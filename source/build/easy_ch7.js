@@ -1,0 +1,135 @@
+/* 쉬운 이야기 7장 · 진통제 케이크 (원작 21장) */
+EASY.push({
+  key: `ch7`, num: 7, bgm: `bgm_ch7.mp3`, title: `진통제 케이크`, orig: `원작 21장`, origTitle: `향료의 새로운 출발`,
+  bgKeys: [`ch7`, `ch7_spring`, `ch7_garden`],
+  endings: {
+    canon: {title: `실수 없는 새날`, label: `원작 결말`},
+    imag:  {title: `실수 박물관`, label: `상상 결말`},
+    bal:   {title: `냄새부터 맡기`, label: `균형 결말`}
+  },
+  items: {
+    bottle:{ic:`🧪`, name:`'바닐라' 병`, desc:`바닐라라고 쓰여 있었지만, 사실은 진통제 약이 든 병이었어요.`},
+    garden:{ic:`🌷`, name:`앤의 꽃밭`, desc:`앨런 사모님과 함께 거닌 앤의 작은 꽃밭이에요.`}
+  },
+  album: [
+    {id:`s7_rainbow`, ic:`🌈`, name:`요정의 무지개`},
+    {id:`s7_fairy`, ic:`🍽️`, name:`요정 여왕의 식탁`},
+    {id:`s7_feel`, ic:`💗`, name:`마음 읽기 성공`}
+  ],
+  talk: {
+    e: [`케이크 맛이 왜 이상했나요?`,
+        `앨런 사모님은 우는 앤을 어떻게 위로했나요?`,
+        `"내일은 아직 실수가 없는 새날"이라는 말을 들으면 어떤 기분이 드나요?`],
+    l: [`케이크 맛이 왜 이상했나요?`,
+        `앨런 사모님은 우는 앤을 어떻게 위로했나요?`,
+        `"내일은 아직 실수가 없는 새날"이라는 말을 들으면 어떤 기분이 드나요?`]
+  },
+  nodes: [
+  {id:`b1`, bg:`ch2`, w:`anne`, in:1, f:`anne_happy`, o:`allan`, eff:{met:`allan`}, cam:`in`,
+   e:`새 목사님과 사모님이 오셨어.\n앨런 사모님은 정말 다정한 분이야.`},
+  {w:`allan`, f:`anne_happy`, o:`allan`,
+   e:`사모님은 웃을 때 보조개가 생겨.\n나는 사모님이 정말 좋아.`},
+  {w:`marilla`, f:`anne_surprised`, o:`marilla_warm`,
+   e:`"수요일에 목사님 부부를\n차 마시러 모시자."`},
+  {w:`anne`, f:`anne_happy`, o:`marilla_warm`, cam:`up`,
+   e:`"제가 케이크를 만들어도 돼요?"\n"그래, 만들어 보렴."`},
+  {bg:`ch7_spring`, w:`anne`, f:`anne_happy`, o:`diana`, cam:`out`,
+   e:`나는 다이애나와 '{spring}'에 갔어.\n"케이크가 잘 될까? 걱정돼."`},
+  {t:`choice`, id:`C1`, kind:`talk`, label:`샘가에서`, f:`anne_happy`, o:`diana`,
+   q:{e:`앤은 다이애나와 무엇을 할까요?`},
+   note:{e:`원작의 앤은 다이애나와 케이크 걱정을 이야기해요. 다이애나는 "잘될 거야!" 하고 말해 줬어요.`},
+   opts:[
+    {type:`canon`, go:`s_c`, e:`케이크 걱정을 이야기해요`},
+    {type:`imag`, go:`s_i`, eff:{album:`s7_rainbow`}, e:`요정의 무지개를 만들어요`}
+   ]},
+  {id:`s_c`, w:`diana`, f:`anne_happy`, o:`diana`,
+   e:`"걱정 마, 앤.\n네 케이크는 늘 맛있잖아."`},
+  {t:`goto`, to:`s_m`},
+  {id:`s_i`, w:`anne`, f:`anne_dreamy`, o:`diana`, fx:`dream`, cam:`up`,
+   e:`우리는 샘물 위에 무지개를 만들었어.\n요정이 가져갈지도 몰라!`},
+  /* ---------- 케이크 ---------- */
+  {id:`s_m`, bg:`ch2`, w:`anne`, in:1, f:`anne_sad`, cam:`in`,
+   e:`수요일 아침, 나는 코감기에 걸렸어.\n냄새를 하나도 맡을 수 없었어.`},
+  {w:`anne`, in:1, f:`anne_happy`,
+   e:`그래도 케이크를 구웠어.\n폭신하게 잘 부풀었어!`},
+  {bg:`ch7`, w:`anne`, in:1, f:`anne_happy`, o:`allan`, cam:`out`,
+   e:`식탁을 꽃으로 예쁘게 꾸몄어.\n목사님 부부가 오셨어.`},
+  {t:`choice`, id:`C2`, kind:`act`, label:`식탁 꾸미기`, f:`anne_happy`, o:`allan`,
+   q:{e:`앤은 식탁을 어떻게 꾸몄을까요?`},
+   note:{e:`원작의 앤은 장미와 고사리로 식탁을 꾸며요. 목사님 부부가 "정말 예뻐요!" 하고 감탄했어요.`},
+   opts:[
+    {type:`canon`, go:`t_c`, e:`장미와 고사리로 꾸며요`},
+    {type:`imag`, go:`t_i`, eff:{album:`s7_fairy`}, e:`요정 여왕의 식탁으로 꾸며요`}
+   ]},
+  {id:`t_c`, w:`allan`, f:`anne_happy`, o:`allan`,
+   e:`"세상에, 식탁이 정말 예뻐요!"\n사모님이 감탄하셨어.`},
+  {t:`goto`, to:`t_m`},
+  {id:`t_i`, w:`allan`, f:`anne_dreamy`, o:`allan`, fx:`dream`,
+   e:`"요정 여왕의 식탁 같구나!"\n사모님이 활짝 웃으셨어.`},
+  {id:`t_m`, w:`marilla`, f:`anne_happy`, o:`allan`,
+   e:`"사모님, 앤이 만든 케이크를\n꼭 드셔 보세요."`},
+  {w:`allan`, f:`anne_surprised`, o:`allan`, cam:`in`,
+   e:`사모님이 한 입 드셨어.\n그런데 표정이 이상했어.`},
+  {w:`marilla`, f:`anne_surprised`, o:`marilla_strict`, cam:`shake`,
+   e:`아주머니도 맛을 보셨어.\n"앤! 케이크에 뭘 넣은 거니?"`},
+  {t:`choice`, id:`C3`, kind:`predict`, label:`케이크의 비밀`, f:`anne_surprised`, o:`marilla_strict`,
+   q:{e:`케이크 맛이 왜 이상했을까요?`},
+   note:{e:`원작에서 바닐라 병에는 진통제 약이 들어 있었어요. 앤은 코감기 때문에 냄새를 못 맡았어요.`},
+   opts:[
+    {type:`canon`, go:`m_c`, eff:{item:`bottle`}, e:`바닐라 병에 약이 들어 있었어요`},
+    {type:`imag`, go:`m_i`, eff:{item:`bottle`}, e:`요정이 마법을 걸었어요`}
+   ]},
+  {id:`m_c`, w:`marilla`, f:`anne_sad`, o:`marilla_strict`,
+   e:`"이 병에는 진통제가 들어 있었다!\n바닐라가 아니었어."`},
+  {t:`goto`, to:`m_m`},
+  {id:`m_i`, w:`marilla`, f:`anne_sad`, o:`marilla_strict`, fx:`dream`,
+   e:`"요정 탓이 아니란다.\n이 병에는 진통제가 들어 있었다."`},
+  {id:`m_m`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_sad`, cam:`in`,
+   e:`나는 다락방으로 뛰어가 엉엉 울었어.\n너무 창피했어.`},
+  {t:`choice`, id:`F1`, kind:`feel`, label:`앤의 마음`, f:`anne_sad`,
+   q:{e:`지금 앤의 마음은 어떨까요?`},
+   note:{e:`원작의 앤은 너무 부끄러워서 울었어요. 사모님께 잘하고 싶었거든요.`},
+   opts:[
+    {type:`feel`, ic:`😳`, ok:1, eff:{album:`s7_feel`}, e:`부끄러워요`},
+    {type:`feel`, ic:`😆`, e:`신나요`},
+    {type:`feel`, ic:`😴`, e:`졸려요`}
+   ]},
+  /* ---------- 위로 ---------- */
+  {w:`allan`, f:`anne_sad`, o:`allan`, cam:`in`,
+   e:`누가 방에 들어왔어. 앨런 사모님이었어.\n"앤, 울지 마. 누구나 하는 실수란다."`},
+  {t:`choice`, id:`C4`, kind:`talk`, label:`사모님께`, f:`anne_sad`, o:`allan`,
+   q:{e:`앤은 사모님께 뭐라고 할까요?`},
+   note:{e:`원작의 앤은 "맛있는 케이크를 드리고 싶었어요."라고 말해요. 사모님은 "네 마음이 고맙구나."라고 하셨어요.`},
+   opts:[
+    {type:`canon`, go:`a_c`, eff:{item:`garden`, heart:{allan:1}}, e:`"맛있게 드리고 싶었어요"`},
+    {type:`imag`, go:`a_i`, eff:{item:`garden`, heart:{allan:1}}, e:`"마법 케이크였어요"`}
+   ]},
+  {id:`a_c`, w:`allan`, f:`anne_sad`, o:`allan`,
+   e:`"사모님께 맛있는 케이크를\n드리고 싶었어요."\n"그 마음이 정말 고맙구나."`},
+  {t:`goto`, to:`a_m`},
+  {id:`a_i`, w:`allan`, f:`anne_dreamy`, o:`allan`, fx:`dream`,
+   e:`"사실 아픈 곳을 낫게 하는\n마법 케이크였어요…."\n사모님이 소리 내어 웃으셨어.`},
+  {id:`a_m`, bg:`ch7_garden`, w:`allan`, f:`anne_happy`, o:`allan`, cam:`out`,
+   e:`"자, 이제 네 꽃밭을 보여 주렴."\n우리는 함께 꽃밭을 걸었어.`},
+  {w:`anne`, f:`anne_happy`, o:`marilla_warm`, cam:`up`,
+   e:`"아주머니, 내일은 아직\n실수가 하나도 없는 새날이에요!"`},
+  {t:`name`, id:`N7`, key:`newday`, free:true, max:30, label:`내일 해 보고 싶은 일`, f:`anne_happy`, o:`marilla_warm`,
+   q:{e:`✍️ 내일은 새날이에요!\n내일 무엇을 해 보고 싶나요?`},
+   pick:[`케이크 다시 굽기`, `친구 도와주기`, `새 책 읽기`],
+   ph:`직접 써도 돼요`,
+   note:{e:`원작의 앤은 "같은 실수는 두 번 안 해요!"라고 말해요.`}},
+  {t:`ending`},
+  {id:`E_canon`, bg:`ch2`, w:`marilla`, f:`anne_happy`, o:`marilla_strict`, cam:`in`, eff:{album:`e_canon`},
+   e:`"저는 같은 실수는 두 번 안 해요!"\n아주머니가 피식 웃으셨어.`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_imag`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`, cam:`up`, eff:{album:`e_imag`},
+   e:`언젠가 '앤의 실수 박물관'이 생길 거야.\n같은 실수는 하나도 없지!`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_bal`, bg:`ch2`, w:`anne`, f:`anne_happy`, o:`marilla_warm`, eff:{album:`e_bal`, heart:{marilla:1}},
+   e:`나는 부엌에 규칙을 붙였어.\n"병은 냄새부터 맡기!"`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_last`, bg:`ch7_garden`, w:`anne`, in:1, f:`anne_dreamy`, cam:`up`,
+   e:`내일은 새날이야.\n내일은 꼭 '{newday}'!`},
+  {t:`endcard`}
+  ]
+});

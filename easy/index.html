@@ -4741,6 +4741,1220 @@ EASY.push({
   ]
 });
 
+/* 쉬운 이야기 2장 · 린드 부인의 독설 (원작 9~10장) */
+EASY.push({
+  key: `ch2`, num: 2, bgm: `bgm_ch2.mp3`, title: `린드 부인의 독설`, orig: `원작 9~10장`, origTitle: `레이첼 린드 부인, 깜짝 놀라다 · 앤의 사과`,
+  bgKeys: [`ch2`, `ch2_room`, `ch2_lane`, `ch2_lynde`, `ch2_night`],
+  endings: {
+    canon: {title: `집에 가는 길`, label: `원작 결말`},
+    imag:  {title: `바람이 된 앤`, label: `상상 결말`},
+    bal:   {title: `아주머니의 손`, label: `균형 결말`}
+  },
+  items: {
+    auburn:{ic:`🍂`, name:`적갈색의 희망`, desc:`"네 머리도 크면 예쁜 적갈색이 될 거다." 린드 부인의 말이에요.`},
+    narcissi:{ic:`🤍`, name:`하얀 수선화`, desc:`린드 부인이 꺾어 가라고 한 하얀 꽃이에요.`}
+  },
+  album: [
+    {id:`s2_hair`, ic:`🍁`, name:`노을빛 머리`},
+    {id:`s2_play`, ic:`🎭`, name:`매슈 아저씨의 연극`},
+    {id:`s2_feel`, ic:`💗`, name:`마음 읽기 성공`}
+  ],
+  talk: {
+    e: [`린드 부인은 앤에게 어떤 말을 했나요? 그 말을 들은 앤의 마음은 어땠을까요?`,
+        `앤은 왜 결국 사과하러 갔을까요?`,
+        `친구에게 상처 주는 말을 들으면 어떻게 하면 좋을까요?`],
+    l: [`린드 부인은 앤에게 어떤 말을 했나요? 그 말을 들은 앤의 마음은 어땠을까요?`,
+        `앤은 왜 결국 사과하러 갔을까요?`,
+        `친구에게 상처 주는 말을 들으면 어떻게 하면 좋을까요?`]
+  },
+  nodes: [
+  {id:`b1`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_sad`, cam:`in`,
+   e:`아저씨와 아주머니는 남자아이를 기다렸대.\n나는 밤새 울었어.`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`marilla_warm`, eff:{met:`marilla`},
+   e:`그런데 마릴라 아주머니가 마음을 바꾸셨어.\n나는 초록 지붕 집에서 살게 됐어!`},
+  {bg:`ch2_lane`, w:`anne`, in:1, f:`anne_happy`, cam:`out`,
+   e:`나는 날마다 숲과 시냇가를 탐험했어.\n정말 신나는 날들이었어.`},
+  /* ---------- 린드 부인 ---------- */
+  {bg:`ch2`, w:`anne`, in:1, f:`anne_surprised`, o:`lynde`, eff:{met:`lynde`},
+   e:`어느 날, 이웃집 린드 부인이 오셨어.\n부인은 나를 빤히 쳐다보셨어.`},
+  {w:`lynde`, f:`anne_sad`, o:`lynde`, cam:`right`,
+   e:`"세상에, 너무 말랐고 못생겼구나.\n머리는 홍당무처럼 빨갛네!"`},
+  {t:`choice`, id:`F1`, kind:`feel`, label:`앤의 마음`, f:`anne_angry`, o:`lynde`,
+   q:{e:`이 말을 들은 앤의 마음은 어떨까요?`},
+   note:{e:`원작의 앤은 몹시 화가 났어요. 생김새로 놀림받는 건 정말 아픈 일이니까요.`},
+   opts:[
+    {type:`feel`, ic:`😊`, e:`기뻐요`},
+    {type:`feel`, ic:`😠`, ok:1, eff:{album:`s2_feel`}, e:`화나요`},
+    {type:`feel`, ic:`😴`, e:`졸려요`}
+   ]},
+  {t:`choice`, id:`C1`, kind:`predict`, label:`앤의 대답`, f:`anne_angry`, o:`lynde`,
+   q:{e:`원작의 앤은 어떻게 했을까요?`},
+   note:{e:`원작의 앤은 발을 쾅쾅 구르며 "아주머니가 미워요!" 하고 소리쳐요.`},
+   opts:[
+    {type:`canon`, go:`k_c`, e:`발을 구르며 소리쳐요`},
+    {type:`imag`, go:`k_i`, e:`"제 머리는 노을 색이에요!"`}
+   ]},
+  {id:`k_c`, w:`anne`, f:`anne_angry`, o:`lynde`, cam:`shake`,
+   e:`"아주머니가 미워요! 미워요!"\n나는 발을 쾅쾅 굴렀어.`},
+  {t:`goto`, to:`k_m`},
+  {id:`k_i`, w:`anne`, f:`anne_angry`, o:`lynde`, fx:`dream`, eff:{album:`s2_hair`},
+   e:`"홍당무가 아니에요!\n제 머리는 노을과 단풍 색이에요!"`},
+  {id:`k_m`, w:`marilla`, f:`anne_angry`, o:`marilla_strict`,
+   e:`"앤! 네 방에 올라가 있어라."`},
+  {bg:`ch2_room`, w:`anne`, in:1, f:`anne_sad`, cam:`in`,
+   e:`나는 침대에 엎드려 엉엉 울었어.`},
+  {w:`marilla`, f:`anne_sad`, o:`marilla_strict`,
+   e:`"린드 부인께 가서 사과해라.\n사과할 때까지 방에 있거라."`},
+  {w:`anne`, f:`anne_angry`, o:`marilla_strict`,
+   e:`"싫어요! 하나도 안 미안해요!"`},
+  /* ---------- 매슈 아저씨 ---------- */
+  {w:`anne`, in:1, f:`anne_surprised`, o:`matthew`, cam:`in`,
+   e:`밤이 되자 누가 문을 똑똑 두드렸어.\n매슈 아저씨였어!`},
+  {w:`matthew`, f:`anne_sad`, o:`matthew`,
+   e:`"앤, 그냥 사과하면 어떻겠니?\n네가 없으니 아래층이 쓸쓸하구나."`},
+  {t:`choice`, id:`C2`, kind:`predict`, label:`매슈의 부탁`, f:`anne_sad`, o:`matthew`,
+   q:{e:`원작의 앤은 뭐라고 대답했을까요?`},
+   note:{e:`원작의 앤은 "아저씨를 위해서라면 할게요."라고 대답해요.`},
+   opts:[
+    {type:`canon`, go:`m_c`, eff:{heart:{matthew:1}}, e:`"아저씨를 위해 할게요"`},
+    {type:`imag`, go:`m_i`, eff:{heart:{matthew:1}, album:`s2_play`}, e:`사과 연습을 같이 해요`}
+   ]},
+  {id:`m_c`, w:`anne`, f:`anne_sad`, o:`matthew`,
+   e:`"아저씨를 위해서라면 할게요.\n사실 지금은 조금 부끄러워요."`},
+  {t:`goto`, to:`m_m`},
+  {id:`m_i`, w:`matthew`, f:`anne_happy`, o:`matthew`, fx:`dream`,
+   e:`아저씨가 린드 부인 흉내를 내셨어.\n나는 웃음이 터졌어.`},
+  {w:`anne`, f:`anne_happy`, o:`matthew`, fx:`dream`,
+   e:`"알았어요. 진짜로 사과할게요!"`},
+  {id:`m_m`, w:`matthew`, f:`anne_happy`, o:`matthew`,
+   e:`"내가 이런 말 했다는 건\n마릴라한테 비밀이다."`},
+  /* ---------- 사과 ---------- */
+  {bg:`ch2_lynde`, w:`anne`, in:1, f:`anne_surprised`, o:`lynde`, cam:`in`,
+   e:`나는 아주머니와 린드 부인 댁에 갔어.\n가슴이 쿵쾅쿵쾅 뛰었어.`},
+  {t:`choice`, id:`C3`, kind:`act`, label:`사과하기`, f:`anne_sad`, o:`lynde`,
+   q:{e:`앤은 어떻게 사과할까요?`},
+   note:{e:`원작의 앤은 무릎을 꿇고 아주 큰 목소리로 정성껏 사과해요.`},
+   opts:[
+    {type:`canon`, go:`g_c`, e:`무릎 꿇고 사과해요`},
+    {type:`imag`, go:`g_i`, e:`시를 읊으며 사과해요`}
+   ]},
+  {id:`g_c`, w:`anne`, f:`anne_sad`, o:`lynde`,
+   e:`"린드 부인, 정말 너무너무 죄송해요!\n제발 용서해 주세요!"`},
+  {t:`goto`, to:`g_m`},
+  {id:`g_i`, w:`anne`, f:`anne_dreamy`, o:`lynde`, fx:`dream`,
+   e:`"오, 린드 부인이시여!\n홍당무 소녀가 용서를 비나이다!"`},
+  {id:`g_m`, w:`lynde`, f:`anne_happy`, o:`lynde`, eff:{item:`auburn`, heart:{lynde:2}},
+   e:`"그래, 용서하마.\n네 머리도 크면 예쁜 적갈색이 될 거다."`},
+  {w:`anne`, f:`anne_happy`, o:`lynde`,
+   e:`"정말요? 부인이 저에게 희망을 주셨어요!"`},
+  {w:`lynde`, f:`anne_happy`, o:`lynde`, eff:{item:`narcissi`},
+   e:`"마당의 하얀 꽃도 꺾어 가렴."`},
+  {t:`choice`, id:`F2`, kind:`feel`, label:`사과한 뒤`, f:`anne_happy`, o:`lynde`,
+   q:{e:`사과하고 나서 앤의 마음은 어떨까요?`},
+   note:{e:`원작의 앤은 마음이 가벼워졌어요. 사과를 잘해서 뿌듯했대요.`},
+   opts:[
+    {type:`feel`, ic:`😌`, ok:1, e:`가벼워요`},
+    {type:`feel`, ic:`😠`, e:`화나요`},
+    {type:`feel`, ic:`😢`, e:`슬퍼요`}
+   ]},
+  {t:`ending`},
+  {id:`E_canon`, bg:`ch2_night`, w:`anne`, f:`anne_happy`, o:`marilla_warm`, cam:`in`, eff:{album:`e_canon`},
+   e:`나는 아주머니 손을 잡았어.\n"집에 가는 길은 참 좋아요."`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_imag`, bg:`ch2_night`, w:`anne`, f:`anne_dreamy`, o:`marilla_warm`, fx:`dream`, cam:`up`, eff:{album:`e_imag`},
+   e:`"아주머니, 저는 지금 바람이에요!\n'{avenue}' 위로 휙 날아갈래요!"`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_bal`, bg:`ch2_night`, w:`marilla`, f:`anne_surprised`, o:`marilla_warm`, cam:`in`, eff:{album:`e_bal`, heart:{marilla:1}},
+   e:`"앤, 나도 어릴 때 못생겼다는 말을 들었단다.\n그 말이 오래 아팠지."`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_last`, bg:`ch2_night`, w:`anne`, in:1, f:`anne_happy`, o:`marilla_warm`,
+   e:`저 멀리 초록 지붕 집 불빛이 보였어.\n내 집이 나를 기다리고 있었어.`},
+  {t:`endcard`}
+  ]
+});
+
+/* 쉬운 이야기 3장 · 다이애나와의 맹세 (원작 12장) */
+EASY.push({
+  key: `ch3`, num: 3, bgm: `bgm_ch3.mp3`, title: `다이애나와의 맹세`, orig: `원작 12장`, origTitle: `엄숙한 맹세와 약속`,
+  bgKeys: [`ch3`, `ch3_path`, `ch3_garden`, `ch3_bridge`],
+  endings: {
+    canon: {title: `마음의 친구`, label: `원작 결말`},
+    imag:  {title: `같은 별에서 온 자매`, label: `상상 결말`},
+    bal:   {title: `내일 또 만나`, label: `균형 결말`}
+  },
+  items: {
+    wreath:{ic:`🌼`, name:`꽃 모자`, desc:`앤이 꽃을 잔뜩 달고 교회에 간 모자예요.`},
+    vow:{ic:`🤝`, name:`해와 달의 맹세`, desc:`"해와 달이 있는 한 영원히 친구야." 앤과 다이애나의 약속이에요.`},
+    choco:{ic:`🍫`, name:`초콜릿 사탕`, desc:`매슈 아저씨가 사 주신 사탕. 앤은 반을 다이애나에게 주었어요.`}
+  },
+  album: [
+    {id:`s3_queen`, ic:`👑`, name:`들꽃 나라 여왕`},
+    {id:`s3_star`, ic:`💫`, name:`같은 별의 자매`},
+    {id:`s3_feel`, ic:`💗`, name:`마음 읽기 성공`}
+  ],
+  talk: {
+    e: [`앤이 다이애나와 한 맹세는 무엇이었나요?`,
+        `앤은 왜 초콜릿을 다이애나와 나누고 싶었을까요?`,
+        `나에게 '마음의 친구'는 누구인가요?`],
+    l: [`앤이 다이애나와 한 맹세는 무엇이었나요?`,
+        `앤은 왜 초콜릿을 다이애나와 나누고 싶었을까요?`,
+        `나에게 '마음의 친구'는 누구인가요?`]
+  },
+  nodes: [
+  {id:`b1`, bg:`ch2`, w:`anne`, in:1, f:`anne_happy`, cam:`in`,
+   e:`일요일에 나는 교회에 갔어.\n길가에 꽃이 가득 피어 있었어.`},
+  {t:`choice`, id:`C1`, kind:`act`, label:`길가의 꽃`, f:`anne_happy`,
+   q:{e:`앤은 꽃을 어떻게 할까요?`},
+   note:{e:`원작의 앤은 꽃을 잔뜩 꺾어 모자에 빙 둘러 달아요. 사람들이 깜짝 놀랐대요.`},
+   opts:[
+    {type:`canon`, go:`a_c`, eff:{item:`wreath`}, e:`모자에 꽃을 잔뜩 달아요`},
+    {type:`imag`, go:`a_i`, eff:{item:`wreath`, album:`s3_queen`}, e:`꽃 나라 여왕이 돼요`}
+   ]},
+  {id:`a_c`, w:`anne`, in:1, f:`anne_happy`,
+   e:`나는 꽃을 모자에 잔뜩 달았어.\n사람들이 나를 쳐다봤어.`},
+  {t:`goto`, to:`a_m`},
+  {id:`a_i`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`, cam:`up`,
+   e:`나는 들꽃 나라의 여왕이야!\n꽃 요정들이 나를 따라왔어.`},
+  {id:`a_m`, w:`marilla`, f:`anne_sad`, o:`marilla_strict`,
+   e:`"앤, 모자에 꽃을 잔뜩 달면 안 된다.\n사람들이 흉을 봤단다."`},
+  {w:`anne`, f:`anne_sad`, o:`marilla_strict`,
+   e:`"죄송해요.\n다음엔 조심할게요."`},
+  /* ---------- 다이애나 ---------- */
+  {w:`marilla`, f:`anne_surprised`, o:`marilla_warm`,
+   e:`"오늘 배리 부인 댁에 가자.\n다이애나라는 여자아이가 있단다."`},
+  {bg:`ch3_path`, w:`anne`, in:1, f:`anne_sad`, o:`marilla_strict`, cam:`out`,
+   e:`나는 가슴이 두근두근했어.\n"다이애나가 나를 안 좋아하면 어떡하죠?"`},
+  {bg:`ch3`, w:`barry`, f:`anne_surprised`, o:`barry`, eff:{met:`barry`},
+   e:`"어서 오렴. 다이애나, 앤에게 꽃밭을 보여 주렴."`},
+  {bg:`ch3_garden`, w:`anne`, in:1, f:`anne_surprised`, o:`diana`, eff:{met:`diana`}, cam:`in`,
+   e:`검은 머리에 볼이 발그레한 여자아이야.\n다이애나가 웃고 있어.`},
+  {t:`choice`, id:`C2`, kind:`talk`, label:`첫마디`, f:`anne_surprised`, o:`diana`,
+   q:{e:`앤은 다이애나에게 뭐라고 말할까요?`},
+   note:{e:`원작의 앤은 "나를 조금이라도 좋아할 수 있니? 마음의 친구가 될 만큼?" 하고 물어요.`},
+   opts:[
+    {type:`canon`, go:`d_c`, eff:{heart:{diana:1}}, e:`"나랑 친구가 되어 줄래?"`},
+    {type:`imag`, go:`d_i`, eff:{heart:{diana:1}, album:`s3_star`}, e:`"우리 같은 별에서 왔나 봐!"`}
+   ]},
+  {id:`d_c`, w:`anne`, f:`anne_surprised`, o:`diana`,
+   e:`"다이애나, 나를 조금이라도 좋아할 수 있니?\n마음의 친구가 될 만큼?"`},
+  {t:`goto`, to:`d_m`},
+  {id:`d_i`, w:`anne`, f:`anne_dreamy`, o:`diana`, fx:`dream`,
+   e:`"우리, 옛날에 같은 별에서 태어난\n자매였던 게 분명해!"`},
+  {id:`d_m`, w:`diana`, f:`anne_happy`, o:`diana`,
+   e:`다이애나가 웃었어.\n"그래, 좋아!"`},
+  {t:`choice`, id:`F1`, kind:`feel`, label:`앤의 마음`, f:`anne_happy`, o:`diana`,
+   q:{e:`지금 앤의 마음은 어떨까요?`},
+   note:{e:`원작의 앤은 아주 기뻐요. 처음으로 마음의 친구가 생겼거든요.`},
+   opts:[
+    {type:`feel`, ic:`😊`, ok:1, eff:{album:`s3_feel`}, e:`기뻐요`},
+    {type:`feel`, ic:`😢`, e:`슬퍼요`},
+    {type:`feel`, ic:`😨`, e:`무서워요`}
+   ]},
+  {t:`choice`, id:`C3`, kind:`act`, label:`우정의 맹세`, f:`anne_happy`, o:`diana`,
+   q:{e:`이제 우정을 맹세해요.\n어떻게 할까요?`},
+   note:{e:`원작의 앤과 다이애나는 손을 잡고 "해와 달이 있는 한 영원히 친구"라고 맹세해요.`},
+   opts:[
+    {type:`canon`, go:`v_c`, eff:{item:`vow`}, e:`손잡고 해와 달에 맹세해요`},
+    {type:`imag`, go:`v_i`, eff:{item:`vow`}, e:`꽃 왕관을 쓰고 맹세해요`}
+   ]},
+  {id:`v_c`, w:`anne`, f:`anne_happy`, o:`diana`, cam:`up`,
+   e:`우리는 손을 꼭 잡았어.\n"해와 달이 있는 한, 영원히 친구야!"`},
+  {t:`goto`, to:`v_m`},
+  {id:`v_i`, w:`anne`, f:`anne_dreamy`, o:`diana`, fx:`dream`, cam:`up`,
+   e:`우리는 꽃 왕관을 썼어.\n"영원히 친구가 될 것을 맹세해!"`},
+  {id:`v_m`, bg:`ch3_bridge`, w:`anne`, f:`anne_happy`, o:`diana`, cam:`out`,
+   e:`우리는 통나무 다리에 갔어.\n다리 아래에 맑은 샘이 있었어.`},
+  {t:`name`, id:`N3`, key:`spring`, canon:`드라이어드의 샘`, max:14, label:`샘의 이름`, f:`anne_dreamy`, o:`diana`,
+   q:{e:`✍️ 맑은 샘에 이름을 지어 주세요!`},
+   pick:[`드라이어드의 샘`, `요정의 거울`, `반짝 샘`],
+   ph:`직접 써도 돼요`,
+   note:{e:`원작의 앤은 '드라이어드의 샘'이라고 불러요. 드라이어드는 숲의 요정이에요.`}},
+  {w:`anne`, f:`anne_happy`, o:`diana`,
+   e:`"이제 여기는 '{spring}'야.\n우리 둘만의 비밀 장소야!"`},
+  /* ---------- 초콜릿 ---------- */
+  {bg:`ch2`, w:`matthew`, f:`anne_surprised`, o:`matthew`, cam:`in`,
+   e:`그날 밤, 매슈 아저씨가\n초콜릿 사탕을 주셨어.`},
+  {t:`choice`, id:`C4`, kind:`predict`, label:`초콜릿`, f:`anne_happy`, o:`matthew`,
+   q:{e:`원작의 앤은 사탕을 어떻게 했을까요?`},
+   note:{e:`원작의 앤은 "반은 다이애나에게 줘도 돼요?" 하고 물어요. 나누면 더 맛있대요.`},
+   opts:[
+    {type:`canon`, go:`ch_c`, eff:{item:`choco`, heart:{matthew:1}}, e:`다이애나와 나눠요`},
+    {type:`imag`, go:`ch_i`, eff:{item:`choco`, heart:{matthew:1}}, e:`보물 상자에 넣어요`}
+   ]},
+  {id:`ch_c`, w:`anne`, f:`anne_happy`, o:`matthew`,
+   e:`"반은 다이애나에게 줘도 되죠?\n나누면 두 배로 맛있거든요!"`},
+  {t:`goto`, to:`ch_m`},
+  {id:`ch_i`, w:`anne`, f:`anne_dreamy`, o:`matthew`, fx:`dream`,
+   e:`"이건 '우정의 보석'이에요.\n보물 상자에 넣어 둘래요!"`},
+  {id:`ch_m`, w:`marilla`, f:`anne_happy`, o:`marilla_warm`,
+   e:`아주머니가 조용히 말씀하셨어.\n"앤은 욕심쟁이가 아니구나."`},
+  {t:`ending`},
+  {id:`E_canon`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_happy`, cam:`in`, eff:{album:`e_canon`},
+   e:`나에게도 마음의 친구가 생겼어.\n오늘은 최고의 날이야!`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_imag`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`, cam:`up`, eff:{album:`e_imag`},
+   e:`창밖에 별 두 개가 반짝였어.\n하나는 나, 하나는 다이애나야.`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_bal`, bg:`ch2`, w:`anne`, f:`anne_happy`, o:`marilla_warm`, eff:{album:`e_bal`, heart:{marilla:1}},
+   e:`"아주머니, 데려가 주셔서 고마워요.\n내일 또 다이애나를 만나도 돼요?"`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_last`, bg:`ch2`, w:`marilla`, f:`anne_happy`, o:`marilla_warm`,
+   e:`아주머니는 빙그레 웃으셨어.\n"그래, 내일 또 가려무나."`},
+  {t:`endcard`}
+  ]
+});
+
+/* 쉬운 이야기 4장 · 홍당무 석판 사건 (원작 15장) */
+EASY.push({
+  key: `ch4`, num: 4, bgm: `bgm_ch4.mp3`, title: `홍당무 석판 사건`, orig: `원작 15장`, origTitle: `찻잔 속의 폭풍`,
+  bgKeys: [`ch4`, `ch4_birch`, `ch4_spruce`, `ch4_yard`],
+  endings: {
+    canon: {title: `학교에 안 갈래요`, label: `원작 결말`},
+    imag:  {title: `용을 이긴 공주`, label: `상상 결말`},
+    bal:   {title: `내일은 다시 학교로`, label: `균형 결말`}
+  },
+  items: {
+    slate:{ic:`🪨`, name:`금 간 석판`, desc:`앤이 화가 나서 내리친 석판이에요. 쩍 금이 갔어요.`},
+    candy:{ic:`💗`, name:`하트 사탕`, desc:`길버트가 준 "너는 달콤해" 사탕. 앤은 받지 않았어요.`}
+  },
+  album: [
+    {id:`s4_dragon`, ic:`🐉`, name:`불 뿜는 용`},
+    {id:`s4_wall`, ic:`🪟`, name:`보이지 않는 유리벽`},
+    {id:`s4_feel`, ic:`💗`, name:`마음 읽기 성공`}
+  ],
+  talk: {
+    e: [`길버트는 앤을 뭐라고 놀렸나요? 앤은 왜 그렇게 화가 났을까요?`,
+        `길버트가 사과했을 때 앤이 받아 주었다면 어떻게 되었을까요?`,
+        `화가 많이 날 때, 나는 어떻게 마음을 가라앉히나요?`],
+    l: [`길버트는 앤을 뭐라고 놀렸나요? 앤은 왜 그렇게 화가 났을까요?`,
+        `길버트가 사과했을 때 앤이 받아 주었다면 어떻게 되었을까요?`,
+        `화가 많이 날 때, 나는 어떻게 마음을 가라앉히나요?`]
+  },
+  nodes: [
+  {id:`b1`, bg:`ch4_birch`, w:`anne`, in:1, f:`anne_happy`, o:`diana`, cam:`out`,
+   e:`나는 다이애나와 학교에 다녀.\n학교 가는 숲길은 정말 예뻐.`},
+  {w:`anne`, f:`anne_dreamy`, o:`diana`,
+   e:`"봄이면 제비꽃이 피는 골짜기가 있어.\n이름을 지어 주자!"`},
+  {t:`name`, id:`N4`, key:`vale`, canon:`제비꽃 골짜기`, max:14, label:`숲속 골짜기의 이름`, f:`anne_dreamy`, o:`diana`,
+   q:{e:`✍️ 제비꽃이 피는 골짜기에 이름을 지어 주세요!`},
+   pick:[`제비꽃 골짜기`, `보라 꽃 마을`, `초록 비밀 정원`],
+   ph:`직접 써도 돼요`,
+   note:{e:`원작의 앤은 '제비꽃 골짜기'라고 불러요.`}},
+  {w:`diana`, f:`anne_happy`, o:`diana`,
+   e:`"'{vale}'! 멋진 이름이야.\n그런데 오늘 길버트가 학교에 온대."`},
+  {w:`diana`, f:`anne_surprised`, o:`diana`,
+   e:`"길버트는 공부를 잘해.\n그리고 여자애들을 잘 놀려."`},
+  /* ---------- 교실 ---------- */
+  {bg:`ch4`, w:`anne`, in:1, f:`anne_surprised`, o:`gilbert`, eff:{met:`gilbert`}, cam:`in`,
+   e:`길버트가 나를 자꾸 쳐다봤어.\n하지만 나는 창밖만 봤어.`},
+  {w:`gilbert`, f:`anne_angry`, o:`gilbert`, cam:`shake`,
+   e:`길버트가 내 머리를 잡아당겼어.\n"홍당무! 홍당무!"`},
+  {t:`choice`, id:`F1`, kind:`feel`, label:`앤의 마음`, f:`anne_angry`, o:`gilbert`,
+   q:{e:`지금 앤의 마음은 어떨까요?`},
+   note:{e:`원작의 앤은 너무 화가 났어요. 앤이 가장 싫어하는 말이 '홍당무'였거든요.`},
+   opts:[
+    {type:`feel`, ic:`😊`, e:`즐거워요`},
+    {type:`feel`, ic:`😴`, e:`심심해요`},
+    {type:`feel`, ic:`😠`, ok:1, eff:{album:`s4_feel`}, e:`화나요`}
+   ]},
+  {t:`choice`, id:`C1`, kind:`predict`, label:`홍당무!`, f:`anne_angry`, o:`gilbert`,
+   q:{e:`원작의 앤은 어떻게 했을까요?`},
+   note:{e:`원작의 앤은 석판으로 길버트의 머리를 "퍽!" 내리쳐요. 석판이 쩍 갈라졌어요.`},
+   opts:[
+    {type:`canon`, go:`h_c`, eff:{item:`slate`}, e:`석판으로 머리를 내리쳐요`},
+    {type:`imag`, go:`h_i`, eff:{item:`slate`, album:`s4_dragon`}, e:`불 뿜는 용이 돼요`}
+   ]},
+  {id:`h_c`, w:`anne`, f:`anne_angry`, o:`gilbert`, cam:`shake`,
+   e:`퍽! 나는 석판으로 길버트 머리를 내리쳤어.\n석판이 쩍 갈라졌어.`},
+  {t:`goto`, to:`h_m`},
+  {id:`h_i`, w:`anne`, f:`anne_angry`, o:`gilbert`, fx:`dream`, cam:`shake`,
+   e:`나는 불을 뿜는 용이 됐어!\n쾅! 석판을 책상에 내리쳤어.`},
+  {id:`h_m`, w:`phillips`, f:`anne_sad`, o:`phillips`, eff:{met:`phillips`},
+   e:`"앤 셜리! 칠판 앞에 서 있어라!"\n선생님이 화를 내셨어.`},
+  {bg:`ch4_yard`, w:`gilbert`, f:`anne_angry`, o:`gilbert`, cam:`in`,
+   e:`학교가 끝나고 길버트가 말했어.\n"앤, 놀려서 정말 미안해."`},
+  {t:`choice`, id:`C2`, kind:`act`, label:`길버트의 사과`, f:`anne_angry`, o:`gilbert`,
+   q:{e:`앤은 어떻게 할까요?`},
+   note:{e:`원작의 앤은 쳐다보지도 않고 지나가요. 아직 너무 화가 났거든요.`},
+   opts:[
+    {type:`canon`, go:`s_c`, e:`못 들은 척 지나가요`},
+    {type:`imag`, go:`s_i`, e:`"별 백 개를 따 와!"`}
+   ]},
+  {id:`s_c`, w:`anne`, f:`anne_angry`, o:`gilbert`,
+   e:`나는 길버트를 쳐다보지도 않고\n휙 지나가 버렸어.`},
+  {t:`goto`, to:`s_m`},
+  {id:`s_i`, w:`anne`, f:`anne_dreamy`, o:`gilbert`, fx:`dream`,
+   e:`"용서받고 싶으면\n하늘에서 별 백 개를 따 와!"`},
+  /* ---------- 벌 ---------- */
+  {id:`s_m`, bg:`ch4_spruce`, w:`anne`, in:1, f:`anne_happy`, cam:`out`,
+   e:`며칠 뒤, 점심시간에 숲에서 놀았어.\n그만 학교에 늦고 말았어.`},
+  {bg:`ch4`, w:`phillips`, f:`anne_surprised`, o:`phillips`,
+   e:`"앤 셜리, 벌로\n길버트 옆자리에 앉아라!"`},
+  {t:`choice`, id:`C3`, kind:`act`, label:`길버트 옆자리`, f:`anne_sad`, o:`gilbert`,
+   q:{e:`늦은 아이는 많은데 앤만 벌을 받았어요.\n앤은 어떻게 할까요?`},
+   note:{e:`원작의 앤은 길버트 옆에 앉아 책상에 얼굴을 파묻어요. 너무 창피했거든요.`},
+   opts:[
+    {type:`canon`, go:`w_c`, e:`책상에 얼굴을 묻어요`},
+    {type:`imag`, go:`w_i`, eff:{album:`s4_wall`}, e:`유리벽이 있다고 상상해요`}
+   ]},
+  {id:`w_c`, w:`anne`, in:1, f:`anne_sad`,
+   e:`나는 책상에 얼굴을 파묻었어.\n너무 창피했어.`},
+  {t:`goto`, to:`w_m`},
+  {id:`w_i`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`,
+   e:`나와 길버트 사이에\n보이지 않는 유리벽이 있어!`},
+  {id:`w_m`, w:`gilbert`, f:`anne_sad`, o:`gilbert`, eff:{item:`candy`},
+   e:`길버트가 하트 사탕을 내밀었어.\n"너는 달콤해"라고 쓰여 있었어.`},
+  {w:`anne`, f:`anne_angry`, o:`gilbert`,
+   e:`나는 사탕을 받지 않았어.\n그리고 책을 챙겨 집으로 갔어.`},
+  {bg:`ch2`, w:`anne`, f:`anne_angry`, o:`marilla_strict`,
+   e:`"아주머니, 저는 이제 학교에 안 갈래요!"`},
+  {t:`choice`, id:`F2`, kind:`feel`, label:`마릴라의 마음`, f:`anne_angry`, o:`marilla_strict`,
+   q:{e:`마릴라 아주머니의 마음은 어떨까요?`},
+   note:{e:`원작의 마릴라 아주머니는 걱정이 됐어요. 그래서 린드 부인께 의논하러 갔어요.`},
+   opts:[
+    {type:`feel`, ic:`😟`, ok:1, e:`걱정돼요`},
+    {type:`feel`, ic:`😆`, e:`신나요`},
+    {type:`feel`, ic:`😴`, e:`졸려요`}
+   ]},
+  {w:`marilla`, f:`anne_sad`, o:`marilla_warm`,
+   e:`아주머니는 린드 부인께 물어보셨어.\n"잠깐 쉬게 두렴. 곧 다시 갈 거야."`},
+  {t:`ending`},
+  {id:`E_canon`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_sad`, cam:`in`, eff:{album:`e_canon`},
+   e:`나는 집에서 혼자 공부하기로 했어.\n길버트는 절대 용서 안 할 거야!`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_imag`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`, cam:`up`, eff:{album:`e_imag`},
+   e:`꿈속에서 나는 용을 이긴 공주였어.\n용은 길버트를 꼭 닮았어!`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_bal`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_sad`, o:`marilla_warm`, eff:{album:`e_bal`, heart:{marilla:1}},
+   e:`"조금만 쉬고, 다시 학교에 갈게요."\n아주머니가 고개를 끄덕이셨어.`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_last`, bg:`ch1_home`, w:`matthew`, f:`anne_happy`, o:`matthew`,
+   e:`매슈 아저씨가 웃으며 말씀하셨어.\n"앤은 곧 괜찮아질 거다."`},
+  {t:`endcard`}
+  ]
+});
+
+/* 쉬운 이야기 5장 · 다과회 소동 (원작 16~17장) */
+EASY.push({
+  key: `ch5`, num: 5, bgm: `bgm_ch5.mp3`, title: `다과회 소동`, orig: `원작 16~17장`, origTitle: `다이애나를 초대한 다과회의 비극`,
+  bgKeys: [`ch5`, `ch5_orchard`, `ch5_dusk`],
+  endings: {
+    canon: {title: `다시 학교로`, label: `원작 결말`},
+    imag:  {title: `언젠가 다시`, label: `상상 결말`},
+    bal:   {title: `기다리는 마음`, label: `균형 결말`}
+  },
+  items: {
+    lock:{ic:`🖤`, name:`다이애나의 머리카락`, desc:`헤어지며 받은 다이애나의 곱슬머리 한 타래예요.`},
+    pebble:{ic:`🪨`, name:`이름 새긴 조약돌`, desc:`서로의 이름을 새겨 나눠 가진 조약돌이에요.`}
+  },
+  album: [
+    {id:`s5_party`, ic:`👑`, name:`여왕의 연회`},
+    {id:`s5_potion`, ic:`🍷`, name:`루비 물약`},
+    {id:`s5_feel`, ic:`💗`, name:`마음 읽기 성공`}
+  ],
+  talk: {
+    e: [`앤은 다이애나에게 무엇을 잘못 주었나요?`,
+        `배리 부인은 왜 앤을 오해했을까요?`,
+        `친구와 헤어질 때 앤은 어떤 마음이었을까요?`],
+    l: [`앤은 다이애나에게 무엇을 잘못 주었나요?`,
+        `배리 부인은 왜 앤을 오해했을까요?`,
+        `친구와 헤어질 때 앤은 어떤 마음이었을까요?`]
+  },
+  nodes: [
+  {id:`b1`, bg:`ch5_orchard`, w:`anne`, in:1, f:`anne_happy`, cam:`out`,
+   e:`가을이 왔어. 나는 다시 학교에 다녀.\n빨간 단풍잎이 예쁘게 떨어져.`},
+  {bg:`ch2`, w:`marilla`, f:`anne_happy`, o:`marilla_warm`,
+   e:`"앤, 다이애나를 초대해서\n차를 마셔도 된다."`},
+  {w:`anne`, f:`anne_happy`, o:`marilla_warm`, cam:`up`,
+   e:`"정말요? 저의 첫 다과회예요!"`},
+  {t:`choice`, id:`C1`, kind:`talk`, label:`다과회 계획`, f:`anne_happy`, o:`marilla_warm`,
+   q:{e:`앤은 어떤 다과회를 하고 싶을까요?`},
+   note:{e:`원작의 앤은 어른처럼 차를 따르고 싶어 해요. 다이애나에게 "설탕 넣을래?" 하고 물어볼 거래요.`},
+   opts:[
+    {type:`canon`, go:`p_c`, e:`어른처럼 차를 따라요`},
+    {type:`imag`, go:`p_i`, eff:{album:`s5_party`}, e:`여왕의 연회를 열어요`}
+   ]},
+  {id:`p_c`, w:`anne`, f:`anne_happy`, o:`marilla_warm`,
+   e:`"제가 차를 따를 거예요.\n'설탕 넣을래?' 하고 물어볼래요!"`},
+  {t:`goto`, to:`p_m`},
+  {id:`p_i`, w:`anne`, f:`anne_dreamy`, o:`marilla_warm`, fx:`dream`,
+   e:`"거실은 여왕의 연회장이에요.\n다이애나는 이웃 나라 공주님이고요!"`},
+  {id:`p_m`, w:`marilla`, f:`anne_happy`, o:`marilla_strict`,
+   e:`"찬장에 산딸기 주스가 있다.\n그걸 마시렴."`},
+  /* ---------- 다과회 ---------- */
+  {bg:`ch5`, w:`anne`, in:1, f:`anne_happy`, o:`diana`, cam:`in`,
+   e:`다이애나가 왔어!\n우리는 과수원에서 신나게 놀았어.`},
+  {w:`anne`, in:1, f:`anne_surprised`,
+   e:`찬장에서 빨간 병을 찾았어.\n이게 산딸기 주스인가 봐.`},
+  {t:`choice`, id:`C2`, kind:`act`, label:`빨간 병`, f:`anne_happy`, o:`diana`,
+   q:{e:`앤은 빨간 병을 어떻게 할까요?`},
+   note:{e:`원작의 앤은 큰 잔에 따라 주며 "마음껏 마셔!" 해요. 하지만 그건 주스가 아니었어요.`},
+   opts:[
+    {type:`canon`, go:`r_c`, e:`큰 잔에 따라 줘요`},
+    {type:`imag`, go:`r_i`, eff:{album:`s5_potion`}, e:`'루비 물약'이라 불러요`}
+   ]},
+  {id:`r_c`, w:`anne`, f:`anne_happy`, o:`diana`,
+   e:`"마음껏 마셔, 다이애나!"\n다이애나는 세 잔이나 마셨어.`},
+  {t:`goto`, to:`r_m`},
+  {id:`r_i`, w:`anne`, f:`anne_dreamy`, o:`diana`, fx:`dream`,
+   e:`"공주님, 루비 물약을 드세요!"\n다이애나는 세 잔이나 마셨어.`},
+  {id:`r_m`, w:`diana`, f:`anne_surprised`, o:`diana`, cam:`shake`,
+   e:`"앤, 나 머리가 빙글빙글 돌아….\n집에 갈래."`},
+  {bg:`ch2`, w:`marilla`, f:`anne_surprised`, o:`marilla_strict`, cam:`in`,
+   e:`"앤! 이건 주스가 아니라\n열매로 담근 술이잖니!"`},
+  {t:`choice`, id:`F1`, kind:`feel`, label:`앤의 마음`, f:`anne_sad`, o:`marilla_strict`,
+   q:{e:`이 말을 들은 앤의 마음은 어떨까요?`},
+   note:{e:`원작의 앤은 너무 놀랐어요. 일부러 그런 게 아니었으니까요.`},
+   opts:[
+    {type:`feel`, ic:`😲`, ok:1, eff:{album:`s5_feel`}, e:`깜짝 놀라요`},
+    {type:`feel`, ic:`😊`, e:`즐거워요`},
+    {type:`feel`, ic:`😴`, e:`졸려요`}
+   ]},
+  {w:`anne`, in:1, f:`anne_sad`,
+   e:`아주머니가 병을 잘못 두신 거였어.\n나는 정말 몰랐어.`},
+  /* ---------- 배리 부인 ---------- */
+  {bg:`ch5_dusk`, w:`barry`, f:`anne_sad`, o:`barry`, cam:`in`,
+   e:`배리 부인은 몹시 화가 나셨어.\n"이제 다이애나랑 놀지 마라!"`},
+  {t:`choice`, id:`C3`, kind:`act`, label:`용서를 빌기`, f:`anne_sad`, o:`barry`,
+   q:{e:`앤은 어떻게 할까요?`},
+   note:{e:`원작의 앤은 "일부러 그런 게 아니에요!" 하고 울면서 빌어요. 하지만 부인은 용서하지 않았어요.`},
+   opts:[
+    {type:`canon`, go:`b_c`, e:`울면서 용서를 빌어요`},
+    {type:`imag`, go:`b_i`, e:`"백 일 동안 말 안 할게요"`}
+   ]},
+  {id:`b_c`, w:`anne`, f:`anne_sad`, o:`barry`,
+   e:`"부인, 일부러 그런 게 아니에요.\n제발 용서해 주세요!"`},
+  {t:`goto`, to:`b_m`},
+  {id:`b_i`, w:`anne`, f:`anne_dreamy`, o:`barry`, fx:`dream`,
+   e:`"용서해 주시면\n백 일 동안 한마디도 안 할게요!"`},
+  {id:`b_m`, w:`barry`, f:`anne_sad`, o:`barry`,
+   e:`배리 부인은 문을 닫아 버리셨어.\n나는 울면서 집에 왔어.`},
+  /* ---------- 작별 ---------- */
+  {bg:`ch3_bridge`, w:`diana`, f:`anne_sad`, o:`diana`, cam:`in`,
+   e:`다음 날, 다이애나가 샘에 왔어.\n"앤, 딱 십 분만 만날 수 있대."`},
+  {t:`choice`, id:`C4`, kind:`act`, label:`작별의 선물`, f:`anne_sad`, o:`diana`,
+   q:{e:`헤어지기 전에 무엇을 나눌까요?`},
+   note:{e:`원작의 앤은 다이애나의 곱슬머리 한 타래를 받아 소중히 간직해요.`},
+   opts:[
+    {type:`canon`, go:`g_c`, eff:{item:`lock`, heart:{diana:1}}, e:`머리카락 한 타래`},
+    {type:`imag`, go:`g_i`, eff:{item:`pebble`, heart:{diana:1}}, e:`이름 새긴 조약돌`}
+   ]},
+  {id:`g_c`, w:`anne`, f:`anne_sad`, o:`diana`,
+   e:`"네 머리카락 한 타래를 줄래?\n평생 간직할게."`},
+  {t:`goto`, to:`g_m`},
+  {id:`g_i`, w:`anne`, f:`anne_dreamy`, o:`diana`, fx:`dream`,
+   e:`우리는 조약돌에 서로 이름을 새겼어.\n하나씩 나눠 가졌어.`},
+  {id:`g_m`, w:`diana`, f:`anne_sad`, o:`diana`,
+   e:`"앤, 너는 영원히 내 친구야."\n다이애나가 울면서 갔어.`},
+  {t:`choice`, id:`F2`, kind:`feel`, label:`헤어진 뒤`, f:`anne_sad`, o:`diana`,
+   q:{e:`다이애나와 헤어진 앤의 마음은요?`},
+   note:{e:`원작의 앤은 무척 슬펐어요. 하지만 학교에 가면 다이애나를 볼 수 있었어요.`},
+   opts:[
+    {type:`feel`, ic:`😢`, ok:1, e:`슬퍼요`},
+    {type:`feel`, ic:`😆`, e:`신나요`},
+    {type:`feel`, ic:`😠`, e:`화나요`}
+   ]},
+  {t:`ending`},
+  {id:`E_canon`, bg:`ch4`, w:`anne`, in:1, f:`anne_happy`, cam:`out`, eff:{album:`e_canon`},
+   e:`나는 다시 학교에 가기로 했어.\n교실에서는 다이애나를 볼 수 있거든.`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_imag`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`, cam:`up`, eff:{album:`e_imag`},
+   e:`언젠가 마법처럼 다시 만날 거야.\n나는 그날을 꿈꾸며 잠들었어.`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_bal`, bg:`ch2`, w:`marilla`, f:`anne_sad`, o:`marilla_warm`, eff:{album:`e_bal`, heart:{marilla:1}},
+   e:`"앤, 내 잘못도 있다.\n기다리면 배리 부인 마음도 풀릴 거다."`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_last`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_happy`,
+   e:`다이애나와 나는 아직 친구야.\n마음은 늘 함께 있어.`},
+  {t:`endcard`}
+  ]
+});
+
+/* 쉬운 이야기 6장 · 미니 메이를 구한 밤 (원작 18장) */
+EASY.push({
+  key: `ch6`, num: 6, bgm: `bgm_ch6.mp3`, title: `미니 메이를 구한 밤`, orig: `원작 18장`, origTitle: `앤, 구조에 나서다`,
+  bgKeys: [`ch6`, `ch6_snow`, `ch6_barry`, `ch6_morning`],
+  endings: {
+    canon: {title: `다시 친구가 된 날`, label: `원작 결말`},
+    imag:  {title: `겨울밤 구조대`, label: `상상 결말`},
+    bal:   {title: `다 함께 고마워`, label: `균형 결말`}
+  },
+  items: {
+    jamKey:{ic:`🗝️`, name:`찬장 열쇠`, desc:`공부를 마칠 때까지 책을 잠가 둔 찬장 열쇠예요.`},
+    star:{ic:`⭐`, name:`겨울 별`, desc:`다이애나와 다시 친구가 된 날 밤에 본 별이에요.`}
+  },
+  album: [
+    {id:`s6_book`, ic:`📕`, name:`봉인된 마법서`},
+    {id:`s6_story`, ic:`👶`, name:`용감한 아기 공주 이야기`},
+    {id:`s6_feel`, ic:`💗`, name:`마음 읽기 성공`}
+  ],
+  talk: {
+    e: [`앤은 어떻게 미니 메이를 구할 수 있었나요?`,
+        `배리 부인은 왜 앤에게 사과했을까요?`,
+        `위급할 때 침착하려면 어떻게 해야 할까요?`],
+    l: [`앤은 어떻게 미니 메이를 구할 수 있었나요?`,
+        `배리 부인은 왜 앤에게 사과했을까요?`,
+        `위급할 때 침착하려면 어떻게 해야 할까요?`]
+  },
+  nodes: [
+  {id:`b1`, bg:`ch6`, w:`anne`, in:1, f:`anne_happy`, cam:`in`,
+   e:`겨울이 왔어.\n다이애나와는 아직 놀 수 없어.`},
+  {w:`anne`, in:1, f:`anne_happy`,
+   e:`오늘 친구가 재미있는 책을 빌려줬어.\n그런데 숙제를 먼저 해야 해.`},
+  {t:`choice`, id:`C1`, kind:`act`, label:`새 책`, f:`anne_happy`,
+   q:{e:`읽고 싶은 책이 있어요.\n앤은 어떻게 할까요?`},
+   note:{e:`원작의 앤은 책을 찬장에 넣고 잠가요. 그리고 열쇠를 매슈 아저씨께 맡겨요.`},
+   opts:[
+    {type:`canon`, go:`k_c`, eff:{item:`jamKey`}, e:`찬장에 잠가 둬요`},
+    {type:`imag`, go:`k_i`, eff:{album:`s6_book`}, e:`마법의 책이라 상상해요`}
+   ]},
+  {id:`k_c`, w:`anne`, f:`anne_happy`, o:`matthew`,
+   e:`"아저씨, 열쇠를 맡아 주세요.\n숙제를 다 하면 주세요!"`},
+  {t:`goto`, to:`k_m`},
+  {id:`k_i`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`,
+   e:`이 책은 봉인된 마법서야.\n숙제를 다 해야 열리는 거야!`},
+  /* ---------- 다이애나 ---------- */
+  {id:`k_m`, w:`anne`, in:1, f:`anne_surprised`, o:`diana`, cam:`shake`,
+   e:`그날 밤, 누가 문을 쾅쾅 두드렸어.\n다이애나였어!`},
+  {w:`diana`, f:`anne_surprised`, o:`diana`,
+   e:`"앤, 미니 메이가 많이 아파!\n숨을 잘 못 쉬어!"`},
+  {w:`anne`, in:1, f:`anne_surprised`, o:`diana`,
+   e:`미니 메이는 다이애나의 아기 동생이야.\n집에는 어른이 아무도 없대.`},
+  {t:`choice`, id:`C2`, kind:`talk`, label:`다이애나에게`, f:`anne_surprised`, o:`diana`,
+   q:{e:`앤은 다이애나에게 뭐라고 할까요?`},
+   note:{e:`원작의 앤은 "걱정 마. 나는 어떻게 하는지 알아!" 하고 말해요. 고아원에서 아기들을 많이 돌봤거든요.`},
+   opts:[
+    {type:`canon`, go:`t_c`, eff:{heart:{diana:1}}, e:`"걱정 마, 내가 알아!"`},
+    {type:`imag`, go:`t_i`, eff:{heart:{diana:1}}, e:`"우리는 겨울밤 구조대야!"`}
+   ]},
+  {id:`t_c`, w:`anne`, f:`anne_happy`, o:`diana`,
+   e:`"울지 마. 나는 어떻게 하는지 알아.\n아기들을 많이 돌봐 봤거든!"`},
+  {t:`goto`, to:`t_m`},
+  {id:`t_i`, w:`anne`, f:`anne_dreamy`, o:`diana`, fx:`dream`,
+   e:`"걱정 마! 오늘 밤 우리는\n겨울밤 구조대야!"`},
+  {id:`t_m`, bg:`ch6_snow`, w:`anne`, in:1, f:`anne_dreamy`, o:`diana`, cam:`out`,
+   e:`나는 약병을 챙겨서 달렸어.\n눈 덮인 들판에 달이 밝았어.`},
+  /* ---------- 배리 씨네 ---------- */
+  {bg:`ch6_barry`, w:`anne`, in:1, f:`anne_surprised`, o:`minnie_may`, cam:`in`,
+   e:`미니 메이는 열이 펄펄 났어.\n숨소리가 쌕쌕 거칠었어.`},
+  {t:`choice`, id:`F1`, kind:`feel`, label:`다이애나의 마음`, f:`anne_surprised`, o:`diana`,
+   q:{e:`다이애나의 마음은 어떨까요?`},
+   note:{e:`원작의 다이애나는 너무 무서웠어요. 동생이 많이 아팠으니까요.`},
+   opts:[
+    {type:`feel`, ic:`😨`, ok:1, eff:{album:`s6_feel`}, e:`무서워요`},
+    {type:`feel`, ic:`😆`, e:`신나요`},
+    {type:`feel`, ic:`😴`, e:`졸려요`}
+   ]},
+  {t:`choice`, id:`C3`, kind:`act`, label:`가장 먼저`, f:`anne_surprised`, o:`minnie_may`,
+   q:{e:`앤은 무엇부터 할까요?`},
+   note:{e:`원작의 앤은 물을 끓이게 하고, 차분하게 아기에게 약을 먹여요.`},
+   opts:[
+    {type:`canon`, go:`m_c`, e:`차분하게 일을 나눠요`},
+    {type:`imag`, go:`m_i`, eff:{album:`s6_story`}, e:`아기에게 이야기를 들려줘요`}
+   ]},
+  {id:`m_c`, w:`anne`, f:`anne_happy`, o:`diana`,
+   e:`"다이애나, 물을 끓여 줘.\n나는 아기에게 약을 먹일게."`},
+  {t:`goto`, to:`m_m`},
+  {id:`m_i`, w:`anne`, f:`anne_dreamy`, o:`minnie_may`, fx:`dream`,
+   e:`"옛날에 용감한 아기 공주가 살았어."\n나는 이야기하며 약을 먹였어.`},
+  {id:`m_m`, w:`anne`, in:1, f:`anne_sad`, o:`minnie_may`,
+   e:`밤새 아기를 돌봤어.\n나도 많이 무서웠지만 참았어.`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`minnie_may`, cam:`in`,
+   e:`새벽이 되자, 미니 메이가 편하게 숨을 쉬었어.\n이제 괜찮아!`},
+  {w:`doctor`, f:`anne_happy`, o:`doctor`,
+   e:`늦게 오신 의사 선생님이 말씀하셨어.\n"이 아이가 아기를 살렸구나!"`},
+  /* ---------- 아침 ---------- */
+  {bg:`ch6_morning`, w:`anne`, f:`anne_happy`, o:`matthew`, cam:`out`,
+   e:`아침에 아저씨와 집에 왔어.\n서리가 반짝반짝 빛났어.`},
+  {bg:`ch3`, w:`barry`, f:`anne_surprised`, o:`barry`, cam:`in`,
+   e:`오후에 배리 부인이 나를 부르셨어.\n"앤, 정말 고맙구나. 그리고 미안하다."`},
+  {t:`choice`, id:`C4`, kind:`talk`, label:`배리 부인에게`, f:`anne_happy`, o:`barry`,
+   q:{e:`앤은 뭐라고 대답할까요?`},
+   note:{e:`원작의 앤은 "지난 일은 다 잊을게요."라고 말해요. 그리고 다이애나와 다시 친구가 돼요.`},
+   opts:[
+    {type:`canon`, go:`f_c`, eff:{heart:{barry:2}}, e:`"지난 일은 다 잊을게요"`},
+    {type:`imag`, go:`f_i`, eff:{heart:{barry:2}}, e:`"여기는 화해의 성이에요!"`}
+   ]},
+  {id:`f_c`, w:`anne`, f:`anne_happy`, o:`barry`,
+   e:`"괜찮아요, 부인.\n지난 일은 다 잊을게요."`},
+  {t:`goto`, to:`f_m`},
+  {id:`f_i`, w:`anne`, f:`anne_dreamy`, o:`barry`, fx:`dream`,
+   e:`"오늘부터 이 집은\n저에게 '화해의 성'이에요!"`},
+  {id:`f_m`, w:`diana`, f:`anne_happy`, o:`diana`, eff:{item:`star`, heart:{diana:1}},
+   e:`"앤, 이제 다시 같이 놀 수 있어!"\n우리는 꼭 껴안았어.`},
+  {t:`choice`, id:`F2`, kind:`feel`, label:`다시 만난 친구`, f:`anne_happy`, o:`diana`,
+   q:{e:`다이애나를 다시 만난 앤의 마음은요?`},
+   note:{e:`원작의 앤은 너무 행복해서 하늘을 날 것 같았대요.`},
+   opts:[
+    {type:`feel`, ic:`😢`, e:`슬퍼요`},
+    {type:`feel`, ic:`🥰`, ok:1, e:`행복해요`},
+    {type:`feel`, ic:`😠`, e:`화나요`}
+   ]},
+  {t:`ending`},
+  {id:`E_canon`, bg:`ch6_snow`, w:`anne`, f:`anne_happy`, o:`marilla_warm`, cam:`up`, eff:{album:`e_canon`},
+   e:`"아주머니, 오늘은 정말 행복해요!\n다이애나와 다시 친구가 됐어요."`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_imag`, bg:`ch6_snow`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`, cam:`up`, eff:{album:`e_imag`},
+   e:`겨울밤 구조대의 임무 성공!\n별들이 우리에게 박수를 쳐 주었어.`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_bal`, bg:`ch6`, w:`marilla`, f:`anne_happy`, o:`marilla_warm`, eff:{album:`e_bal`, heart:{marilla:1}},
+   e:`"앤, 정말 장하구나."\n아주머니가 내 머리를 쓰다듬으셨어.`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_last`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_happy`,
+   e:`오늘 밤엔 기도를 오래 할 거야.\n감사한 일이 정말 많거든.`},
+  {t:`endcard`}
+  ]
+});
+
+/* 쉬운 이야기 7장 · 진통제 케이크 (원작 21장) */
+EASY.push({
+  key: `ch7`, num: 7, bgm: `bgm_ch7.mp3`, title: `진통제 케이크`, orig: `원작 21장`, origTitle: `향료의 새로운 출발`,
+  bgKeys: [`ch7`, `ch7_spring`, `ch7_garden`],
+  endings: {
+    canon: {title: `실수 없는 새날`, label: `원작 결말`},
+    imag:  {title: `실수 박물관`, label: `상상 결말`},
+    bal:   {title: `냄새부터 맡기`, label: `균형 결말`}
+  },
+  items: {
+    bottle:{ic:`🧪`, name:`'바닐라' 병`, desc:`바닐라라고 쓰여 있었지만, 사실은 진통제 약이 든 병이었어요.`},
+    garden:{ic:`🌷`, name:`앤의 꽃밭`, desc:`앨런 사모님과 함께 거닌 앤의 작은 꽃밭이에요.`}
+  },
+  album: [
+    {id:`s7_rainbow`, ic:`🌈`, name:`요정의 무지개`},
+    {id:`s7_fairy`, ic:`🍽️`, name:`요정 여왕의 식탁`},
+    {id:`s7_feel`, ic:`💗`, name:`마음 읽기 성공`}
+  ],
+  talk: {
+    e: [`케이크 맛이 왜 이상했나요?`,
+        `앨런 사모님은 우는 앤을 어떻게 위로했나요?`,
+        `"내일은 아직 실수가 없는 새날"이라는 말을 들으면 어떤 기분이 드나요?`],
+    l: [`케이크 맛이 왜 이상했나요?`,
+        `앨런 사모님은 우는 앤을 어떻게 위로했나요?`,
+        `"내일은 아직 실수가 없는 새날"이라는 말을 들으면 어떤 기분이 드나요?`]
+  },
+  nodes: [
+  {id:`b1`, bg:`ch2`, w:`anne`, in:1, f:`anne_happy`, o:`allan`, eff:{met:`allan`}, cam:`in`,
+   e:`새 목사님과 사모님이 오셨어.\n앨런 사모님은 정말 다정한 분이야.`},
+  {w:`allan`, f:`anne_happy`, o:`allan`,
+   e:`사모님은 웃을 때 보조개가 생겨.\n나는 사모님이 정말 좋아.`},
+  {w:`marilla`, f:`anne_surprised`, o:`marilla_warm`,
+   e:`"수요일에 목사님 부부를\n차 마시러 모시자."`},
+  {w:`anne`, f:`anne_happy`, o:`marilla_warm`, cam:`up`,
+   e:`"제가 케이크를 만들어도 돼요?"\n"그래, 만들어 보렴."`},
+  {bg:`ch7_spring`, w:`anne`, f:`anne_happy`, o:`diana`, cam:`out`,
+   e:`나는 다이애나와 '{spring}'에 갔어.\n"케이크가 잘 될까? 걱정돼."`},
+  {t:`choice`, id:`C1`, kind:`talk`, label:`샘가에서`, f:`anne_happy`, o:`diana`,
+   q:{e:`앤은 다이애나와 무엇을 할까요?`},
+   note:{e:`원작의 앤은 다이애나와 케이크 걱정을 이야기해요. 다이애나는 "잘될 거야!" 하고 말해 줬어요.`},
+   opts:[
+    {type:`canon`, go:`s_c`, e:`케이크 걱정을 이야기해요`},
+    {type:`imag`, go:`s_i`, eff:{album:`s7_rainbow`}, e:`요정의 무지개를 만들어요`}
+   ]},
+  {id:`s_c`, w:`diana`, f:`anne_happy`, o:`diana`,
+   e:`"걱정 마, 앤.\n네 케이크는 늘 맛있잖아."`},
+  {t:`goto`, to:`s_m`},
+  {id:`s_i`, w:`anne`, f:`anne_dreamy`, o:`diana`, fx:`dream`, cam:`up`,
+   e:`우리는 샘물 위에 무지개를 만들었어.\n요정이 가져갈지도 몰라!`},
+  /* ---------- 케이크 ---------- */
+  {id:`s_m`, bg:`ch2`, w:`anne`, in:1, f:`anne_sad`, cam:`in`,
+   e:`수요일 아침, 나는 코감기에 걸렸어.\n냄새를 하나도 맡을 수 없었어.`},
+  {w:`anne`, in:1, f:`anne_happy`,
+   e:`그래도 케이크를 구웠어.\n폭신하게 잘 부풀었어!`},
+  {bg:`ch7`, w:`anne`, in:1, f:`anne_happy`, o:`allan`, cam:`out`,
+   e:`식탁을 꽃으로 예쁘게 꾸몄어.\n목사님 부부가 오셨어.`},
+  {t:`choice`, id:`C2`, kind:`act`, label:`식탁 꾸미기`, f:`anne_happy`, o:`allan`,
+   q:{e:`앤은 식탁을 어떻게 꾸몄을까요?`},
+   note:{e:`원작의 앤은 장미와 고사리로 식탁을 꾸며요. 목사님 부부가 "정말 예뻐요!" 하고 감탄했어요.`},
+   opts:[
+    {type:`canon`, go:`t_c`, e:`장미와 고사리로 꾸며요`},
+    {type:`imag`, go:`t_i`, eff:{album:`s7_fairy`}, e:`요정 여왕의 식탁으로 꾸며요`}
+   ]},
+  {id:`t_c`, w:`allan`, f:`anne_happy`, o:`allan`,
+   e:`"세상에, 식탁이 정말 예뻐요!"\n사모님이 감탄하셨어.`},
+  {t:`goto`, to:`t_m`},
+  {id:`t_i`, w:`allan`, f:`anne_dreamy`, o:`allan`, fx:`dream`,
+   e:`"요정 여왕의 식탁 같구나!"\n사모님이 활짝 웃으셨어.`},
+  {id:`t_m`, w:`marilla`, f:`anne_happy`, o:`allan`,
+   e:`"사모님, 앤이 만든 케이크를\n꼭 드셔 보세요."`},
+  {w:`allan`, f:`anne_surprised`, o:`allan`, cam:`in`,
+   e:`사모님이 한 입 드셨어.\n그런데 표정이 이상했어.`},
+  {w:`marilla`, f:`anne_surprised`, o:`marilla_strict`, cam:`shake`,
+   e:`아주머니도 맛을 보셨어.\n"앤! 케이크에 뭘 넣은 거니?"`},
+  {t:`choice`, id:`C3`, kind:`predict`, label:`케이크의 비밀`, f:`anne_surprised`, o:`marilla_strict`,
+   q:{e:`케이크 맛이 왜 이상했을까요?`},
+   note:{e:`원작에서 바닐라 병에는 진통제 약이 들어 있었어요. 앤은 코감기 때문에 냄새를 못 맡았어요.`},
+   opts:[
+    {type:`canon`, go:`m_c`, eff:{item:`bottle`}, e:`바닐라 병에 약이 들어 있었어요`},
+    {type:`imag`, go:`m_i`, eff:{item:`bottle`}, e:`요정이 마법을 걸었어요`}
+   ]},
+  {id:`m_c`, w:`marilla`, f:`anne_sad`, o:`marilla_strict`,
+   e:`"이 병에는 진통제가 들어 있었다!\n바닐라가 아니었어."`},
+  {t:`goto`, to:`m_m`},
+  {id:`m_i`, w:`marilla`, f:`anne_sad`, o:`marilla_strict`, fx:`dream`,
+   e:`"요정 탓이 아니란다.\n이 병에는 진통제가 들어 있었다."`},
+  {id:`m_m`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_sad`, cam:`in`,
+   e:`나는 다락방으로 뛰어가 엉엉 울었어.\n너무 창피했어.`},
+  {t:`choice`, id:`F1`, kind:`feel`, label:`앤의 마음`, f:`anne_sad`,
+   q:{e:`지금 앤의 마음은 어떨까요?`},
+   note:{e:`원작의 앤은 너무 부끄러워서 울었어요. 사모님께 잘하고 싶었거든요.`},
+   opts:[
+    {type:`feel`, ic:`😳`, ok:1, eff:{album:`s7_feel`}, e:`부끄러워요`},
+    {type:`feel`, ic:`😆`, e:`신나요`},
+    {type:`feel`, ic:`😴`, e:`졸려요`}
+   ]},
+  /* ---------- 위로 ---------- */
+  {w:`allan`, f:`anne_sad`, o:`allan`, cam:`in`,
+   e:`누가 방에 들어왔어. 앨런 사모님이었어.\n"앤, 울지 마. 누구나 하는 실수란다."`},
+  {t:`choice`, id:`C4`, kind:`talk`, label:`사모님께`, f:`anne_sad`, o:`allan`,
+   q:{e:`앤은 사모님께 뭐라고 할까요?`},
+   note:{e:`원작의 앤은 "맛있는 케이크를 드리고 싶었어요."라고 말해요. 사모님은 "네 마음이 고맙구나."라고 하셨어요.`},
+   opts:[
+    {type:`canon`, go:`a_c`, eff:{item:`garden`, heart:{allan:1}}, e:`"맛있게 드리고 싶었어요"`},
+    {type:`imag`, go:`a_i`, eff:{item:`garden`, heart:{allan:1}}, e:`"마법 케이크였어요"`}
+   ]},
+  {id:`a_c`, w:`allan`, f:`anne_sad`, o:`allan`,
+   e:`"사모님께 맛있는 케이크를\n드리고 싶었어요."\n"그 마음이 정말 고맙구나."`},
+  {t:`goto`, to:`a_m`},
+  {id:`a_i`, w:`allan`, f:`anne_dreamy`, o:`allan`, fx:`dream`,
+   e:`"사실 아픈 곳을 낫게 하는\n마법 케이크였어요…."\n사모님이 소리 내어 웃으셨어.`},
+  {id:`a_m`, bg:`ch7_garden`, w:`allan`, f:`anne_happy`, o:`allan`, cam:`out`,
+   e:`"자, 이제 네 꽃밭을 보여 주렴."\n우리는 함께 꽃밭을 걸었어.`},
+  {w:`anne`, f:`anne_happy`, o:`marilla_warm`, cam:`up`,
+   e:`"아주머니, 내일은 아직\n실수가 하나도 없는 새날이에요!"`},
+  {t:`name`, id:`N7`, key:`newday`, free:true, max:30, label:`내일 해 보고 싶은 일`, f:`anne_happy`, o:`marilla_warm`,
+   q:{e:`✍️ 내일은 새날이에요!\n내일 무엇을 해 보고 싶나요?`},
+   pick:[`케이크 다시 굽기`, `친구 도와주기`, `새 책 읽기`],
+   ph:`직접 써도 돼요`,
+   note:{e:`원작의 앤은 "같은 실수는 두 번 안 해요!"라고 말해요.`}},
+  {t:`ending`},
+  {id:`E_canon`, bg:`ch2`, w:`marilla`, f:`anne_happy`, o:`marilla_strict`, cam:`in`, eff:{album:`e_canon`},
+   e:`"저는 같은 실수는 두 번 안 해요!"\n아주머니가 피식 웃으셨어.`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_imag`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`, cam:`up`, eff:{album:`e_imag`},
+   e:`언젠가 '앤의 실수 박물관'이 생길 거야.\n같은 실수는 하나도 없지!`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_bal`, bg:`ch2`, w:`anne`, f:`anne_happy`, o:`marilla_warm`, eff:{album:`e_bal`, heart:{marilla:1}},
+   e:`나는 부엌에 규칙을 붙였어.\n"병은 냄새부터 맡기!"`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_last`, bg:`ch7_garden`, w:`anne`, in:1, f:`anne_dreamy`, cam:`up`,
+   e:`내일은 새날이야.\n내일은 꼭 '{newday}'!`},
+  {t:`endcard`}
+  ]
+});
+
+/* 쉬운 이야기 8장 · 초록 머리 (원작 27장) */
+EASY.push({
+  key: `ch8`, num: 8, bgm: `bgm_ch8.mp3`, title: `초록 머리`, orig: `원작 27장`, origTitle: `허영심과 마음고생`,
+  bgKeys: [`ch8`, `ch8_porch`, `ch8_attic`],
+  endings: {
+    canon: {title: `이젠 익숙해진 수다`, label: `원작 결말`},
+    imag:  {title: `붉은 머리를 사랑한 공주`, label: `상상 결말`},
+    bal:   {title: `서로를 돌보는 저녁`, label: `균형 결말`}
+  },
+  items: {
+    dye:{ic:`🧴`, name:`빈 염색약 병`, desc:`까맣게 된다고 했지만, 머리가 초록색이 된 염색약이에요.`},
+    ribbon:{ic:`🎀`, name:`검은 리본`, desc:`짧은 머리에 두를 검은 벨벳 리본이에요.`}
+  },
+  album: [
+    {id:`s8_potion`, ic:`⚗️`, name:`까마귀 물약`},
+    {id:`s8_hero`, ic:`📚`, name:`책 속 주인공처럼`},
+    {id:`s8_feel`, ic:`💗`, name:`마음 읽기 성공`}
+  ],
+  talk: {
+    e: [`앤은 왜 머리를 염색하고 싶었을까요?`,
+        `행상인의 말을 그대로 믿으면 안 되는 까닭은 무엇일까요?`,
+        `내 모습 중에 좋은 점은 무엇인가요?`],
+    l: [`앤은 왜 머리를 염색하고 싶었을까요?`,
+        `행상인의 말을 그대로 믿으면 안 되는 까닭은 무엇일까요?`,
+        `내 모습 중에 좋은 점은 무엇인가요?`]
+  },
+  nodes: [
+  {id:`b1`, bg:`ch4`, w:`anne`, in:1, f:`anne_happy`, cam:`out`,
+   e:`시간이 흘러 봄이 왔어.\n하지만 나는 여전히 빨강 머리가 싫어.`},
+  /* ---------- 행상인 ---------- */
+  {bg:`ch8_porch`, w:`anne`, in:1, f:`anne_happy`, cam:`in`,
+   e:`어느 날 물건 파는 아저씨가 왔어.\n상자에 신기한 물건이 가득했어.`},
+  {w:`anne`, in:1, f:`anne_dreamy`,
+   e:`"이 약을 바르면 머리가\n까마귀처럼 새까매진단다!"`},
+  {t:`choice`, id:`C1`, kind:`act`, label:`염색약`, f:`anne_dreamy`,
+   q:{e:`앤은 어떻게 할까요?`},
+   note:{e:`원작의 앤은 염색약을 사서 바로 머리에 발라요. 새까만 머리가 너무 갖고 싶었거든요.`},
+   opts:[
+    {type:`canon`, go:`p_c`, eff:{item:`dye`}, e:`사서 바로 발라요`},
+    {type:`imag`, go:`p_i`, eff:{item:`dye`, album:`s8_potion`}, e:`마법 물약이라 상상해요`}
+   ]},
+  {id:`p_c`, bg:`ch8_attic`, w:`anne`, in:1, f:`anne_happy`,
+   e:`나는 염색약을 샀어.\n다락방에서 머리에 몽땅 발랐어.`},
+  {t:`goto`, to:`p_m`},
+  {id:`p_i`, bg:`ch8_attic`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`,
+   e:`"까마귀의 마법이여!"\n나는 주문을 외우며 약을 발랐어.`},
+  {id:`p_m`, w:`anne`, in:1, f:`anne_green_hair`, cam:`shake`,
+   e:`그런데… 머리가 까매지지 않았어.\n초록색이 됐어!`},
+  {t:`choice`, id:`F1`, kind:`feel`, label:`앤의 마음`, f:`anne_green_hair`,
+   q:{e:`초록 머리가 된 앤의 마음은요?`},
+   note:{e:`원작의 앤은 너무 속상해서 베개에 얼굴을 묻고 울었어요.`},
+   opts:[
+    {type:`feel`, ic:`😆`, e:`신나요`},
+    {type:`feel`, ic:`😭`, ok:1, eff:{album:`s8_feel`}, e:`속상해요`},
+    {type:`feel`, ic:`😴`, e:`졸려요`}
+   ]},
+  {w:`marilla`, f:`anne_green_hair`, o:`marilla_strict`, cam:`in`,
+   e:`아주머니가 다락방에 오셨어.\n"앤! 머리가 초록색이잖니!"`},
+  {t:`choice`, id:`C2`, kind:`talk`, label:`솔직하게`, f:`anne_green_hair`, o:`marilla_strict`,
+   q:{e:`앤은 뭐라고 말할까요?`},
+   note:{e:`원작의 앤은 "빨강 머리가 싫어서 염색했어요."라고 솔직하게 말해요.`},
+   opts:[
+    {type:`canon`, go:`r_c`, e:`"빨강 머리가 싫었어요"`},
+    {type:`imag`, go:`r_i`, e:`"공주가 되고 싶었어요"`}
+   ]},
+  {id:`r_c`, w:`anne`, f:`anne_green_hair`, o:`marilla_strict`,
+   e:`"빨강 머리가 너무 싫었어요.\n까만 머리가 되고 싶었어요."`},
+  {t:`goto`, to:`r_m`},
+  {id:`r_i`, w:`anne`, f:`anne_green_hair`, o:`marilla_strict`, fx:`dream`,
+   e:`"까만 머리 공주가 되고 싶었어요.\n딱 하루만이라도요."`},
+  {id:`r_m`, w:`marilla`, f:`anne_green_hair`, o:`marilla_strict`,
+   e:`"모르는 사람 말을\n그대로 믿으면 안 된다."`},
+  {w:`anne`, in:1, f:`anne_green_hair`,
+   e:`일주일 동안 머리를 감았어.\n그래도 초록색이 안 지워졌어.`},
+  /* ---------- 자르기 ---------- */
+  {bg:`ch2`, w:`marilla`, f:`anne_green_hair`, o:`marilla_strict`, cam:`in`,
+   e:`"앤, 머리를 잘라야겠다.\n다른 방법이 없구나."`},
+  {t:`choice`, id:`C3`, kind:`act`, label:`머리 자르기`, f:`anne_green_hair`, o:`marilla_strict`,
+   q:{e:`머리를 자를 때 앤은 어떻게 할까요?`},
+   note:{e:`원작의 앤은 "너무 슬퍼요!" 하며 자르는 내내 울어요.`},
+   opts:[
+    {type:`canon`, go:`h_c`, e:`자르는 내내 울어요`},
+    {type:`imag`, go:`h_i`, eff:{album:`s8_hero`}, e:`책 속 주인공이라 상상해요`}
+   ]},
+  {id:`h_c`, w:`anne`, f:`anne_sad`, o:`marilla_strict`,
+   e:`"너무 슬퍼요.\n자르시는 동안 울게요."`},
+  {t:`goto`, to:`h_m`},
+  {id:`h_i`, w:`anne`, f:`anne_dreamy`, o:`marilla_strict`, fx:`dream`,
+   e:`나는 착한 일을 하려고\n머리카락을 판 책 속 주인공이야.`},
+  {id:`h_m`, bg:`ch8_attic`, w:`anne`, in:1, f:`anne_sad`, cam:`in`,
+   e:`머리가 아주 짧아졌어.\n거울을 보니 너무 어색했어.`},
+  {w:`anne`, in:1, f:`anne_happy`,
+   e:`하지만 괜찮아.\n머리는 다시 자랄 거야.`},
+  /* ---------- 학교 ---------- */
+  {bg:`ch4`, w:`anne`, in:1, f:`anne_sad`, cam:`out`,
+   e:`학교에서 조시가 놀렸어.\n"앤, 꼭 허수아비 같아!"`},
+  {t:`choice`, id:`C4`, kind:`act`, label:`놀림받을 때`, f:`anne_sad`,
+   q:{e:`앤은 어떻게 할까요?`},
+   note:{e:`원작의 앤은 아무 말도 하지 않고 조시를 용서해요.`},
+   opts:[
+    {type:`canon`, go:`j_c`, e:`말없이 용서해요`},
+    {type:`imag`, go:`j_i`, e:`"허수아비는 용감해!"`}
+   ]},
+  {id:`j_c`, w:`anne`, in:1, f:`anne_happy`,
+   e:`나는 아무 말도 하지 않았어.\n그리고 조시를 용서했어.`},
+  {t:`goto`, to:`j_m`},
+  {id:`j_i`, w:`anne`, f:`anne_dreamy`, fx:`dream`,
+   e:`"고마워! 허수아비는\n들판을 지키는 용감한 파수꾼이야."`},
+  {id:`j_m`, bg:`ch2`, w:`anne`, f:`anne_happy`, o:`marilla_warm`, eff:{item:`ribbon`},
+   e:`"다이애나가 그러는데,\n짧은 머리에 검은 리본을 두르래요!"`},
+  {t:`name`, id:`N8`, key:`snood`, canon:`스누드`, max:14, label:`검은 리본의 이름`, f:`anne_happy`, o:`marilla_warm`,
+   q:{e:`✍️ 검은 리본에 예쁜 이름을 지어 주세요!`},
+   pick:[`스누드`, `밤하늘 리본`, `까만 나비`],
+   ph:`직접 써도 돼요`,
+   note:{e:`원작의 앤은 리본을 '스누드'라고 불러요. 옛날 아가씨들이 머리에 두르던 띠의 이름이에요.`}},
+  {w:`anne`, f:`anne_happy`, o:`marilla_warm`,
+   e:`"'{snood}'! 멋지죠?\n그런데 제가 말을 너무 많이 하나요?"`},
+  {t:`ending`},
+  {id:`E_canon`, w:`marilla`, f:`anne_happy`, o:`marilla_warm`, cam:`in`, eff:{album:`e_canon`},
+   e:`"아니다. 네 수다는 싫지 않다.\n이젠 익숙해졌거든."`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_imag`, bg:`ch8_attic`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`, cam:`up`, eff:{album:`e_imag`},
+   e:`나는 새 이야기를 썼어.\n"공주는 자기 빨강 머리를 사랑하게 되었어요."`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_bal`, w:`anne`, f:`anne_happy`, o:`marilla_warm`, cam:`in`, eff:{album:`e_bal`, heart:{marilla:1}},
+   e:`아주머니가 머리가 아프시대.\n나는 찬 수건을 이마에 올려 드렸어.`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_last`, bg:`ch8_attic`, w:`anne`, in:1, f:`anne_happy`, cam:`up`,
+   e:`빨강 머리도, 짧은 머리도 다 나야.\n같은 실수는 두 번 안 할 거야!`},
+  {t:`endcard`}
+  ]
+});
+
+/* 쉬운 이야기 9장 · 불운한 백합 아가씨 (원작 28장) */
+EASY.push({
+  key: `ch9`, num: 9, bgm: `bgm_ch9.mp3`, title: `불운한 백합 아가씨`, orig: `원작 28장`, origTitle: `불운한 백합 아가씨`,
+  bgKeys: [`ch9`, `ch9_drift`, `ch9_bridge`],
+  endings: {
+    canon: {title: `조금은 간직하렴`, label: `원작 결말`},
+    imag:  {title: `스스로 노 젓는 공주`, label: `상상 결말`},
+    bal:   {title: `새 배를 위한 약속`, label: `균형 결말`}
+  },
+  items: {
+    shawl:{ic:`🖤`, name:`검은 숄`, desc:`연극할 때 배를 덮은 검은 숄이에요.`},
+    pile:{ic:`🪵`, name:`다리 기둥`, desc:`가라앉는 배에서 앤이 붙잡은 다리 기둥이에요.`}
+  },
+  album: [
+    {id:`s9_sunset`, ic:`🌅`, name:`노을빛 공주`},
+    {id:`s9_maybe`, ic:`⚔️`, name:`"생각해 볼게"`},
+    {id:`s9_feel`, ic:`💗`, name:`마음 읽기 성공`}
+  ],
+  talk: {
+    e: [`배에 물이 샐 때 앤은 어떻게 했나요?`,
+        `길버트가 친구가 되자고 했을 때, 앤은 왜 거절했을까요?`,
+        `매슈 아저씨가 말한 '조금은 간직할 낭만'은 무엇일까요?`],
+    l: [`배에 물이 샐 때 앤은 어떻게 했나요?`,
+        `길버트가 친구가 되자고 했을 때, 앤은 왜 거절했을까요?`,
+        `매슈 아저씨가 말한 '조금은 간직할 낭만'은 무엇일까요?`]
+  },
+  nodes: [
+  {id:`b1`, bg:`ch9`, w:`anne`, in:1, f:`anne_happy`, o:`diana`, cam:`out`,
+   e:`여름이야. 우리는 연못가에 모였어.\n오늘은 연극 놀이를 할 거야!`},
+  {w:`anne`, f:`anne_dreamy`, o:`diana`,
+   e:`옛이야기 속 공주가\n배를 타고 떠내려가는 연극이야.`},
+  {w:`diana`, f:`anne_sad`, o:`diana`, cam:`in`,
+   e:`"앤, 네가 공주를 해!"\n"빨강 머리 공주는 이상하잖아…."`},
+  {t:`choice`, id:`C1`, kind:`talk`, label:`공주 역할`, f:`anne_sad`, o:`diana`,
+   q:{e:`앤은 공주 역할을 할까요?`},
+   note:{e:`원작에서 다이애나가 "네 머리 색이 짙어져서 예뻐."라고 말해 줘요. 앤은 기뻐하며 공주를 맡아요.`},
+   opts:[
+    {type:`canon`, go:`e_c`, eff:{item:`shawl`, heart:{diana:1}}, e:`기뻐하며 맡아요`},
+    {type:`imag`, go:`e_i`, eff:{item:`shawl`, album:`s9_sunset`}, e:`노을빛 공주가 돼요`}
+   ]},
+  {id:`e_c`, w:`diana`, f:`anne_happy`, o:`diana`,
+   e:`"네 머리는 예전보다 짙어졌어.\n정말 예뻐!" 나는 공주를 맡았어.`},
+  {t:`goto`, to:`e_m`},
+  {id:`e_i`, w:`anne`, f:`anne_dreamy`, o:`diana`, fx:`dream`,
+   e:`"좋아! 나는 노을빛 머리의 공주야.\n노을이 머리를 물들인 거지!"`},
+  /* ---------- 위기 ---------- */
+  {id:`e_m`, bg:`ch9_drift`, w:`anne`, in:1, f:`anne_dreamy`, cam:`up`,
+   e:`나는 배에 누웠어.\n배가 천천히 떠내려갔어.`},
+  {w:`anne`, in:1, f:`anne_surprised`, cam:`shake`,
+   e:`그런데 등이 축축해!\n배에 물이 들어오고 있어!`},
+  {t:`choice`, id:`F1`, kind:`feel`, label:`앤의 마음`, f:`anne_surprised`,
+   q:{e:`지금 앤의 마음은 어떨까요?`},
+   note:{e:`원작의 앤은 무척 무서웠어요. 하지만 침착하려고 애썼어요.`},
+   opts:[
+    {type:`feel`, ic:`😨`, ok:1, eff:{album:`s9_feel`}, e:`무서워요`},
+    {type:`feel`, ic:`😆`, e:`재밌어요`},
+    {type:`feel`, ic:`😴`, e:`졸려요`}
+   ]},
+  {t:`choice`, id:`C2`, kind:`act`, label:`가라앉는 배`, f:`anne_surprised`,
+   q:{e:`노도 없어요! 앤은 어떻게 할까요?`},
+   note:{e:`원작의 앤은 기도하며 눈을 크게 뜨고 다리 기둥을 지켜봐요. 그리고 기둥에 매달려요.`},
+   opts:[
+    {type:`canon`, go:`s_c`, eff:{item:`pile`}, e:`다리 기둥을 붙잡아요`},
+    {type:`imag`, go:`s_i`, eff:{item:`pile`}, e:`물의 요정을 상상하며 버텨요`}
+   ]},
+  {id:`s_c`, bg:`ch9_bridge`, w:`anne`, in:1, f:`anne_surprised`, cam:`in`,
+   e:`배가 다리 기둥에 부딪혔어.\n나는 기둥을 꽉 붙잡았어!`},
+  {t:`goto`, to:`s_m`},
+  {id:`s_i`, bg:`ch9_bridge`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`,
+   e:`물의 요정이 손을 내미는 것 같았어.\n나는 다리 기둥을 꽉 붙잡았어!`},
+  {id:`s_m`, w:`anne`, in:1, f:`anne_sad`,
+   e:`배는 가라앉아 버렸어.\n나는 기둥에 매달려 있었어. 팔이 아팠어.`},
+  /* ---------- 길버트 ---------- */
+  {w:`gilbert`, f:`anne_surprised`, o:`gilbert`, cam:`in`,
+   e:`그때 작은 배가 왔어. 길버트였어!\n"앤! 내 손 잡아!"`},
+  {w:`anne`, f:`anne_angry`, o:`gilbert`,
+   e:`나는 길버트의 배를 타고 내렸어.\n"고마워." 나는 차갑게 말했어.`},
+  {w:`gilbert`, f:`anne_surprised`, o:`gilbert`,
+   e:`"앤, 우리 친구가 될 수 없을까?\n그때 놀려서 정말 미안해."`},
+  {t:`choice`, id:`C3`, kind:`talk`, label:`"친구가 되자"`, f:`anne_surprised`, o:`gilbert`,
+   q:{e:`앤은 뭐라고 대답할까요?`},
+   note:{e:`원작의 앤은 "싫어!" 하고 거절해요. 하지만 집에 가면서 조금 후회했어요.`},
+   opts:[
+    {type:`canon`, go:`g_c`, e:`"싫어!" 하고 거절해요`},
+    {type:`imag`, go:`g_i`, eff:{flag:`gilbertMaybe`, heart:{gilbert:1}, album:`s9_maybe`}, e:`"생각해 볼게" 하고 말해요`}
+   ]},
+  {id:`g_c`, w:`gilbert`, f:`anne_angry`, o:`gilbert`, cam:`shake`,
+   e:`"싫어! 너랑은 친구 안 해!"\n길버트는 화가 나서 가 버렸어.`},
+  {w:`anne`, in:1, f:`anne_sad`,
+   e:`그런데 이상하게 후회가 됐어.\n다르게 말할걸 그랬나?`},
+  {t:`goto`, to:`g_m`},
+  {id:`g_i`, w:`gilbert`, f:`anne_dreamy`, o:`gilbert`,
+   e:`"구해 줘서 고마워.\n친구는… 생각해 볼게."\n길버트가 웃었어.`},
+  {id:`g_m`, bg:`ch9`, w:`diana`, f:`anne_sad`, o:`diana`, cam:`in`,
+   e:`다이애나가 달려왔어.\n"앤! 살았구나! 정말 다행이야!"`},
+  {bg:`ch2`, w:`marilla`, f:`anne_happy`, o:`marilla_strict`,
+   e:`"앤, 너는 언제 철이 들겠니?"\n"이제 진짜 철들 거예요!"`},
+  {t:`choice`, id:`F2`, kind:`feel`, label:`마릴라의 마음`, f:`anne_happy`, o:`marilla_strict`,
+   q:{e:`마릴라 아주머니의 마음은 어떨까요?`},
+   note:{e:`원작의 마릴라 아주머니는 앤이 걱정되었어요. 앤이 무사해서 다행이라고 생각했어요.`},
+   opts:[
+    {type:`feel`, ic:`😆`, e:`신나요`},
+    {type:`feel`, ic:`😴`, e:`졸려요`},
+    {type:`feel`, ic:`😟`, ok:1, e:`걱정돼요`}
+   ]},
+  {w:`matthew`, f:`anne_happy`, o:`matthew`, cam:`in`,
+   e:`아저씨가 내 어깨에 손을 얹으셨어.\n"앤, 상상하는 마음을 조금은 간직하렴."`},
+  {t:`name`, id:`N9`, key:`romance`, free:true, max:30, label:`간직하고 싶은 것`, f:`anne_happy`, o:`matthew`,
+   q:{e:`✍️ 앤이 꼭 간직하고 싶은 것은 무엇일까요?`},
+   pick:[`꽃에 이름 붙이기`, `이야기 짓기`, `별 보며 꿈꾸기`],
+   ph:`직접 써도 돼요`,
+   note:{e:`매슈 아저씨는 앤의 상상하는 마음을 정말 좋아했어요.`}},
+  {t:`ending`},
+  {id:`E_canon`, w:`matthew`, f:`anne_happy`, o:`matthew`, cam:`in`, eff:{album:`e_canon`, heart:{matthew:1}},
+   e:`"네, 아저씨. '{romance}'만큼은\n꼭 간직할게요."`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_imag`, bg:`ch9_drift`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`, cam:`up`, eff:{album:`e_imag`},
+   e:`나는 새 이야기를 썼어.\n공주가 직접 노를 저어 가는 이야기야!`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_bal`, bg:`ch9`, w:`diana`, f:`anne_happy`, o:`diana`, eff:{album:`e_bal`, heart:{diana:1}},
+   e:`나는 배리 아저씨께 사과했어.\n"새 배는 둘이 같이 칠해 주렴."`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_last`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_dreamy`, cam:`up`,
+   e:`길버트를 보았을 때\n왜 가슴이 두근거렸을까?`},
+  {t:`endcard`}
+  ]
+});
+
+/* 쉬운 이야기 10장 · 길모퉁이 (원작 32~38장) */
+EASY.push({
+  key: `ch10`, num: 10, bgm: `bgm_ch10.mp3`, title: `길모퉁이`, orig: `원작 32~38장`, origTitle: `길모퉁이`,
+  bgKeys: [`ch10`, `ch10_pasture`, `ch10_hill`],
+  midReport: true, finalReport: true,
+  endings: {
+    canon: {title: `세상은 평안하다`, label: `원작 결말`},
+    imag:  {title: `이름 지은 길의 지도`, label: `상상 결말`},
+    bal:   {title: `함께 공부하는 친구`, label: `균형 결말`}
+  },
+  items: {
+    avery:{ic:`🏅`, name:`장학금`, desc:`앤이 열심히 공부해서 받은 상이에요.`},
+    scotchRose:{ic:`🌹`, name:`하얀 장미`, desc:`매슈 아저씨가 가장 좋아하던 작고 하얀 장미예요.`},
+    bend:{ic:`🛤️`, name:`길모퉁이`, desc:`"모퉁이를 돌면 좋은 것이 있을 거예요." 앤의 새 길이에요.`}
+  },
+  album: [
+    {id:`s10_rest`, ic:`🐄`, name:`"제가 소를 몰게요"`},
+    {id:`s10_rose`, ic:`🌹`, name:`장미 심기`},
+    {id:`s10_feel`, ic:`💗`, name:`마음 읽기 성공`}
+  ],
+  talk: {
+    e: [`매슈 아저씨는 앤에게 "남자아이 열두 명보다 네가 좋다"고 했어요. 이 말을 들은 앤은 어땠을까요?`,
+        `앤은 왜 대학에 가지 않고 초록 지붕 집에 남았을까요?`,
+        `앤과 길버트는 어떻게 친구가 되었나요?`],
+    l: [`매슈 아저씨는 앤에게 "남자아이 열두 명보다 네가 좋다"고 했어요. 이 말을 들은 앤은 어땠을까요?`,
+        `앤은 왜 대학에 가지 않고 초록 지붕 집에 남았을까요?`,
+        `앤과 길버트는 어떻게 친구가 되었나요?`]
+  },
+  nodes: [
+  {id:`b1`, bg:`ch4`, w:`anne`, in:1, f:`anne_grown`, cam:`out`,
+   e:`몇 년이 지났어. 나는 열여섯 살이야.\n열심히 공부해서 큰 상도 받았어.`},
+  {w:`anne`, in:1, f:`anne_grown`, eff:{item:`avery`},
+   e:`가을에는 먼 곳에 있는\n대학에 가게 됐어!`},
+  /* ---------- 매슈 ---------- */
+  {bg:`ch10_pasture`, w:`anne`, in:1, f:`anne_grown`, o:`matthew`, cam:`out`,
+   e:`저녁에 매슈 아저씨와 소를 몰러 갔어.\n아저씨는 많이 지쳐 보였어.`},
+  {t:`choice`, id:`C1`, kind:`talk`, label:`매슈 아저씨께`, f:`anne_grown`, o:`matthew`,
+   q:{e:`앤은 아저씨께 뭐라고 할까요?`},
+   note:{e:`원작의 앤은 "제가 남자아이였다면 아저씨를 도와드릴 텐데요." 하고 말해요.`},
+   opts:[
+    {type:`canon`, go:`m_c`, e:`"제가 남자아이였다면…"`},
+    {type:`imag`, go:`m_i`, eff:{heart:{matthew:1}, album:`s10_rest`}, e:`"오늘은 제가 소를 몰게요"`}
+   ]},
+  {id:`m_c`, w:`anne`, f:`anne_grown`, o:`matthew`,
+   e:`"제가 남자아이였다면\n아저씨를 많이 도와드릴 텐데요."`},
+  {t:`goto`, to:`m_m`},
+  {id:`m_i`, w:`anne`, f:`anne_grown`, o:`matthew`,
+   e:`"아저씨, 좀 쉬세요.\n오늘은 제가 소를 몰게요."`},
+  {id:`m_m`, w:`matthew`, f:`anne_grown`, o:`matthew`, cam:`in`,
+   e:`"앤, 나는 남자아이 열두 명보다\n네가 더 좋다."`},
+  {w:`matthew`, f:`anne_grown`, o:`matthew`,
+   e:`"너는 내가 자랑스러워하는\n내 딸이란다."`},
+  {t:`choice`, id:`F1`, kind:`feel`, label:`앤의 마음`, f:`anne_grown`, o:`matthew`,
+   q:{e:`이 말을 들은 앤의 마음은 어떨까요?`},
+   note:{e:`원작의 앤은 이 말을 평생 소중히 기억했어요.`},
+   opts:[
+    {type:`feel`, ic:`🥰`, ok:1, eff:{album:`s10_feel`}, e:`따뜻해요`},
+    {type:`feel`, ic:`😠`, e:`화나요`},
+    {type:`feel`, ic:`😴`, e:`졸려요`}
+   ]},
+  /* ---------- 이별 ---------- */
+  {bg:`ch2`, w:`anne`, in:1, f:`anne_grown`, cam:`in`,
+   e:`그런데 다음 날,\n매슈 아저씨가 쓰러지셨어.`},
+  {w:`anne`, in:1, f:`anne_grown`,
+   e:`아저씨는 그대로 하늘나라로 떠나셨어.\n심장이 많이 아프셨대.`},
+  {bg:`ch2_room`, w:`anne`, in:1, f:`anne_grown`, cam:`in`,
+   e:`처음에는 눈물도 나지 않았어.\n믿을 수가 없었어.`},
+  {w:`marilla`, f:`anne_grown`, o:`marilla_warm`,
+   e:`밤에 아주머니가 나를 안아 주셨어.\n우리는 함께 울었어.`},
+  {w:`marilla`, f:`anne_grown`, o:`marilla_warm`, eff:{heart:{marilla:1}},
+   e:`"앤, 나는 너를 정말 사랑한다.\n너는 나의 기쁨이란다."`},
+  {t:`choice`, id:`F2`, kind:`feel`, label:`함께 있는 마음`, f:`anne_grown`, o:`marilla_warm`,
+   q:{e:`앤과 아주머니의 마음은 어떨까요?`},
+   note:{e:`두 사람은 슬펐지만, 서로가 있어서 힘이 되었어요.`},
+   opts:[
+    {type:`feel`, ic:`😆`, e:`신나요`},
+    {type:`feel`, ic:`🫂`, ok:1, e:`슬프지만 서로 기대요`},
+    {type:`feel`, ic:`😠`, e:`화나요`}
+   ]},
+  {bg:`ch7_garden`, w:`anne`, in:1, f:`anne_grown`, o:`allan`,
+   e:`시간이 조금 흘렀어.\n나는 아저씨를 기억하고 싶었어.`},
+  {t:`choice`, id:`C2`, kind:`act`, label:`아저씨를 기억하기`, f:`anne_grown`,
+   q:{e:`앤은 무엇을 할까요?`},
+   note:{e:`원작의 앤은 아저씨가 가장 좋아하던 하얀 장미를 아저씨 곁에 심어요.`},
+   opts:[
+    {type:`canon`, go:`r_c`, eff:{item:`scotchRose`, album:`s10_rose`}, e:`하얀 장미를 심어요`},
+    {type:`imag`, go:`r_i`, eff:{item:`scotchRose`}, e:`꽃들에게 이야기를 들려줘요`}
+   ]},
+  {id:`r_c`, w:`anne`, in:1, f:`anne_grown`,
+   e:`나는 아저씨 곁에 하얀 장미를 심었어.\n아저씨가 가장 좋아하던 꽃이야.`},
+  {t:`goto`, to:`r_m`},
+  {id:`r_i`, w:`anne`, in:1, f:`anne_grown`, fx:`dream`,
+   e:`"얘들아, 너희를 가장 사랑한\n멋진 아저씨가 계셨어."`},
+  /* ---------- 결심 ---------- */
+  {id:`r_m`, bg:`ch2`, w:`marilla`, f:`anne_grown`, o:`marilla_strict`, cam:`in`,
+   e:`아주머니가 눈이 많이 아프시대.\n"앤, 이 집을 팔아야겠구나."`},
+  {t:`choice`, id:`C3`, kind:`act`, label:`앤의 결심`, f:`anne_grown`, o:`marilla_strict`,
+   q:{e:`초록 지붕 집을 팔아야 한대요.\n앤은 어떻게 할까요?`},
+   note:{e:`원작의 앤은 대학에 가지 않기로 해요. 아주머니 곁에 남아 선생님이 되기로 했어요.`},
+   opts:[
+    {type:`canon`, go:`h_c`, eff:{item:`bend`}, e:`대학에 안 가고 남아요`},
+    {type:`imag`, go:`h_i`, eff:{item:`bend`}, e:`집을 '꿈의 학교'로 만들어요`}
+   ]},
+  {id:`h_c`, w:`anne`, f:`anne_grown`, o:`marilla_warm`,
+   e:`"집을 팔면 안 돼요.\n저는 대학에 안 가고 여기 있을게요."`},
+  {t:`goto`, to:`h_m`},
+  {id:`h_i`, w:`anne`, f:`anne_grown`, o:`marilla_warm`, fx:`dream`,
+   e:`"여기를 '꿈의 학교'로 만들어요!\n여기서 가르치고, 여기서 배울게요."`},
+  {id:`h_m`, w:`anne`, in:1, f:`anne_grown`, cam:`up`,
+   e:`"제 앞에 곧은길이 있었는데\n이제 길모퉁이가 생겼어요."`},
+  {w:`anne`, in:1, f:`anne_grown`,
+   e:`"모퉁이를 돌면 무엇이 있을까요?\n분명 좋은 것이 있을 거예요."`},
+  /* ---------- 길버트 ---------- */
+  {bg:`ch10`, w:`lynde`, f:`anne_grown`, o:`lynde`, cam:`in`,
+   e:`"앤, 길버트가 너에게\n가까운 학교 선생님 자리를 양보했대."`},
+  {bg:`ch10_hill`, w:`anne`, in:1, f:`anne_grown`, cam:`out`,
+   e:`저녁에 언덕길을 걷다가\n길버트를 만났어.`},
+  {t:`choice`, id:`C4`, kind:`talk`, label:`길버트에게`, f:`anne_grown`, o:`gilbert_grown`,
+   q:{e:`앤은 길버트에게 뭐라고 할까요?`},
+   note:{e:`원작의 앤은 손을 내밀며 "고마워. 그날 이미 용서했어."라고 말해요. 둘은 드디어 친구가 돼요.`},
+   opts:[
+    {type:`canon`, go:`g_c`, eff:{heart:{gilbert:2}}, e:`"고마워. 이미 용서했어"`},
+    {type:`imag`, go:`g_i`, eff:{heart:{gilbert:2}}, e:`"공주가 대답할게. 친구 하자!"`}
+   ]},
+  {id:`g_c`, w:`anne`, f:`anne_grown`, o:`gilbert_grown`, cam:`in`,
+   e:`"길버트, 정말 고마워.\n사실 그날 이미 용서했어."`},
+  {t:`goto`, to:`g_m`},
+  {id:`g_i`, w:`anne`, f:`anne_grown`, o:`gilbert_grown`, cam:`in`,
+   e:`"그날의 공주가 이제 대답할게.\n우리, 친구 하자!"`},
+  {id:`g_m`, w:`gilbert`, f:`anne_grown`, o:`gilbert_grown`, eff:{met:`gilbert`},
+   e:`"좋아! 우리는 좋은 친구가 될 거야.\n집까지 바래다줄게."`},
+  {t:`name`, id:`N10`, key:`bend`, free:true, max:30, label:`길모퉁이 너머`, f:`anne_grown`, o:`gilbert_grown`,
+   q:{e:`✍️ 앤의 길모퉁이 너머에는\n무엇이 있으면 좋을까요?`},
+   pick:[`좋은 선생님이 된 앤`, `친구들과 웃는 날`, `새로운 꿈`],
+   ph:`직접 써도 돼요`,
+   note:{e:`원작의 앤은 모퉁이 너머에 가장 좋은 것이 있다고 믿어요.`}},
+  {t:`ending`},
+  {id:`E_canon`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_grown`, cam:`up`, eff:{album:`e_canon`},
+   e:`그날 밤 창밖에 별이 반짝였어.\n"세상은 모두 평안하구나."`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_imag`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_grown`, fx:`dream`, cam:`up`, eff:{album:`e_imag`},
+   e:`나는 내가 이름 지은 길들의 지도를 그렸어.\n'{avenue}', '{spring}', '{vale}'….`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_bal`, bg:`ch10`, w:`diana`, f:`anne_grown`, o:`diana_grown`, cam:`in`, eff:{album:`e_bal`, heart:{diana:1, marilla:1}},
+   e:`주말이면 길버트와 다이애나가 왔어.\n우리는 함께 공부했어.`},
+  {t:`goto`, to:`E_last`},
+  {id:`E_last`, bg:`ch10_hill`, w:`anne`, in:1, f:`anne_grown`, cam:`out`,
+   e:`모퉁이 너머에는 '{bend}'{bend|이} 있을 거야.\n함께 걸어 줘서 고마워!`},
+  {t:`endcard`}
+  ]
+});
+
 
 </script>
 <script>

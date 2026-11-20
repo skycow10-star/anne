@@ -1,5 +1,5 @@
 /* 빨강 머리 앤 오프라인 지원: 인터넷이 되면 항상 최신 판을 먼저 받고, 인터넷이 없으면 저장해 둔 판으로 실행합니다. */
-const CACHE = "anne-vn-v18";
+const CACHE = "anne-vn-v19";
 const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./apple-touch-icon.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES.map(f => new Request(f, {cache: "reload"})))).then(() => self.skipWaiting()));
@@ -15,7 +15,8 @@ self.addEventListener("fetch", e => {
   e.respondWith(caches.open(CACHE).then(async c => {
     if(isPage){
       try{
-        const r = await fetch(req, {cache: "no-cache"});
+        let r = null;
+        try{ r = await fetch(new URL("./index.html", self.registration.scope).href, {cache: "no-cache", credentials: "same-origin"}); }catch(e1){ r = await fetch(req); }
         if(r && r.ok){ c.put("./index.html", r.clone()); return r; }
       }catch(err){}
       return (await c.match("./index.html")) || (await c.match(req, {ignoreSearch: true})) || offline();

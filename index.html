@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<script>window.addEventListener("error",function(e){try{var d=document.getElementById("bootErr");if(!d){d=document.createElement("div");d.id="bootErr";(document.body||document.documentElement).appendChild(d);}d.style.cssText="position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;background:#fff3f0;border:2px solid #c0392b;color:#7a1f14;padding:10px 12px;font:13px/1.5 sans-serif;border-radius:10px;word-break:break-all";d.textContent="⚠ 앱 오류: "+e.message+" (줄 "+(e.lineno||"?")+") — 이 화면을 캡처해 선생님께 보내 주세요.";}catch(x){}});</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>빨강 머리 앤 — 초록 지붕 집으로 가는 길</title>
 <link rel="manifest" href="manifest.webmanifest">
@@ -25,7 +26,7 @@
     background:radial-gradient(circle at 20% 10%,#f3e6cf 0,#e6d5b8 60%,#dcc7a5 100%);overflow:hidden}
   button,input{font-family:inherit}
   [hidden]{display:none!important}
-  .app{max-width:1100px;position:fixed;top:0;bottom:0;left:0;right:0;margin:0 auto;display:flex;flex-direction:column;background:var(--paper);position:relative;
+  .app{max-width:1100px;height:100vh;height:100dvh;margin:0 auto;display:flex;flex-direction:column;background:var(--paper);position:relative;
     box-shadow:0 0 40px rgba(60,40,20,.25);
     background-image:radial-gradient(rgba(160,120,70,.06) 1px,transparent 1px),radial-gradient(rgba(160,120,70,.04) 1px,transparent 1px);
     background-size:7px 7px,13px 13px;background-position:0 0,3px 5px}
@@ -369,7 +370,6 @@
     .app{height:auto;box-shadow:none}
     .toolbar,.stage,.rp-btns,.book{display:none!important}
     .report{overflow:visible}
-    .app{position:static}
     .mid-ans,.mid-saved,.mid-who input{display:none!important}
     .mid-print{display:block!important}
     .mid-who .print-name{display:inline!important}

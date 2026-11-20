@@ -362,6 +362,7 @@
         <button type="button" class="btn" id="btnBox">🎁<span class="tx"> 추억 상자</span></button>
         <button type="button" class="btn level" id="btnLevel">🌱<span class="tx"> 초등 수준</span></button>
         <button type="button" class="btn" id="btnSound">🔊</button>
+        <button type="button" class="btn" id="btnMusic" title="배경 음악">🎵</button>
         <button type="button" class="btn" id="btnFx" title="꽃잎·카메라 움직임 효과">✨<span class="tx"> 효과</span></button>
         <button type="button" class="btn" id="btnReset" title="처음부터 다시">↺<span class="tx"> 처음</span></button>
         <span class="tb-sep teacher-only"></span>
@@ -740,7 +741,7 @@ BOOK.ch3 = {
    f: 앤 표정, o: 상대 캐릭터, bk: 원문 책장 문단 번호
    ========================================================= */
 CHAPTERS.push({
-  key: `ch1`, num: 1, title: `기차역의 기다림`, orig: `원작 2장`, origTitle: `매슈 커스버트, 깜짝 놀라다`,
+  key: `ch1`, num: 1, bgm: `bgm_ch1.mp3`, title: `기차역의 기다림`, orig: `원작 2장`, origTitle: `매슈 커스버트, 깜짝 놀라다`,
   endings: {
     canon: {title: `꿈이 아니기를`, label: `원작 결말`},
     imag:  {title: `별빛 아래의 코델리아`, label: `상상 결말`},
@@ -1931,9 +1932,9 @@ const fresh = () => ({ch:0, pos:0, phase:"cover", started:false, canon:50, imag:
 const freshP = () => ({album:{}, endings:{}, reached:{}, snaps:{}});
 let S = fresh();
 let P = freshP();
-let level = "easy", soundOn = true;
+let level = "easy", soundOn = true, musicOn = true;
 let fxOn = !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-function save(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify({S, P, level, soundOn, fxOn})); }catch(e){} }
+function save(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify({S, P, level, soundOn, fxOn, musicOn})); }catch(e){} }
 function load(){
   try{
     const d = JSON.parse(localStorage.getItem(SAVE_KEY) || "null"); if(!d) return;
@@ -1941,6 +1942,7 @@ function load(){
     if(d.P) P = Object.assign(freshP(), d.P);
     if(d.level === "easy" || d.level === "lit") level = d.level;
     if(typeof d.soundOn === "boolean") soundOn = d.soundOn;
+    if(typeof d.musicOn === "boolean") musicOn = d.musicOn;
     if(typeof d.fxOn === "boolean") fxOn = d.fxOn;
     if(S.flags && S.flags.metMatthew) S.met.matthew = true;
     setChapter(S.ch);
@@ -2568,6 +2570,7 @@ function showNote(){
 }
 
 function render(instant){
+  bgmUpdate();
   updateGauge(); applyLevelUI(); applySoundUI(); setPill(); renderHud();
   el.vn.classList.toggle("choosing", S.phase === "choice" || S.phase === "name");
   document.body.classList.toggle("covering", false);
@@ -2696,6 +2699,7 @@ function showChapterCard(){
   setTimeout(() => el.chapterCard.classList.remove("show"), 1600);
 }
 function renderCover(){
+  setTimeout(bgmUpdate, 0);
   el.cover.classList.remove("hide"); document.body.classList.add("covering"); el.vn.classList.remove("choosing");
   el.coverSub.textContent = CHAPTERS.map(c => c.num + "장 " + c.title).join(" · ");
   el.coverText.textContent = level === "lit"
@@ -2846,6 +2850,49 @@ el.btnLevel.addEventListener("click", e => {
   else if(S.phase === "cover") renderCover();
   toast(level === "lit" ? "📜 원작 수준(문학 표현)으로 바꿨어요" : "🌱 초등 수준(쉬운 말)으로 바꿨어요");
 });
+/* ---------- 배경 음악 ---------- */
+const BGM = {el:null, gain:null, cur:null, urls:{}, vol:0.32, fading:false};
+function bgmWant(){ return (musicOn && S.started && !document.hidden && !document.body.classList.contains("covering") && CH.bgm) ? CH.bgm : null; }
+function bgmSetVol(v, sec){
+  if(BGM.gain && actx){ const g = BGM.gain.gain, t = actx.currentTime; g.cancelScheduledValues(t); g.setValueAtTime(g.value, t); g.linearRampToValueAtTime(v, t + sec); }
+  else if(BGM.el){ BGM.el.volume = Math.max(0, Math.min(1, v)); }
+}
+async function bgmSrc(f){
+  if(BGM.urls[f]) return BGM.urls[f];
+  if(/^https?:$/.test(location.protocol)){
+    try{ const r = await fetch(f); if(!r.ok) throw 0; BGM.urls[f] = URL.createObjectURL(await r.blob()); return BGM.urls[f]; }catch(e){ return null; }
+  }
+  return f;
+}
+async function bgmUpdate(){
+  const want = bgmWant();
+  if(want === BGM.cur) return;
+  const prev = BGM.el; BGM.cur = want;
+  if(prev){ bgmSetVol(0, 0.8); setTimeout(() => { if(BGM.el === prev && BGM.cur !== prev.dataset.f) prev.pause(); }, 850); }
+  if(!want) return;
+  const src = await bgmSrc(want);
+  if(BGM.cur !== want) return;
+  if(!src){ BGM.cur = null; return; }
+  if(!BGM.el){
+    BGM.el = new Audio(); BGM.el.loop = true; BGM.el.preload = "auto";
+    const ctx = unlockAudio();
+    if(ctx){ try{ BGM.gain = ctx.createGain(); BGM.gain.gain.value = 0; ctx.createMediaElementSource(BGM.el).connect(BGM.gain); BGM.gain.connect(ctx.destination); }catch(e){ BGM.gain = null; } }
+    BGM.el.addEventListener("timeupdate", () => {
+      const a = BGM.el; if(!a.duration || BGM.cur !== a.dataset.f) return;
+      if(a.duration - a.currentTime < 2.2 && !BGM.fading){ BGM.fading = true; bgmSetVol(0.02, 2); }
+      else if(a.currentTime < 1.5 && BGM.fading){ BGM.fading = false; bgmSetVol(BGM.vol, 2.5); }
+    });
+  }
+  const a = BGM.el;
+  if(a.dataset.f !== want){ a.src = src; a.dataset.f = want; BGM.fading = false; }
+  if(!BGM.gain) a.volume = 0;
+  a.play().then(() => bgmSetVol(BGM.vol, 2)).catch(() => { BGM.cur = null; });
+}
+document.addEventListener("visibilitychange", bgmUpdate);
+window.addEventListener("pointerdown", () => { if(!BGM.cur) bgmUpdate(); }, {passive:true});
+function applyMusicUI(){ const b = $("btnMusic"); if(!b) return; b.classList.toggle("off", !musicOn); b.title = musicOn ? "배경 음악 켜짐 (누르면 끄기)" : "배경 음악 꺼짐 (누르면 켜기)"; }
+$("btnMusic").addEventListener("click", e => { e.stopPropagation(); musicOn = !musicOn; applyMusicUI(); save(); unlockAudio(); bgmUpdate(); toast(musicOn ? (CH.bgm ? "🎵 배경 음악을 켰어요" : "🎵 배경 음악을 켰어요 (이 장은 아직 음악이 없어요)") : "배경 음악을 껐어요"); });
+applyMusicUI();
 el.btnSound.addEventListener("click", e => { e.stopPropagation(); soundOn = !soundOn; applySoundUI(); save(); if(soundOn){ unlockAudio(); sfx("select"); } });
 el.btnBook.addEventListener("click", e => { e.stopPropagation(); el.book.classList.contains("open") ? closeBook() : openBook(); });
 el.miniBook.addEventListener("click", e => { e.stopPropagation(); openBook(); });
@@ -2988,14 +3035,14 @@ document.addEventListener("keydown", e => {
    ========================================================= */
 if(window.STUDENT_MODE && location.hash !== "#teacher") document.body.classList.add("student");
 window.addEventListener("hashchange", () => document.body.classList.toggle("student", !!window.STUDENT_MODE && location.hash !== "#teacher"));
-window.__anne = {state:() => S, node:() => curNode(), persist:() => P, process:(src, key) => processImage(src, key), start:(ci, snap) => startChapter(ci, snap), uploaded:() => uploaded, exportHTML:student => collectImages().then(im => buildHTML(im, student))};
+window.__anne = {state:() => S, node:() => curNode(), persist:() => P, process:(src, key) => processImage(src, key), start:(ci, snap) => startChapter(ci, snap), bgm:() => ({cur:BGM.cur, paused:BGM.el ? BGM.el.paused : null, t:BGM.el ? BGM.el.currentTime : 0, gain:BGM.gain ? BGM.gain.gain.value : (BGM.el ? BGM.el.volume : null)}), uploaded:() => uploaded, exportHTML:student => collectImages().then(im => buildHTML(im, student))};
 /* 홈 화면 앱(웹앱): 인터넷 주소로 열었을 때만 오프라인 기능을 켭니다. 파일로 열면 그냥 지나갑니다. */
 if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
   const hadCtl = !!navigator.serviceWorker.controller; let reloaded = false;
   navigator.serviceWorker.addEventListener("controllerchange", () => { if(hadCtl && !reloaded){ reloaded = true; location.reload(); } });
   window.addEventListener("load", () => navigator.serviceWorker.register("sw.js", {updateViaCache:"none"}).then(r => r.update()).catch(() => {}));
 }
-load(); probeFolder(); applyLevelUI(); applySoundUI(); applyFxUI(); updateGauge();
+load(); probeFolder(); applyLevelUI(); applySoundUI(); applyFxUI(); applyMusicUI(); updateGauge();
 renderCover();
 })();
 

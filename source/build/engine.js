@@ -77,13 +77,19 @@ const GLOSS = {
   "역장":`기차역 일을 책임지는 사람이에요.`,
   "밤색 암말":`밤 껍질 같은 붉은 갈색 털을 가진 암컷 말이에요.`,
   "금잔화":`주황빛이 도는 노란 꽃이에요.`,
-  "첨탑":`교회 지붕 위에 뾰족하게 솟은 탑이에요.`
+  "첨탑":`교회 지붕 위에 뾰족하게 솟은 탑이에요.`,
+  "드라이어드":`그리스 신화에 나오는 나무와 숲의 요정이에요.`,
+  "목사관":`목사님 가족이 사는 집이에요.`,
+  "진통제 연고":`아픈 곳에 바르거나 먹는 약이에요. 옛날엔 먹기도 했대요.`,
+  "층 케이크":`여러 겹의 빵 사이에 잼이나 크림을 바른 케이크예요.`,
+  "모슬린":`얇고 부드러운 무명천이에요.`,
+  "주일 학교":`일요일에 교회에서 아이들에게 성경을 가르치는 모임이에요.`
 };
 const GLOSS_RE = new RegExp(Object.keys(GLOSS).sort((a,b) => b.length - a.length).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "g");
 const KIND = {act:`🚶 행동하기`, predict:`🔮 예측하기 · 원작의 앤은?`, talk:`💬 말 걸기`, name:`✍️ 이름 짓기`};
-const WHO = {anne:`앤 셜리`, matthew:`매슈 커스버트`, station:`역장`, marilla:`마릴라 커스버트`, lynde:`레이첼 린드 부인`, diana:`다이애나 배리`, barry:`배리 부인`, gilbert:`길버트 블라이스`, phillips:`필립스 선생님`, jimmy:`지미 글로버`, doctor:`의사 선생님`, maryjoe:`메리 조`};
-const CHARS = {matthew:{ic:`🐴`, name:`매슈`, full:`매슈 아저씨`, start:1}, marilla:{ic:`🧺`, name:`마릴라`, full:`마릴라 아주머니`, start:1}, lynde:{ic:`🧶`, name:`린드 부인`, full:`린드 부인`, start:0}, diana:{ic:`🎀`, name:`다이애나`, full:`다이애나`, start:1}, barry:{ic:`📚`, name:`배리 부인`, full:`배리 부인`, start:0}, gilbert:{ic:`🍎`, name:`길버트`, full:`길버트`, start:0}};
-const DEFAULT_NAMES = {avenue:`기쁨의 하얀 길`, pond:`반짝이는 호수`, advice:`…`};
+const WHO = {anne:`앤 셜리`, matthew:`매슈 커스버트`, station:`역장`, marilla:`마릴라 커스버트`, lynde:`레이첼 린드 부인`, diana:`다이애나 배리`, barry:`배리 부인`, gilbert:`길버트 블라이스`, phillips:`필립스 선생님`, jimmy:`지미 글로버`, doctor:`의사 선생님`, maryjoe:`메리 조`, allan:`앨런 사모님`};
+const CHARS = {matthew:{ic:`🐴`, name:`매슈`, full:`매슈 아저씨`, start:1}, marilla:{ic:`🧺`, name:`마릴라`, full:`마릴라 아주머니`, start:1}, lynde:{ic:`🧶`, name:`린드 부인`, full:`린드 부인`, start:0}, diana:{ic:`🎀`, name:`다이애나`, full:`다이애나`, start:1}, barry:{ic:`📚`, name:`배리 부인`, full:`배리 부인`, start:0}, gilbert:{ic:`🍎`, name:`길버트`, full:`길버트`, start:0}, allan:{ic:`🌸`, name:`앨런 사모님`, full:`앨런 사모님`, start:1}};
+const DEFAULT_NAMES = {avenue:`기쁨의 하얀 길`, pond:`반짝이는 호수`, advice:`…`, spring:`드라이어드의 샘`, vale:`제비꽃 골짜기`};
 CHAPTERS.forEach(c => { if(c.items) Object.assign(ITEMS, c.items); if(c.album) ALBUMS[c.key] = c.album; });
 const BADGE = {
   canon:{e:`📖 원작과 같은 길!`, l:`📖 원작의 길을 걸었습니다`},
@@ -104,7 +110,7 @@ function setChapter(ci){
 let bookBuiltFor = null;
 setChapter(0);
 const BG_KEYS = [].concat(...CHAPTERS.map(c => c.bgKeys || []));
-const SPRITE_KEYS = [`anne_happy`,`anne_sad`,`anne_surprised`,`anne_angry`,`anne_dreamy`,`matthew`,`lynde`,`marilla_strict`,`marilla_warm`,`diana`,`barry`,`gilbert`,`phillips`,`doctor`,`minnie_may`];
+const SPRITE_KEYS = [`anne_happy`,`anne_sad`,`anne_surprised`,`anne_angry`,`anne_dreamy`,`matthew`,`lynde`,`marilla_strict`,`marilla_warm`,`diana`,`barry`,`gilbert`,`phillips`,`doctor`,`minnie_may`,`allan`];
 
 /* =========================================================
    1. 상태 & 저장
@@ -624,12 +630,44 @@ function svgFrostLane(){
     <rect y="640" width="1600" height="260" fill="#eef3fa"/><path d="M640 900 Q780 720 800 600 Q820 720 960 900Z" fill="#d8e2ee"/></g>
     <rect width="1600" height="900" filter="url(#paper25)"/></svg>`;
 }
+function svgTeaTable(){
+  const rnd = mulberry(151); let roses = "";
+  for(let i=0;i<18;i++){ const x = 260+rnd()*1080, y = 610+rnd()*60; roses += `<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${(10+rnd()*10).toFixed(0)}" fill="${["#e46f7e","#f4a3ae","#fbd2d6"][i%3]}"/><path d="M${(x-24).toFixed(0)} ${(y+10).toFixed(0)} q14 -18 30 -4" stroke="#6f9a58" stroke-width="7" fill="none"/>`; }
+  return SVG_OPEN + DEFS(26) + `<rect width="1600" height="900" fill="#f4e4c8"/><g filter="url(#wc26)">
+    <rect x="980" y="110" width="420" height="330" rx="10" fill="#cfe6f2"/><rect x="980" y="110" width="420" height="330" rx="10" fill="none" stroke="#a58463" stroke-width="18"/><path d="M1190 110 V440 M980 275 H1400" stroke="#a58463" stroke-width="10"/>
+    ${blossomCloud(rnd, 1190, 260, 180, 120, 22, ["#b9d89a","#9cc47e","#f3c6cf"])}
+    <rect x="0" y="560" width="1600" height="340" fill="#c9a77f"/><ellipse cx="800" cy="650" rx="660" ry="120" fill="#fbf6ea"/>${roses}
+    <path d="M700 600 h200 l-20 -90 h-160z" fill="#f7d79a"/><path d="M700 560 h200" stroke="#c9434e" stroke-width="14"/><path d="M720 525 h160" stroke="#c9434e" stroke-width="12"/>
+    <ellipse cx="420" cy="640" rx="70" ry="22" fill="#ffffff"/><ellipse cx="1180" cy="640" rx="70" ry="22" fill="#ffffff"/><path d="M1140 600 q40 -60 80 0z" fill="#9fc0d8"/></g>
+    <rect width="1600" height="900" filter="url(#paper26)"/></svg>`;
+}
+function svgDryadSpring(){
+  const rnd = mulberry(157); let firs = "";
+  for(let i=0;i<9;i++){ const x = 60+i*190+rnd()*60, h = 360+rnd()*160; firs += `<path d="M${x.toFixed(0)} ${(560-h).toFixed(0)} L${(x-90).toFixed(0)} 580 L${(x+90).toFixed(0)} 580Z" fill="${i%2?"#3f6a52":"#4f7d5c"}"/>`; }
+  return SVG_OPEN + DEFS(27) + `<linearGradient id="sk27" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9b9a6"/><stop offset=".55" stop-color="#fbd8a8"/><stop offset="1" stop-color="#f7e8c8"/></linearGradient>
+    <rect width="1600" height="900" fill="url(#sk27)"/><g filter="url(#wc27)">${firs}
+    <rect y="570" width="1600" height="330" fill="#88a96c"/><ellipse cx="820" cy="720" rx="330" ry="90" fill="#9fc8d6"/><ellipse cx="820" cy="712" rx="250" ry="56" fill="#c8e4ea"/>
+    <path d="M640 700 q180 -120 360 0" stroke="#f08a8a" stroke-width="7" fill="none" opacity=".8"/><path d="M650 706 q170 -110 340 0" stroke="#f6d36a" stroke-width="7" fill="none" opacity=".8"/><path d="M660 712 q160 -100 320 0" stroke="#8fc6e6" stroke-width="7" fill="none" opacity=".8"/>
+    <ellipse cx="1170" cy="760" rx="120" ry="48" fill="#b0584a"/><path d="M380 900 Q400 700 300 560" stroke="#7b9a5e" stroke-width="10" fill="none"/></g>
+    <rect width="1600" height="900" filter="url(#paper27)"/></svg>`;
+}
+function svgAnneGarden(){
+  const rnd = mulberry(163);
+  return SVG_OPEN + DEFS(28) + `<linearGradient id="sk28" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9c6e8"/><stop offset=".6" stop-color="#fbe2c6"/></linearGradient>
+    <rect width="1600" height="900" fill="url(#sk28)"/><g filter="url(#wc28)">
+    <rect x="180" y="200" width="520" height="380" fill="#f3efe4"/><path d="M150 210 L440 60 L730 210Z" fill="#5f9a6a"/><rect x="380" y="400" width="100" height="180" fill="#7d5a40"/><rect x="230" y="270" width="100" height="90" fill="#cfe2ee"/><rect x="540" y="270" width="100" height="90" fill="#cfe2ee"/>
+    <rect y="580" width="1600" height="320" fill="#97b878"/>
+    ${blossomCloud(rnd, 1000, 680, 420, 90, 46, ["#e46f7e","#f6c25a","#ffffff","#b893d6","#f4a3ae"])}${blossomCloud(rnd, 300, 760, 260, 60, 26, ["#f6c25a","#e46f7e","#ffffff"])}
+    ${blossomCloud(rnd, 1300, 300, 220, 200, 30, ["#7ea862","#94bb72","#6b9654"])}</g>
+    <rect width="1600" height="900" filter="url(#paper28)"/></svg>`;
+}
 const SVG_SCENES = {ch1:svgStation, ch1_road:svgRoad, ch1_avenue:svgAvenue, ch1_pond:svgPond, ch1_home:svgHome,
   ch2:svgKitchen, ch2_room:svgRoom, ch2_lane:svgLane, ch2_lynde:svgLyndeRoom, ch2_night:svgNightLane,
   ch3:svgParlor, ch3_path:svgFirPath, ch3_garden:svgGarden, ch3_bridge:svgBridge,
   ch4:svgClass, ch4_birch:svgBirch, ch4_spruce:svgSpruce, ch4_yard:svgSchoolYard,
   ch5:svgTeaRoom, ch5_orchard:svgOrchard, ch5_dusk:svgDuskDoor,
-  ch6:svgWinterKitchen, ch6_snow:svgSnowField, ch6_barry:svgBarryKitchen, ch6_morning:svgFrostLane};
+  ch6:svgWinterKitchen, ch6_snow:svgSnowField, ch6_barry:svgBarryKitchen, ch6_morning:svgFrostLane,
+  ch7:svgTeaTable, ch7_spring:svgDryadSpring, ch7_garden:svgAnneGarden};
 const svgCache = {};
 
 /* =========================================================
@@ -769,7 +807,10 @@ const SCENE_FX = {
   ch6:        {light:"lamp",   motes:{n:14}},
   ch6_snow:   {light:"night",  stars:{n:44, band:[0,.45]}, petals:{n:18, col:["#ffffff","#eef4ff"], size:[2,4], vy:[10,20], wind:-4}},
   ch6_barry:  {light:"lamp",   motes:{n:10}},
-  ch6_morning:{light:"road",   glints:{n:30, band:[.1,.9]}, petals:{n:8, col:["#ffffff"], size:[2,3], vy:[6,12], wind:-3}}
+  ch6_morning:{light:"road",   glints:{n:30, band:[.1,.9]}, petals:{n:8, col:["#ffffff"], size:[2,3], vy:[6,12], wind:-3}},
+  ch7:        {light:"warm",   motes:{n:20}},
+  ch7_spring: {light:"sunset", glints:{n:20, band:[.72,.86]}, motes:{n:10}},
+  ch7_garden: {light:"rose",   petals:{n:14, col:["#f4a3ae","#ffffff","#f6c25a"], size:[4,8], vy:[10,20], wind:-8}}
 };
 let curFx = null;
 function setSceneFx(bg){
@@ -1097,7 +1138,9 @@ const NAME_LABELS = [
   {k:`advice`, ch:2, what:`앤에게 건넨 한마디`, free:true},
   {k:`spring`, ch:3, what:`통나무 다리 아래 샘`, canon:`드라이어드의 샘`},
   {k:`together`, ch:3, what:`다이애나와 하고 싶은 일`, free:true},
-  {k:`vale`, ch:4, what:`숲 그늘의 작은 골짜기`, canon:`제비꽃 골짜기`}
+  {k:`vale`, ch:4, what:`숲 그늘의 작은 골짜기`, canon:`제비꽃 골짜기`},
+  {k:`prayer`, ch:6, what:`오늘을 기념하는 새 기도문`, free:true},
+  {k:`newday`, ch:7, what:`실수 없는 새날의 도전`, free:true}
 ];
 const READER_TYPE = {
   canon:{emoji:`📖`, name:`원작 탐정형`, e:`원작 속 앤의 마음을 정확히 읽어 내는 독자예요. 인물이 왜 그렇게 행동하는지 꼼꼼히 따라가며 읽었어요.`, l:`인물의 성격과 동기를 정확히 읽어 내는 독자입니다. 원작의 흐름을 존중하며 앤의 선택이 지닌 의미를 따라갔습니다.`},
@@ -1342,7 +1385,7 @@ el.btnHelp.addEventListener("click", e => {
   modal("🖼️ 이미지 파일 이름 안내", `<p>이미지 이름만 맞추면 알맞은 장면에 자동으로 들어가요. 없는 장면은 내장 수채화 그림이 대신 나와요.</p>
     <p style="margin-top:8px"><b>배경 (16:9 권장)</b> · 앞에 <code>bg_</code>를 붙여도 돼요 (예: <code>bg_ch2.png</code>)</p>
     <div class="img-list">${BG_KEYS.map(k => `<span class="${has(k)}">${k}</span>`).join("")}</div>
-    <p style="margin-top:4px;font-size:.8rem;color:#8a7461;line-height:1.7">1장: ch1 = 기차역 · ch1_road = 언덕길 · ch1_avenue = 가로수길 · ch1_pond = 연못 · ch1_home = 초록 지붕 집(밤)<br>2장: ch2 = 초록 지붕 집 부엌 · ch2_room = 앤의 방(동쪽 다락방) · ch2_lane = 노을 진 오솔길 · ch2_lynde = 린드 부인네 부엌 · ch2_night = 밤의 오솔길<br>3장: ch3 = 배리 씨네 거실 · ch3_path = 시냇물 건너 전나무 언덕 지름길 · ch3_garden = 배리 씨네 노을 정원 · ch3_bridge = 통나무 다리와 샘 · 인물 diana, barry<br>4장: ch4 = 에이번리 학교 교실 · ch4_birch = 자작나무 길(아침) · ch4_spruce = 가문비나무 숲(한낮) · ch4_yard = 학교 앞 하굣길 · 인물 gilbert, phillips<br>5장: ch5 = 초록 지붕 집 거실(다과상) · ch5_orchard = 가을 과수원 · ch5_dusk = 해 질 녘 배리 씨네 문간<br>6장: ch6 = 겨울밤 초록 지붕 집 부엌 · ch6_snow = 달빛 눈 들판 · ch6_barry = 배리 씨네 부엌(밤) · ch6_morning = 서리 내린 겨울 아침 오솔길 · 인물 doctor, minnie_may</p>
+    <p style="margin-top:4px;font-size:.8rem;color:#8a7461;line-height:1.7">1장: ch1 = 기차역 · ch1_road = 언덕길 · ch1_avenue = 가로수길 · ch1_pond = 연못 · ch1_home = 초록 지붕 집(밤)<br>2장: ch2 = 초록 지붕 집 부엌 · ch2_room = 앤의 방(동쪽 다락방) · ch2_lane = 노을 진 오솔길 · ch2_lynde = 린드 부인네 부엌 · ch2_night = 밤의 오솔길<br>3장: ch3 = 배리 씨네 거실 · ch3_path = 시냇물 건너 전나무 언덕 지름길 · ch3_garden = 배리 씨네 노을 정원 · ch3_bridge = 통나무 다리와 샘 · 인물 diana, barry<br>4장: ch4 = 에이번리 학교 교실 · ch4_birch = 자작나무 길(아침) · ch4_spruce = 가문비나무 숲(한낮) · ch4_yard = 학교 앞 하굣길 · 인물 gilbert, phillips<br>5장: ch5 = 초록 지붕 집 거실(다과상) · ch5_orchard = 가을 과수원 · ch5_dusk = 해 질 녘 배리 씨네 문간<br>6장: ch6 = 겨울밤 초록 지붕 집 부엌 · ch6_snow = 달빛 눈 들판 · ch6_barry = 배리 씨네 부엌(밤) · ch6_morning = 서리 내린 겨울 아침 오솔길 · 인물 doctor, minnie_may<br>7장: ch7 = 목사님 맞이 차 식탁 · ch7_spring = 해 질 녘 드라이어드의 샘 · ch7_garden = 앤의 꽃밭 · 인물 allan</p>
     <p style="margin-top:8px"><b>캐릭터 (투명 PNG 권장 · 흰 배경은 자동으로 지워요)</b></p>
     <div class="img-list">${SPRITE_KEYS.map(k => `<span class="${has(k)}">${k}</span>`).join("")}</div>
     <p style="margin-top:8px;font-size:.82rem;color:#8a7461">초록색 = 지금 적용됨 · 회색 = 아직 없음</p>

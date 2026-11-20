@@ -20,18 +20,18 @@
     --serif:"Nanum Myeongjo","AppleMyungjo","Batang","Noto Serif KR",serif;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  html,body{height:100%}
+  html,body{height:100%;overscroll-behavior:none}
   body{font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;color:var(--ink);
     background:radial-gradient(circle at 20% 10%,#f3e6cf 0,#e6d5b8 60%,#dcc7a5 100%);overflow:hidden}
   button,input{font-family:inherit}
   [hidden]{display:none!important}
-  .app{max-width:1100px;height:100dvh;margin:0 auto;display:flex;flex-direction:column;background:var(--paper);position:relative;
+  .app{max-width:1100px;position:fixed;top:0;bottom:0;left:0;right:0;margin:0 auto;display:flex;flex-direction:column;background:var(--paper);position:relative;
     box-shadow:0 0 40px rgba(60,40,20,.25);
     background-image:radial-gradient(rgba(160,120,70,.06) 1px,transparent 1px),radial-gradient(rgba(160,120,70,.04) 1px,transparent 1px);
     background-size:7px 7px,13px 13px;background-position:0 0,3px 5px}
 
   /* ---------- 툴바 ---------- */
-  .toolbar{flex-shrink:0;padding:8px 14px;border-bottom:1.5px solid var(--line);background:linear-gradient(180deg,#f6ecdb,#fbf6ec);z-index:30}
+  .toolbar{flex-shrink:0;padding:calc(8px + env(safe-area-inset-top)) 14px 8px;border-bottom:1.5px solid var(--line);background:linear-gradient(180deg,#f6ecdb,#fbf6ec);z-index:30}
   .tb-row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
   .brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:1rem;white-space:nowrap}
   .pill{background:#efe0c6;border:1px solid #d6bd96;color:#6a4a2e;font-size:.76rem;font-weight:800;padding:3px 10px;border-radius:999px}
@@ -281,7 +281,13 @@
   .tl-bar{display:flex;height:8px;border-radius:999px;overflow:hidden;background:#eadfcd;margin-top:4px}
   .tl-bar span{display:block;height:100%}
   .mid-q{margin-top:10px;font-size:.9rem;line-height:1.6}
-  .mid-q .lines{height:84px;margin-top:4px;background:repeating-linear-gradient(180deg,transparent 0 27px,#d9c7a8 27px 28px)}
+  .mid-ans{display:block;width:100%;min-height:96px;margin-top:6px;padding:4px 6px;border:1.5px solid #e2cfae;border-radius:10px;resize:vertical;
+    font:inherit;font-size:16px;line-height:28px;color:var(--ink);background:#fffdf8 repeating-linear-gradient(180deg,transparent 0 27px,#eadcc2 27px 28px);background-attachment:local}
+  .mid-ans:focus{outline:none;border-color:#c98a4a;box-shadow:0 0 0 3px rgba(201,138,74,.18)}
+  .mid-print{display:none;white-space:pre-wrap;line-height:28px;min-height:84px;margin-top:4px;background:repeating-linear-gradient(180deg,transparent 0 27px,#d9c7a8 27px 28px)}
+  .mid-saved{font-size:.76rem;color:#5b8a5e;margin-top:2px;min-height:1em}
+  .mid-who{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.9rem;font-weight:700}
+  .mid-who input{font:inherit;font-size:16px;padding:5px 10px;border:1.5px solid #e2cfae;border-radius:9px;background:#fffdf8;width:180px}
   .talk-q{font-size:.9rem;line-height:1.8;padding-left:4px}
   .rp-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px}
 
@@ -363,6 +369,10 @@
     .app{height:auto;box-shadow:none}
     .toolbar,.stage,.rp-btns,.book{display:none!important}
     .report{overflow:visible}
+    .app{position:static}
+    .mid-ans,.mid-saved,.mid-who input{display:none!important}
+    .mid-print{display:block!important}
+    .mid-who .print-name{display:inline!important}
   }
 </style>
 </head>
@@ -3934,6 +3944,8 @@ const READER_TYPE = {
   imag:{emoji:`✨`, name:`상상 모험가형`, e:`앤처럼 세상을 새로 이름 짓는 독자예요. 원작 바깥으로 나만의 오솔길을 여러 번 냈어요.`, l:`앤처럼 세상에 새 이름을 붙이는 독자입니다. 원작의 빈틈에서 다른 가능성을 상상하며 이야기를 넓혀 갔습니다.`},
   bal:{emoji:`⚖️`, name:`마음 다리형`, e:`앤의 마음과 주변 사람들의 마음을 함께 생각한 독자예요. 서로를 잇는 다리 같은 선택을 많이 했어요.`, l:`앤의 열정과 타인의 입장 사이에서 균형을 찾는 독자입니다. 갈등을 풀어 가는 성숙한 길을 자주 골랐습니다.`}
 };
+function MID(){ P.mid = P.mid || {}; P.mid[CH.key] = P.mid[CH.key] || {name:"", a:[]}; return P.mid[CH.key]; }
+function fallbackCopy(txt, done){ const ta = document.createElement("textarea"); ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); done(); }catch(e){ toast("복사하지 못했어요. 길게 눌러 직접 복사해 주세요."); } ta.remove(); }
 function renderMidReport(){
   const lit = level === "lit", upto = CHAPTERS.slice(0, S.ch + 1);
   const sum = {canon:0, imag:0, bal:0};
@@ -3976,13 +3988,32 @@ function renderMidReport(){
       <div class="card"><h4>🎁 모은 추억 (${S.items.length}개)</h4><p style="font-size:1.5rem;letter-spacing:4px;line-height:1.6">${itemIcons || "—"}</p>
         <h4 style="margin-top:12px">🎬 만난 결말 ${endCount}/${upto.length * 3}</h4><p style="font-size:.84rem;color:#6e5b4b">다른 선택으로 장을 다시 하면 숨은 결말을 더 만날 수 있어요.</p></div>
     </div>
-    <div class="card"><h4>📝 돌아보며 쓰기</h4>${qs.map((q, i) => `<div class="mid-q"><p><b>${i + 1}.</b> ${q}</p><div class="lines"></div></div>`).join("")}</div>
+    <div class="card"><h4>📝 돌아보며 쓰기</h4>
+      <div class="mid-who">이름: <input id="midName" maxlength="20" placeholder="이름을 써 주세요" value="${esc(MID().name || "")}"><span class="print-name" style="display:none">${esc(MID().name || "")}</span></div>
+      ${qs.map((q, i) => `<div class="mid-q"><p><b>${i + 1}.</b> ${q}</p><textarea class="mid-ans" data-i="${i}" rows="3" placeholder="여기에 내 생각을 써 보세요.">${esc(MID().a[i] || "")}</textarea><div class="mid-print" id="midP${i}">${esc(MID().a[i] || "")}</div></div>`).join("")}
+      <div class="mid-saved" id="midSaved"></div>
+      <p style="font-size:.8rem;color:#8a7461;margin-top:4px">쓴 내용은 이 기기에 저절로 저장돼요. 인쇄하면 쓴 글이 함께 인쇄되고, [📋 내 글 복사]로 선생님께 보낼 수도 있어요.</p></div>
     <div class="rp-btns">
       <button type="button" class="big alt" id="midPrint">🖨️ 중간 보고서 인쇄</button>
+      <button type="button" class="big" id="midCopy">📋 내 글 복사</button>
       <button type="button" class="big sky" id="midBack">⬅ ${CH.num}장 리포트로</button>
       ${CHAPTERS[S.ch + 1] ? `<button type="button" class="big sky" id="midNext">➡ ${CH.num + 1}장으로</button>` : `<button type="button" class="big alt" disabled>➡ ${CH.num + 1}장 (준비 중)</button>`}
     </div></div>`;
   $("midPrint").onclick = () => window.print();
+  let saveT = null;
+  const flash = () => { $("midSaved").textContent = "✔ 저장했어요"; clearTimeout(saveT); saveT = setTimeout(() => { const e = $("midSaved"); if(e) e.textContent = ""; }, 1500); };
+  el.report.querySelectorAll(".mid-ans").forEach(ta => {
+    const fit = () => { ta.style.height = "auto"; ta.style.height = Math.max(96, ta.scrollHeight + 4) + "px"; };
+    fit();
+    ta.addEventListener("click", e => e.stopPropagation());
+    ta.addEventListener("input", () => { const i = +ta.dataset.i; MID().a[i] = ta.value; $("midP" + i).textContent = ta.value; fit(); save(); flash(); });
+  });
+  $("midName").addEventListener("input", e => { MID().name = e.target.value; el.report.querySelector(".print-name").textContent = e.target.value; save(); flash(); });
+  $("midCopy").onclick = () => {
+    const m = MID(), txt = `[빨강 머리 앤 · 1~${CH.num}장 중간 보고서]\n이름: ${m.name || ""}\n독서 유형: ${type.name}\n\n` + qs.map((q, i) => `${i + 1}. ${q}\n→ ${m.a[i] || "(아직 안 썼어요)"}`).join("\n\n");
+    const done = () => toast("📋 내 글을 복사했어요. 카톡이나 메모에 붙여 넣으세요!");
+    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, () => fallbackCopy(txt, done)); else fallbackCopy(txt, done);
+  };
   $("midBack").onclick = () => renderReport();
   if($("midNext")) $("midNext").onclick = () => nextChapter();
   el.report.scrollTop = 0; sfx("chime");

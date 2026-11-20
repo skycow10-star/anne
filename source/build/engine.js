@@ -83,7 +83,11 @@ const GLOSS = {
   "진통제 연고":`아픈 곳에 바르거나 먹는 약이에요. 옛날엔 먹기도 했대요.`,
   "층 케이크":`여러 겹의 빵 사이에 잼이나 크림을 바른 케이크예요.`,
   "모슬린":`얇고 부드러운 무명천이에요.`,
-  "주일 학교":`일요일에 교회에서 아이들에게 성경을 가르치는 모임이에요.`
+  "주일 학교":`일요일에 교회에서 아이들에게 성경을 가르치는 모임이에요.`,
+  "행상인":`물건을 짊어지고 이 집 저 집 다니며 파는 장수예요.`,
+  "부인회":`교회 아주머니들이 모여 봉사와 모금을 하는 모임이에요.`,
+  "허영심":`실제보다 더 잘나 보이고 싶어 하는 마음이에요.`,
+  "스누드":`옛날 스코틀랜드 아가씨들이 머리에 두르던 띠예요.`
 };
 const GLOSS_RE = new RegExp(Object.keys(GLOSS).sort((a,b) => b.length - a.length).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "g");
 const KIND = {act:`🚶 행동하기`, predict:`🔮 예측하기 · 원작의 앤은?`, talk:`💬 말 걸기`, name:`✍️ 이름 짓기`};
@@ -110,7 +114,7 @@ function setChapter(ci){
 let bookBuiltFor = null;
 setChapter(0);
 const BG_KEYS = [].concat(...CHAPTERS.map(c => c.bgKeys || []));
-const SPRITE_KEYS = [`anne_happy`,`anne_sad`,`anne_surprised`,`anne_angry`,`anne_dreamy`,`matthew`,`lynde`,`marilla_strict`,`marilla_warm`,`diana`,`barry`,`gilbert`,`phillips`,`doctor`,`minnie_may`,`allan`];
+const SPRITE_KEYS = [`anne_happy`,`anne_sad`,`anne_surprised`,`anne_angry`,`anne_dreamy`,`matthew`,`lynde`,`marilla_strict`,`marilla_warm`,`diana`,`barry`,`gilbert`,`phillips`,`doctor`,`minnie_may`,`allan`,`anne_green_hair`];
 
 /* =========================================================
    1. 상태 & 저장
@@ -661,13 +665,46 @@ function svgAnneGarden(){
     ${blossomCloud(rnd, 1300, 300, 220, 200, 30, ["#7ea862","#94bb72","#6b9654"])}</g>
     <rect width="1600" height="900" filter="url(#paper28)"/></svg>`;
 }
+function svgSpringLane(){
+  const rnd = mulberry(171); let firs = "";
+  for(let i=0;i<7;i++){ const x = 900+i*110+rnd()*40; firs += `<path d="M${x.toFixed(0)} ${(200+rnd()*80).toFixed(0)} L${(x-70).toFixed(0)} 560 L${(x+70).toFixed(0)} 560Z" fill="#4f7d5c"/>`; }
+  return SVG_OPEN + DEFS(29) + `<linearGradient id="sk29" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9a6d6"/><stop offset=".5" stop-color="#f4c0b0"/><stop offset=".8" stop-color="#fde2bf"/></linearGradient>
+    <rect width="1600" height="900" fill="url(#sk29)"/><g filter="url(#wc29)">
+    <path d="M0 560 Q400 500 800 540 T1600 520 V900 H0Z" fill="#b5674e"/><path d="M0 640 Q500 600 1600 650 V900 H0Z" fill="#a9c08a"/>
+    ${firs}<rect x="1020" y="330" width="300" height="230" fill="#f3efe4"/><path d="M1000 340 L1170 230 L1340 340Z" fill="#5f9a6a"/><rect x="1060" y="390" width="60" height="55" fill="#ffd98a"/><rect x="1220" y="390" width="60" height="55" fill="#ffd98a"/>
+    ${blossomCloud(rnd, 320, 460, 220, 90, 26, ["#c9435a","#d9705e","#e2a07a"])}
+    <path d="M520 900 Q700 760 1000 620" stroke="#c9b28c" stroke-width="70" fill="none"/></g>
+    <rect width="1600" height="900" filter="url(#paper29)"/></svg>`;
+}
+function svgBackPorch(){
+  const rnd = mulberry(173);
+  return SVG_OPEN + DEFS(30) + `<rect width="1600" height="900" fill="#dfeadf"/><g filter="url(#wc30)">
+    <rect x="200" y="80" width="760" height="620" fill="#f3efe4"/><rect x="460" y="230" width="220" height="400" fill="#7d5a40"/><circle cx="650" cy="440" r="10" fill="#e3c27a"/>
+    <rect x="380" y="630" width="380" height="40" fill="#b79a7a"/><rect x="340" y="670" width="460" height="40" fill="#a68a6b"/><rect x="300" y="710" width="540" height="190" fill="#9a7d60"/>
+    <rect x="1000" y="560" width="300" height="190" fill="#8a5a3a"/><path d="M1000 560 L1060 470 H1360 L1300 560Z" fill="#a46e48"/>
+    <rect x="1040" y="590" width="40" height="80" fill="#2a2a2a"/><rect x="1100" y="600" width="44" height="70" fill="#5aa0c8"/><rect x="1170" y="590" width="36" height="80" fill="#c9435a"/><rect x="1225" y="610" width="40" height="60" fill="#f2c66b"/>
+    ${blossomCloud(rnd, 1350, 260, 260, 200, 30, ["#a9cf8a","#94bb72","#f6f2f4"])}<rect y="750" x="840" width="760" height="150" fill="#9fbf7f"/></g>
+    <rect width="1600" height="900" filter="url(#paper30)"/></svg>`;
+}
+function svgCandleAttic(){
+  return SVG_OPEN + DEFS(31) + `<radialGradient id="cg31" cx=".62" cy=".55" r=".55"><stop offset="0" stop-color="#ffd98a" stop-opacity=".85"/><stop offset=".5" stop-color="#b9875a" stop-opacity=".35"/><stop offset="1" stop-color="#2b2238" stop-opacity="0"/></radialGradient>
+    <rect width="1600" height="900" fill="#2f2840"/><g filter="url(#wc31)">
+    <path d="M0 0 L520 0 L0 380Z" fill="#241e33"/><path d="M1600 0 L1080 0 L1600 380Z" fill="#241e33"/>
+    <rect x="640" y="140" width="300" height="240" fill="#36406a"/><path d="M790 140 V380 M640 260 H940" stroke="#5a4636" stroke-width="12"/><circle cx="860" cy="200" r="18" fill="#f4efd6" opacity=".8"/>
+    <rect x="120" y="540" width="560" height="200" rx="16" fill="#e8dcc8"/><rect x="120" y="500" width="160" height="80" rx="20" fill="#f6eee0"/><rect x="100" y="720" width="600" height="40" fill="#6b4e3a"/>
+    <rect x="1080" y="480" width="200" height="300" fill="#7a5a44"/><rect x="1110" y="300" width="140" height="180" rx="8" fill="#9fb3c6" stroke="#6b4e3a" stroke-width="14"/>
+    <rect x="980" y="600" width="80" height="16" fill="#e3c27a"/><rect x="1008" y="540" width="22" height="62" fill="#f6eee0"/><ellipse cx="1019" cy="526" rx="10" ry="18" fill="#ffcf5a"/>
+    <rect y="760" width="1600" height="140" fill="#5a4636"/></g><rect width="1600" height="900" fill="url(#cg31)"/>
+    <rect width="1600" height="900" filter="url(#paper31)"/></svg>`;
+}
 const SVG_SCENES = {ch1:svgStation, ch1_road:svgRoad, ch1_avenue:svgAvenue, ch1_pond:svgPond, ch1_home:svgHome,
   ch2:svgKitchen, ch2_room:svgRoom, ch2_lane:svgLane, ch2_lynde:svgLyndeRoom, ch2_night:svgNightLane,
   ch3:svgParlor, ch3_path:svgFirPath, ch3_garden:svgGarden, ch3_bridge:svgBridge,
   ch4:svgClass, ch4_birch:svgBirch, ch4_spruce:svgSpruce, ch4_yard:svgSchoolYard,
   ch5:svgTeaRoom, ch5_orchard:svgOrchard, ch5_dusk:svgDuskDoor,
   ch6:svgWinterKitchen, ch6_snow:svgSnowField, ch6_barry:svgBarryKitchen, ch6_morning:svgFrostLane,
-  ch7:svgTeaTable, ch7_spring:svgDryadSpring, ch7_garden:svgAnneGarden};
+  ch7:svgTeaTable, ch7_spring:svgDryadSpring, ch7_garden:svgAnneGarden,
+  ch8:svgSpringLane, ch8_porch:svgBackPorch, ch8_attic:svgCandleAttic};
 const svgCache = {};
 
 /* =========================================================
@@ -810,7 +847,10 @@ const SCENE_FX = {
   ch6_morning:{light:"road",   glints:{n:30, band:[.1,.9]}, petals:{n:8, col:["#ffffff"], size:[2,3], vy:[6,12], wind:-3}},
   ch7:        {light:"warm",   motes:{n:20}},
   ch7_spring: {light:"sunset", glints:{n:20, band:[.72,.86]}, motes:{n:10}},
-  ch7_garden: {light:"rose",   petals:{n:14, col:["#f4a3ae","#ffffff","#f6c25a"], size:[4,8], vy:[10,20], wind:-8}}
+  ch7_garden: {light:"rose",   petals:{n:14, col:["#f4a3ae","#ffffff","#f6c25a"], size:[4,8], vy:[10,20], wind:-8}},
+  ch8:        {light:"sunset", motes:{n:10}},
+  ch8_porch:  {light:"road",   motes:{n:14}},
+  ch8_attic:  {light:"lamp",   motes:{n:8}}
 };
 let curFx = null;
 function setSceneFx(bg){
@@ -1140,7 +1180,8 @@ const NAME_LABELS = [
   {k:`together`, ch:3, what:`다이애나와 하고 싶은 일`, free:true},
   {k:`vale`, ch:4, what:`숲 그늘의 작은 골짜기`, canon:`제비꽃 골짜기`},
   {k:`prayer`, ch:6, what:`오늘을 기념하는 새 기도문`, free:true},
-  {k:`newday`, ch:7, what:`실수 없는 새날의 도전`, free:true}
+  {k:`newday`, ch:7, what:`실수 없는 새날의 도전`, free:true},
+  {k:`snood`, ch:8, what:`검은 벨벳 리본`, canon:`스누드`}
 ];
 const READER_TYPE = {
   canon:{emoji:`📖`, name:`원작 탐정형`, e:`원작 속 앤의 마음을 정확히 읽어 내는 독자예요. 인물이 왜 그렇게 행동하는지 꼼꼼히 따라가며 읽었어요.`, l:`인물의 성격과 동기를 정확히 읽어 내는 독자입니다. 원작의 흐름을 존중하며 앤의 선택이 지닌 의미를 따라갔습니다.`},
@@ -1385,7 +1426,7 @@ el.btnHelp.addEventListener("click", e => {
   modal("🖼️ 이미지 파일 이름 안내", `<p>이미지 이름만 맞추면 알맞은 장면에 자동으로 들어가요. 없는 장면은 내장 수채화 그림이 대신 나와요.</p>
     <p style="margin-top:8px"><b>배경 (16:9 권장)</b> · 앞에 <code>bg_</code>를 붙여도 돼요 (예: <code>bg_ch2.png</code>)</p>
     <div class="img-list">${BG_KEYS.map(k => `<span class="${has(k)}">${k}</span>`).join("")}</div>
-    <p style="margin-top:4px;font-size:.8rem;color:#8a7461;line-height:1.7">1장: ch1 = 기차역 · ch1_road = 언덕길 · ch1_avenue = 가로수길 · ch1_pond = 연못 · ch1_home = 초록 지붕 집(밤)<br>2장: ch2 = 초록 지붕 집 부엌 · ch2_room = 앤의 방(동쪽 다락방) · ch2_lane = 노을 진 오솔길 · ch2_lynde = 린드 부인네 부엌 · ch2_night = 밤의 오솔길<br>3장: ch3 = 배리 씨네 거실 · ch3_path = 시냇물 건너 전나무 언덕 지름길 · ch3_garden = 배리 씨네 노을 정원 · ch3_bridge = 통나무 다리와 샘 · 인물 diana, barry<br>4장: ch4 = 에이번리 학교 교실 · ch4_birch = 자작나무 길(아침) · ch4_spruce = 가문비나무 숲(한낮) · ch4_yard = 학교 앞 하굣길 · 인물 gilbert, phillips<br>5장: ch5 = 초록 지붕 집 거실(다과상) · ch5_orchard = 가을 과수원 · ch5_dusk = 해 질 녘 배리 씨네 문간<br>6장: ch6 = 겨울밤 초록 지붕 집 부엌 · ch6_snow = 달빛 눈 들판 · ch6_barry = 배리 씨네 부엌(밤) · ch6_morning = 서리 내린 겨울 아침 오솔길 · 인물 doctor, minnie_may<br>7장: ch7 = 목사님 맞이 차 식탁 · ch7_spring = 해 질 녘 드라이어드의 샘 · ch7_garden = 앤의 꽃밭 · 인물 allan</p>
+    <p style="margin-top:4px;font-size:.8rem;color:#8a7461;line-height:1.7">1장: ch1 = 기차역 · ch1_road = 언덕길 · ch1_avenue = 가로수길 · ch1_pond = 연못 · ch1_home = 초록 지붕 집(밤)<br>2장: ch2 = 초록 지붕 집 부엌 · ch2_room = 앤의 방(동쪽 다락방) · ch2_lane = 노을 진 오솔길 · ch2_lynde = 린드 부인네 부엌 · ch2_night = 밤의 오솔길<br>3장: ch3 = 배리 씨네 거실 · ch3_path = 시냇물 건너 전나무 언덕 지름길 · ch3_garden = 배리 씨네 노을 정원 · ch3_bridge = 통나무 다리와 샘 · 인물 diana, barry<br>4장: ch4 = 에이번리 학교 교실 · ch4_birch = 자작나무 길(아침) · ch4_spruce = 가문비나무 숲(한낮) · ch4_yard = 학교 앞 하굣길 · 인물 gilbert, phillips<br>5장: ch5 = 초록 지붕 집 거실(다과상) · ch5_orchard = 가을 과수원 · ch5_dusk = 해 질 녘 배리 씨네 문간<br>6장: ch6 = 겨울밤 초록 지붕 집 부엌 · ch6_snow = 달빛 눈 들판 · ch6_barry = 배리 씨네 부엌(밤) · ch6_morning = 서리 내린 겨울 아침 오솔길 · 인물 doctor, minnie_may<br>7장: ch7 = 목사님 맞이 차 식탁 · ch7_spring = 해 질 녘 드라이어드의 샘 · ch7_garden = 앤의 꽃밭 · 인물 allan<br>8장: ch8 = 봄 저녁 초록 지붕 집 가는 길 · ch8_porch = 행상인이 온 뒷문 계단 · ch8_attic = 촛불 켜진 밤의 다락방 · 인물 anne_green_hair</p>
     <p style="margin-top:8px"><b>캐릭터 (투명 PNG 권장 · 흰 배경은 자동으로 지워요)</b></p>
     <div class="img-list">${SPRITE_KEYS.map(k => `<span class="${has(k)}">${k}</span>`).join("")}</div>
     <p style="margin-top:8px;font-size:.82rem;color:#8a7461">초록색 = 지금 적용됨 · 회색 = 아직 없음</p>

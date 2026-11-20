@@ -1,5 +1,5 @@
 /* 빨강 머리 앤 오프라인 지원: 한 번 열면 인터넷 없이도 실행되고, 인터넷이 될 때 새 버전을 받아 둡니다. */
-const CACHE = "anne-vn-v3";
+const CACHE = "anne-vn-v4";
 const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./apple-touch-icon.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));

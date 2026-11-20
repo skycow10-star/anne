@@ -1208,7 +1208,9 @@ function renderCover(){
     : "앤이 초록 지붕 집의 가족이 되어 가는 이야기예요. 무엇을 고르느냐에 따라 결말이 바뀌고, 앞에서 고른 것이 다음 장에 다시 나와요! 📖 원문 책장을 열면 원작 소설 문장도 함께 읽을 수 있어요.";
   el.btnContinue.hidden = !S.started || S.phase === "cover";
   const chips = $("chapChips");
-  chips.innerHTML = `<button type="button" class="btn" id="coverChapters">📚 장 골라서 시작하기</button>`;
+  const other = EASY_MODE ? (/^https?:$/.test(location.protocol) ? "./" : location.pathname) : (/^https?:$/.test(location.protocol) ? "easy/" : location.pathname + "?easy");
+  chips.innerHTML = `<button type="button" class="btn" id="coverChapters">📚 장 골라서 시작하기</button><a class="btn" id="coverSwitch" href="${other}" style="text-decoration:none">${EASY_MODE ? "📖 원래 이야기로 가기" : "🌼 쉬운 이야기로 가기"}</a>`;
+  $("coverSwitch").onclick = e => e.stopPropagation();
   $("coverChapters").onclick = e => { e.stopPropagation(); openChapterPicker(); };
   el.btnStart.textContent = el.btnContinue.hidden ? "📖 이야기 시작하기" : "📖 처음부터 시작";
   el.dlgText.hidden = false; el.choices.hidden = true; el.note.hidden = true;

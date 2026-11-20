@@ -2467,7 +2467,11 @@ if(window.STUDENT_MODE && location.hash !== "#teacher") document.body.classList.
 window.addEventListener("hashchange", () => document.body.classList.toggle("student", !!window.STUDENT_MODE && location.hash !== "#teacher"));
 window.__anne = {state:() => S, node:() => curNode(), persist:() => P, process:(src, key) => processImage(src, key), uploaded:() => uploaded, exportHTML:student => collectImages().then(im => buildHTML(im, student))};
 /* 홈 화면 앱(웹앱): 인터넷 주소로 열었을 때만 오프라인 기능을 켭니다. 파일로 열면 그냥 지나갑니다. */
-if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){ window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {})); }
+if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
+  const hadCtl = !!navigator.serviceWorker.controller; let reloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => { if(hadCtl && !reloaded){ reloaded = true; location.reload(); } });
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js", {updateViaCache:"none"}).then(r => r.update()).catch(() => {}));
+}
 load(); probeFolder(); applyLevelUI(); applySoundUI(); applyFxUI(); updateGauge();
 renderCover();
 })();

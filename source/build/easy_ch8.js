@@ -1,7 +1,7 @@
 /* 쉬운 이야기 8장 · 초록 머리 (원작 27장) */
 EASY.push({
   key: `ch8`, num: 8, bgm: `bgm_ch8.mp3`, title: `초록 머리`, orig: `원작 27장`, origTitle: `허영심과 마음고생`,
-  bgKeys: [`ch8`, `ch8_porch`, `ch8_attic`],
+  bgKeys: [`ch8`, `ch8_porch`, `ch8_attic`, `ch8_mirror`],
   endings: {
     canon: {title: `이젠 익숙해진 수다`, label: `원작 결말`},
     imag:  {title: `붉은 머리를 사랑한 공주`, label: `상상 결말`},
@@ -39,10 +39,10 @@ EASY.push({
     {type:`canon`, go:`p_c`, eff:{item:`dye`}, e:`사서 바로 발라요`},
     {type:`imag`, go:`p_i`, eff:{item:`dye`, album:`s8_potion`}, e:`마법 물약이라 상상해요`}
    ]},
-  {id:`p_c`, bg:`ch8_attic`, w:`anne`, in:1, f:`anne_happy`,
+  {id:`p_c`, bg:`ch8_mirror`, w:`anne`, in:1, f:`anne_happy`,
    e:`나는 염색약을 샀어.\n다락방에서 머리에 몽땅 발랐어.`},
   {t:`goto`, to:`p_m`},
-  {id:`p_i`, bg:`ch8_attic`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`,
+  {id:`p_i`, bg:`ch8_mirror`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`,
    e:`"까마귀의 마법이여!"\n나는 주문을 외우며 약을 발랐어.`},
   {id:`p_m`, w:`anne`, in:1, f:`anne_green_hair`, cam:`shake`,
    e:`그런데… 머리가 까매지지 않았어.\n초록색이 됐어!`},
@@ -87,7 +87,7 @@ EASY.push({
   {t:`goto`, to:`h_m`},
   {id:`h_i`, w:`anne`, f:`anne_dreamy`, o:`marilla_strict`, fx:`dream`,
    e:`나는 착한 일을 하려고\n머리카락을 판 책 속 주인공이야.`},
-  {id:`h_m`, bg:`ch8_attic`, w:`anne`, in:1, f:`anne_sad`, cam:`in`,
+  {id:`h_m`, bg:`ch8_mirror`, w:`anne`, in:1, f:`anne_sad`, cam:`in`,
    e:`머리가 아주 짧아졌어.\n거울을 보니 너무 어색했어.`},
   {w:`anne`, in:1, f:`anne_happy`,
    e:`하지만 괜찮아.\n머리는 다시 자랄 거야.`},

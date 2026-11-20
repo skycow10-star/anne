@@ -787,7 +787,7 @@ const SVG_SCENES = {ch1:svgStation, ch1_road:svgRoad, ch1_avenue:svgAvenue, ch1_
   ch7:svgTeaTable, ch7_spring:svgDryadSpring, ch7_garden:svgAnneGarden,
   ch8:svgSpringLane, ch8_porch:svgBackPorch, ch8_attic:svgCandleAttic,
   ch9:svgBirchPond, ch9_drift:svgDriftFlat, ch9_bridge:svgBridgePiles,
-  ch10:svgSummerPorch, ch10_pasture:svgSunsetPasture, ch10_hill:svgBendHill};
+  ch10:svgSummerPorch, ch10_pasture:svgSunsetPasture, ch10_hill:svgBendHill, ch8_mirror:svgRoom, ch10_home:svgHome};
 const svgCache = {};
 
 /* =========================================================
@@ -939,7 +939,9 @@ const SCENE_FX = {
   ch9_bridge: {light:"dim",    glints:{n:20, band:[.64,.9]}},
   ch10:       {light:"sunset", motes:{n:16}},
   ch10_pasture:{light:"sunset", petals:{n:8, col:["#e8a04a","#d9733a"], size:[4,7], vy:[12,22], wind:-10}},
-  ch10_hill:  {light:"night",  stars:{n:28, band:[0,.35]}}
+  ch10_hill:  {light:"night",  stars:{n:28, band:[0,.35]}},
+  ch8_mirror: {light:"dim",    motes:{n:14}},
+  ch10_home:  {light:"sunset", petals:{n:6, col:["#ffffff","#f6d36a"], size:[3,6], vy:[10,18], wind:-6}}
 };
 let curFx = null;
 function setSceneFx(bg){
@@ -1202,6 +1204,10 @@ function showChapterCard(){
 function renderCover(){
   setTimeout(bgmUpdate, 0);
   el.cover.classList.remove("hide"); document.body.classList.add("covering"); el.vn.classList.remove("choosing");
+  { const bg = imgFor("ch10_home") || imgFor("ch1_avenue"), an = imgFor("anne_happy"), ca = $("coverAnne");
+    el.cover.classList.toggle("art", !!bg); el.cover.classList.toggle("withanne", !!(bg && an));
+    el.cover.style.backgroundImage = bg ? `url("${bg}")` : "";
+    if(bg && an){ ca.src = an; ca.hidden = false; } else ca.hidden = true; }
   el.coverSub.textContent = (S.started && S.phase !== "cover") ? `지금 읽는 곳: ${CH.num}장 「${CH.title}」` : `초록 지붕 집으로 가는 길 · 전 ${CHAPTERS.length}장`;
   el.coverText.textContent = EASY_MODE ? "짧은 글을 읽고, 내가 앤이라면 어떻게 할지 골라 보세요." : "내가 고른 선택에 따라 앤의 이야기가 달라져요.";
   el.btnContinue.hidden = !S.started || S.phase === "cover";
@@ -1553,7 +1559,7 @@ el.btnHelp.addEventListener("click", e => {
   modal("🖼️ 이미지 파일 이름 안내", `<p>이미지 이름만 맞추면 알맞은 장면에 자동으로 들어가요. 없는 장면은 내장 수채화 그림이 대신 나와요.</p>
     <p style="margin-top:8px"><b>배경 (16:9 권장)</b> · 앞에 <code>bg_</code>를 붙여도 돼요 (예: <code>bg_ch2.png</code>)</p>
     <div class="img-list">${BG_KEYS.map(k => `<span class="${has(k)}">${k}</span>`).join("")}</div>
-    <p style="margin-top:4px;font-size:.8rem;color:#8a7461;line-height:1.7">1장: ch1 = 기차역 · ch1_road = 언덕길 · ch1_avenue = 가로수길 · ch1_pond = 연못 · ch1_home = 초록 지붕 집(밤)<br>2장: ch2 = 초록 지붕 집 부엌 · ch2_room = 앤의 방(동쪽 다락방) · ch2_lane = 노을 진 오솔길 · ch2_lynde = 린드 부인네 부엌 · ch2_night = 밤의 오솔길<br>3장: ch3 = 배리 씨네 거실 · ch3_path = 시냇물 건너 전나무 언덕 지름길 · ch3_garden = 배리 씨네 노을 정원 · ch3_bridge = 통나무 다리와 샘 · 인물 diana, barry<br>4장: ch4 = 에이번리 학교 교실 · ch4_birch = 자작나무 길(아침) · ch4_spruce = 가문비나무 숲(한낮) · ch4_yard = 학교 앞 하굣길 · 인물 gilbert, phillips<br>5장: ch5 = 초록 지붕 집 거실(다과상) · ch5_orchard = 가을 과수원 · ch5_dusk = 해 질 녘 배리 씨네 문간<br>6장: ch6 = 겨울밤 초록 지붕 집 부엌 · ch6_snow = 달빛 눈 들판 · ch6_barry = 배리 씨네 부엌(밤) · ch6_morning = 서리 내린 겨울 아침 오솔길 · 인물 doctor, minnie_may<br>7장: ch7 = 목사님 맞이 차 식탁 · ch7_spring = 해 질 녘 드라이어드의 샘 · ch7_garden = 앤의 꽃밭 · 인물 allan<br>8장: ch8 = 봄 저녁 초록 지붕 집 가는 길 · ch8_porch = 행상인이 온 뒷문 계단 · ch8_attic = 촛불 켜진 밤의 다락방 · 인물 anne_green_hair<br>9장: ch9 = 자작나무 곶이 있는 배리 씨네 연못 · ch9_drift = 평저선을 타고 떠내려가는 일레인 · ch9_bridge = 다리 밑 기둥(물속 그늘)<br>10장: ch10 = 여름 해 질 녘 초록 지붕 집 현관 · ch10_pasture = 노을 진 뒷목장 · ch10_hill = 해 진 뒤 호수로 내려가는 언덕길(길모퉁이) · 인물 anne_grown, diana_grown, gilbert_grown</p>
+    <p style="margin-top:4px;font-size:.8rem;color:#8a7461;line-height:1.7">1장: ch1 = 기차역 · ch1_road = 언덕길 · ch1_avenue = 가로수길 · ch1_pond = 연못 · ch1_home = 초록 지붕 집(밤)<br>2장: ch2 = 초록 지붕 집 부엌 · ch2_room = 앤의 방(동쪽 다락방) · ch2_lane = 노을 진 오솔길 · ch2_lynde = 린드 부인네 부엌 · ch2_night = 밤의 오솔길<br>3장: ch3 = 배리 씨네 거실 · ch3_path = 시냇물 건너 전나무 언덕 지름길 · ch3_garden = 배리 씨네 노을 정원 · ch3_bridge = 통나무 다리와 샘 · 인물 diana, barry<br>4장: ch4 = 에이번리 학교 교실 · ch4_birch = 자작나무 길(아침) · ch4_spruce = 가문비나무 숲(한낮) · ch4_yard = 학교 앞 하굣길 · 인물 gilbert, phillips<br>5장: ch5 = 초록 지붕 집 거실(다과상) · ch5_orchard = 가을 과수원 · ch5_dusk = 해 질 녘 배리 씨네 문간<br>6장: ch6 = 겨울밤 초록 지붕 집 부엌 · ch6_snow = 달빛 눈 들판 · ch6_barry = 배리 씨네 부엌(밤) · ch6_morning = 서리 내린 겨울 아침 오솔길 · 인물 doctor, minnie_may<br>7장: ch7 = 목사님 맞이 차 식탁 · ch7_spring = 해 질 녘 드라이어드의 샘 · ch7_garden = 앤의 꽃밭 · 인물 allan<br>8장: ch8 = 봄 저녁 초록 지붕 집 가는 길 · ch8_porch = 행상인이 온 뒷문 계단 · ch8_attic = 촛불 켜진 밤의 다락방 · ch8_mirror = 낮의 다락방 거울 · 인물 anne_green_hair<br>9장: ch9 = 자작나무 곶이 있는 배리 씨네 연못 · ch9_drift = 평저선을 타고 떠내려가는 일레인 · ch9_bridge = 다리 밑 기둥(물속 그늘)<br>10장: ch10 = 여름 해 질 녘 초록 지붕 집 현관 · ch10_pasture = 노을 진 뒷목장 · ch10_hill = 해 진 뒤 호수로 내려가는 언덕길(길모퉁이) · ch10_home = 여름 초록 지붕 집과 오솔길 · 인물 anne_grown, diana_grown, gilbert_grown</p>
     <p style="margin-top:8px"><b>캐릭터 (투명 PNG 권장 · 흰 배경은 자동으로 지워요)</b></p>
     <div class="img-list">${SPRITE_KEYS.map(k => `<span class="${has(k)}">${k}</span>`).join("")}</div>
     <p style="margin-top:8px;font-size:.82rem;color:#8a7461">초록색 = 지금 적용됨 · 회색 = 아직 없음</p>

@@ -148,6 +148,16 @@
   .slots span.got{border-style:solid;color:#5a3d26;background:#fff}
   .cover{position:absolute;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;
     background:linear-gradient(180deg,rgba(251,246,236,.55),rgba(251,246,236,.92));padding:16px;cursor:default}
+  .cover.art{background-size:cover;background-position:center}
+  .cover-card{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:10px}
+  .cover.art .cover-card{background:rgba(255,250,241,.86);border:1.5px solid rgba(201,170,120,.55);border-radius:22px;padding:22px 26px;box-shadow:0 10px 30px rgba(80,50,20,.18);max-width:min(560px,92%)}
+  .cover-anne{position:absolute;z-index:1;bottom:0;left:4%;height:88%;max-width:46%;object-fit:contain;object-position:bottom;filter:drop-shadow(0 6px 16px rgba(60,40,20,.25));pointer-events:none}
+  .cover.art.withanne{justify-content:center;align-items:flex-end;padding-right:5%}
+  @media (max-aspect-ratio: 1/1){
+    .cover.art.withanne{align-items:center;justify-content:flex-start;padding:6% 12px 0}
+    .cover-anne{left:50%;transform:translateX(-50%);height:52%;max-width:90%}
+    .cover.art .cover-card{padding:16px 16px}
+  }
   .cover.hide{display:none}
   .cover small{letter-spacing:.24em;font-size:.72rem;color:#a07049;font-weight:800}
   .cover h1{font-family:var(--serif);font-size:clamp(1.6rem,4.6vw,2.8rem);color:#4b3626;font-weight:800}
@@ -458,6 +468,8 @@
       <div class="badge" id="badge"></div>
       <div class="endcard" id="endcard"><div class="in" id="endIn"></div></div>
       <div class="cover" id="cover">
+        <img class="cover-anne" id="coverAnne" alt="" hidden>
+        <div class="cover-card">
         <small>ANNE OF GREEN GABLES</small>
         <h1>빨강 머리 앤</h1>
         <h3 id="coverSub"></h3>
@@ -468,6 +480,7 @@
           <button type="button" class="big alt" id="btnContinue" hidden>▶ 이어서 하기</button>
         </div>
         <div class="row chips" id="chapChips"></div>
+        </div>
       </div>
     </div>
 

@@ -148,6 +148,16 @@
   .slots span.got{border-style:solid;color:#5a3d26;background:#fff}
   .cover{position:absolute;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;
     background:linear-gradient(180deg,rgba(251,246,236,.55),rgba(251,246,236,.92));padding:16px;cursor:default}
+  .cover.art{background-size:cover;background-position:center}
+  .cover-card{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:10px}
+  .cover.art .cover-card{background:rgba(255,250,241,.86);border:1.5px solid rgba(201,170,120,.55);border-radius:22px;padding:22px 26px;box-shadow:0 10px 30px rgba(80,50,20,.18);max-width:min(560px,92%)}
+  .cover-anne{position:absolute;z-index:1;bottom:0;left:4%;height:88%;max-width:46%;object-fit:contain;object-position:bottom;filter:drop-shadow(0 6px 16px rgba(60,40,20,.25));pointer-events:none}
+  .cover.art.withanne{justify-content:center;align-items:flex-end;padding-right:5%}
+  @media (max-aspect-ratio: 1/1){
+    .cover.art.withanne{align-items:center;justify-content:flex-start;padding:6% 12px 0}
+    .cover-anne{left:50%;transform:translateX(-50%);height:52%;max-width:90%}
+    .cover.art .cover-card{padding:16px 16px}
+  }
   .cover.hide{display:none}
   .cover small{letter-spacing:.24em;font-size:.72rem;color:#a07049;font-weight:800}
   .cover h1{font-family:var(--serif);font-size:clamp(1.6rem,4.6vw,2.8rem);color:#4b3626;font-weight:800}
@@ -458,6 +468,8 @@
       <div class="badge" id="badge"></div>
       <div class="endcard" id="endcard"><div class="in" id="endIn"></div></div>
       <div class="cover" id="cover">
+        <img class="cover-anne" id="coverAnne" alt="" hidden>
+        <div class="cover-card">
         <small>ANNE OF GREEN GABLES</small>
         <h1>빨강 머리 앤</h1>
         <h3 id="coverSub"></h3>
@@ -468,6 +480,7 @@
           <button type="button" class="big alt" id="btnContinue" hidden>▶ 이어서 하기</button>
         </div>
         <div class="row chips" id="chapChips"></div>
+        </div>
       </div>
     </div>
 
@@ -519,7 +532,7 @@
 <div class="toast" id="toast"></div>
 <div class="tip" id="tip" hidden></div>
 
-<script id="embedded-images">window.EMBEDDED_IMAGES = {}; window.STUDENT_MODE = true; window.IMAGE_FILES = {"anne_angry": "img/anne_angry.webp", "anne_dreamy": "img/anne_dreamy.webp", "anne_green_hair": "img/anne_green_hair.webp", "anne_grown": "img/anne_grown.webp", "anne_happy": "img/anne_happy.webp", "anne_sad": "img/anne_sad.webp", "anne_surprised": "img/anne_surprised.webp", "barry": "img/barry.webp", "ch1": "img/ch1.webp", "ch1_avenue": "img/ch1_avenue.webp", "ch1_home": "img/ch1_home.webp", "ch1_pond": "img/ch1_pond.webp", "ch1_road": "img/ch1_road.webp", "ch2": "img/ch2.webp", "ch2_lane": "img/ch2_lane.webp", "ch2_lynde": "img/ch2_lynde.webp", "ch2_night": "img/ch2_night.webp", "ch2_room": "img/ch2_room.webp", "ch3": "img/ch3.webp", "ch3_bridge": "img/ch3_bridge.webp", "ch3_garden": "img/ch3_garden.webp", "ch3_path": "img/ch3_path.webp", "ch4": "img/ch4.webp", "ch4_birch": "img/ch4_birch.webp", "ch4_spruce": "img/ch4_spruce.webp", "ch4_yard": "img/ch4_yard.webp", "ch5": "img/ch5.webp", "ch5_dusk": "img/ch5_dusk.webp", "ch5_orchard": "img/ch5_orchard.webp", "ch6": "img/ch6.webp", "ch6_barry": "img/ch6_barry.webp", "ch6_morning": "img/ch6_morning.webp", "ch6_snow": "img/ch6_snow.webp", "ch7": "img/ch7.webp", "ch7_garden": "img/ch7_garden.webp", "ch7_spring": "img/ch7_spring.webp", "diana": "img/diana.webp", "diana_grown": "img/diana_grown.webp", "gilbert": "img/gilbert.webp", "gilbert_grown": "img/gilbert_grown.webp", "lynde": "img/lynde.webp", "marilla_strict": "img/marilla_strict.webp", "marilla_warm": "img/marilla_warm.webp", "matthew": "img/matthew.webp", "phillips": "img/phillips.webp"};</script>
+<script id="embedded-images">window.EMBEDDED_IMAGES = {}; window.STUDENT_MODE = true; window.IMAGE_FILES = {"anne_angry": "img/anne_angry.webp", "anne_dreamy": "img/anne_dreamy.webp", "anne_green_hair": "img/anne_green_hair.webp", "anne_grown": "img/anne_grown.webp", "anne_happy": "img/anne_happy.webp", "anne_sad": "img/anne_sad.webp", "anne_surprised": "img/anne_surprised.webp", "barry": "img/barry.webp", "ch1": "img/ch1.webp", "ch10": "img/ch10.webp", "ch10_hill": "img/ch10_hill.webp", "ch10_home": "img/ch10_home.webp", "ch10_pasture": "img/ch10_pasture.webp", "ch1_avenue": "img/ch1_avenue.webp", "ch1_home": "img/ch1_home.webp", "ch1_pond": "img/ch1_pond.webp", "ch1_road": "img/ch1_road.webp", "ch2": "img/ch2.webp", "ch2_lane": "img/ch2_lane.webp", "ch2_lynde": "img/ch2_lynde.webp", "ch2_night": "img/ch2_night.webp", "ch2_room": "img/ch2_room.webp", "ch3": "img/ch3.webp", "ch3_bridge": "img/ch3_bridge.webp", "ch3_garden": "img/ch3_garden.webp", "ch3_path": "img/ch3_path.webp", "ch4": "img/ch4.webp", "ch4_birch": "img/ch4_birch.webp", "ch4_spruce": "img/ch4_spruce.webp", "ch4_yard": "img/ch4_yard.webp", "ch5": "img/ch5.webp", "ch5_dusk": "img/ch5_dusk.webp", "ch5_orchard": "img/ch5_orchard.webp", "ch6": "img/ch6.webp", "ch6_barry": "img/ch6_barry.webp", "ch6_morning": "img/ch6_morning.webp", "ch6_snow": "img/ch6_snow.webp", "ch7": "img/ch7.webp", "ch7_garden": "img/ch7_garden.webp", "ch7_spring": "img/ch7_spring.webp", "ch8": "img/ch8.webp", "ch8_attic": "img/ch8_attic.webp", "ch8_mirror": "img/ch8_mirror.webp", "ch8_porch": "img/ch8_porch.webp", "ch9": "img/ch9.webp", "ch9_bridge": "img/ch9_bridge.webp", "ch9_drift": "img/ch9_drift.webp", "diana": "img/diana.webp", "diana_grown": "img/diana_grown.webp", "doctor": "img/doctor.webp", "gilbert": "img/gilbert.webp", "gilbert_grown": "img/gilbert_grown.webp", "lynde": "img/lynde.webp", "marilla_strict": "img/marilla_strict.webp", "marilla_warm": "img/marilla_warm.webp", "matthew": "img/matthew.webp", "minnie_may": "img/minnie_may.webp", "phillips": "img/phillips.webp"};</script>
 <script>
 const BOOK = {};
 const CHAPTERS = [];
@@ -3822,7 +3835,7 @@ CHAPTERS.push({
    ========================================================= */
 CHAPTERS.push({
   key: `ch8`, num: 8, bgm: `bgm_ch8.mp3`, title: `초록 머리`, orig: `원작 27장`, origTitle: `허영심과 마음고생`,
-  bgKeys: [`ch8`, `ch8_porch`, `ch8_attic`],
+  bgKeys: [`ch8`, `ch8_porch`, `ch8_attic`, `ch8_mirror`],
   endings: {
     canon: {title: `이젠 익숙해진 수다`, label: `원작 결말`},
     imag:  {title: `까마귀 머리 공주의 비밀`, label: `상상 결말`},
@@ -3936,18 +3949,18 @@ CHAPTERS.push({
     {type:`imag`, go:`p_i`, eff:{item:`dye`}, e:`'마법의 까마귀 물약'이라고 상상하며, 주문을 외우고 바른다.`, l:`'마법의 까마귀 물약'이라 여기며 주문을 외우고 바른다.`, s:{e:`마법 물약이라 상상하며 발랐다`, l:`물약의 주문을 외웠다`}},
     {type:`bal`, go:`p_b`, eff:{item:`dye`}, e:`사긴 사지만, 머리 한 가닥에 먼저 시험해 본다.`, l:`사되, 머리 한 가닥에 먼저 시험해 본다.`, s:{e:`한 가닥에 먼저 시험해 봤다`, l:`시험부터 해 보았다`}}
    ]},
-  {id:`p_c`, bg:`ch8_attic`, w:`anne`, in:1, f:`anne_happy`, bk:[`27-26`],
+  {id:`p_c`, bg:`ch8_mirror`, w:`anne`, in:1, f:`anne_happy`, bk:[`27-26`],
    e:`"너니까 50센트에 줄게. 거저 주는 거나 마찬가지야." 정말 친절한 아저씨 같았어! 나는 닭 키워서 번 돈을 내고, 아저씨가 가자마자 다락방에 올라가 설명서대로 낡은 머리 솔로 한 병을 다 발랐어.`,
    l:`"너니까 50센트에 주마. 거저 주는 거나 마찬가지지." 참 마음씨 좋은 사람 같았다. 나는 닭을 길러 번 돈을 내고, 그가 떠나자마자 다락방에 올라가 설명서대로 낡은 머리 솔로 한 병을 남김없이 발랐다.`},
   {t:`goto`, to:`p_m`},
-  {id:`p_i`, bg:`ch8_attic`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`, cam:`up`, eff:{album:`magicPotion`},
+  {id:`p_i`, bg:`ch8_mirror`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`, cam:`up`, eff:{album:`magicPotion`},
    e:`나는 다락방 거울 앞에서 병을 높이 들고 주문을 외웠어. "밤의 까마귀여, 너의 깃털 빛을 내게 다오!" 그리고 솔로 한 병을 다 발랐지. 이제 거울을 보면 새까만 머리의 공주가…`,
    l:`나는 다락방 거울 앞에서 병을 높이 들고 주문을 외웠다. "밤의 까마귀여, 네 깃털의 빛을 내게 다오!" 그리고 솔로 한 병을 남김없이 발랐다. 이제 거울 속에는 까마귀 머리의 공주가…`},
   {t:`goto`, to:`p_m`},
-  {id:`p_b`, bg:`ch8_attic`, w:`anne`, in:1, f:`anne_happy`, eff:{album:`testStrand`},
+  {id:`p_b`, bg:`ch8_mirror`, w:`anne`, in:1, f:`anne_happy`, eff:{album:`testStrand`},
    e:`나는 귀 뒤쪽 머리 한 가닥에 먼저 발라 봤어. 그런데 다락방이 어두워서 그런지 꽤 까맣게 보이는 거야! '됐다!' 나는 안심하고 한 병을 다 발랐어. 어두운 데서 시험한 게 실수였지…`,
    l:`나는 귀 뒤의 머리 한 가닥에 먼저 발라 보았다. 어둑한 다락방에서는 꽤 까맣게 보였다. '됐어!' 안심한 나는 한 병을 남김없이 발랐다. 어두운 곳에서 시험한 것이 실수였다.`},
-  {id:`p_m`, bg:`ch8_attic`, w:`anne`, f:`anne_green_hair`, o:`marilla_strict`, bk:[`27-26`,`27-27`,`27-28`], cam:`shake`,
+  {id:`p_m`, bg:`ch8_mirror`, w:`anne`, f:`anne_green_hair`, o:`marilla_strict`, bk:[`27-26`,`27-27`,`27-28`], cam:`shake`,
    e:`그런데 머리가 변한 끔찍한 색을 보고 얼마나 뉘우쳤는지 몰라. 아주머니 말씀대로 비누로 박박 감았지만 소용없었어. 행상인 말 중에 '감아도 안 지워진다'는 것만은 정말 사실이었던 거야.`,
    l:`그러나 머리카락이 변한 끔찍한 색을 본 순간, 나는 나쁜 짓을 한 것을 뼈저리게 뉘우쳤다. "네 허영심이 너를 어디로 이끌었는지 눈을 떴기를 바란다." 아주머니 말씀대로 비누와 물로 박박 감았지만 아무 소용이 없었다. 행상인의 말 가운데 감아도 지워지지 않는다는 것만은 분명 사실이었다.`},
   {w:`anne`, f:`anne_green_hair`, o:`marilla_warm`, bk:[`27-29`,`27-30`],
@@ -3977,7 +3990,7 @@ CHAPTERS.push({
    e:`"제 실수니까 받아들일게요. 그래도… 조금은 울어도 되죠?" 아주머니가 가위를 든 채 잠시 멈추셨어. "울어도 된다. 그리고 앤, 머리는 다시 자란단다." 그 말이 이상하게 위로가 됐어.`,
    l:`"제 실수이니 받아들일게요. 그래도 조금은 울어도 되죠?" 가위를 든 아주머니가 잠시 손을 멈췄다. "울어도 된다. 그리고 앤, 머리는 다시 자란단다." 그 말이 이상하게 위로가 되었다.`},
   /* ---------- 거울 ---------- */
-  {id:`h_m`, bg:`ch8_attic`, w:`anne`, in:1, f:`anne_sad`, bk:[`27-34`,`27-35`], cam:`in`,
+  {id:`h_m`, bg:`ch8_mirror`, w:`anne`, in:1, f:`anne_sad`, bk:[`27-34`,`27-35`], cam:`in`,
    e:`아주머니는 머리를 아주 짧게 자르셨어. 다락방에 올라가 거울을 봤더니… 아무리 좋게 말해도 어울린다고 할 수 없었어. 나는 거울을 벽 쪽으로 홱 돌려 버렸어. "머리가 다시 자랄 때까지 절대로 내 모습을 안 볼 거야!"`,
    l:`아주머니는 철저했고, 머리는 될 수 있는 한 짧게 잘라야 했다. 위층에 올라가 거울을 들여다본 나는 절망 속에서 오히려 차분해졌다. 아무리 부드럽게 말해도 어울린다고 하기 어려웠다. 나는 곧바로 거울을 벽 쪽으로 돌려 버렸다. "머리가 다시 자랄 때까지 다시는 내 모습을 보지 않을 거야!"`},
   {t:`choice`, id:`C5`, kind:`act`, label:`벽을 향한 거울`, f:`anne_sad`,
@@ -4298,7 +4311,7 @@ CHAPTERS.push({
    ========================================================= */
 CHAPTERS.push({
   key: `ch10`, num: 10, bgm: `bgm_ch10.mp3`, title: `길모퉁이`, orig: `원작 32~38장`, origTitle: `길모퉁이`,
-  bgKeys: [`ch10`, `ch10_pasture`, `ch10_hill`],
+  bgKeys: [`ch10`, `ch10_pasture`, `ch10_hill`, `ch10_home`],
   midReport: true, finalReport: true,
   endings: {
     canon: {title: `하느님은 하늘에, 세상은 평안히`, label: `원작 결말`},
@@ -4337,7 +4350,7 @@ CHAPTERS.push({
   {id:`b1`, bg:`ch4`, w:`anne`, in:1, f:`anne_happy`, cam:`out`,
    e:`백합 아가씨 사건 뒤로 3년이 흘렀어. 스테이시 선생님의 퀸스 반에서 열심히 공부한 끝에, 나는 퀸스 학원 입학시험에 합격했어. 그것도 이백 명 중 일등으로! 길버트랑 동점이었지만, 내 이름이 맨 위에 있었어.`,
    l:`백합 아가씨 사건 뒤로 3년이 흘렀다. 스테이시 선생님의 퀸스 반에서 공부한 끝에, 나는 퀸스 학원 입학시험에 합격했다. 이백 명 가운데 일등으로. 길버트와 동점이었지만 내 이름이 맨 위에 있었다.`},
-  {w:`anne`, in:1, f:`anne_grown`, bk:[`32-40`,`32-41`], cam:`in`,
+  {bg:`ch10_home`, w:`anne`, in:1, f:`anne_grown`, bk:[`32-40`,`32-41`], cam:`in`,
    e:`그 순간은 정말 살아 있을 보람이 있었어. 퀸스로 떠나기 전날, 마릴라 아주머니는 내 모습을 보고 우셨어. "네가 그냥 꼬맹이로 있었으면 싶었다. 이제 너는 다 자라서 떠나가는구나." 그리고 퀸스에서 1년 만에 1급 교사 자격증을 따고, 영문학 최고상인 에이버리 장학금까지 탔어! 가을엔 레드먼드 대학에 가게 됐어.`,
    l:`그 순간은 살아 있을 보람이 있었다. 퀸스로 떠나던 무렵, 아주머니는 나를 보며 눈물을 보였다. "네가 그냥 꼬맹이로 있었으면 싶었다. 이제 너는 다 자라서 떠나가는구나." 그리고 나는 퀸스에서 한 해 만에 1급 교사 자격증을 따고, 영문학 최고 성적에 주는 에이버리 장학금까지 받았다. 가을이면 레드먼드 대학에 간다.`},
   {w:`anne`, in:1, f:`anne_grown`, when:s => s.flags.gilbertSoft || s.flags.gilbertMaybe,
@@ -5547,7 +5560,7 @@ EASY.push({
 /* 쉬운 이야기 8장 · 초록 머리 (원작 27장) */
 EASY.push({
   key: `ch8`, num: 8, bgm: `bgm_ch8.mp3`, title: `초록 머리`, orig: `원작 27장`, origTitle: `허영심과 마음고생`,
-  bgKeys: [`ch8`, `ch8_porch`, `ch8_attic`],
+  bgKeys: [`ch8`, `ch8_porch`, `ch8_attic`, `ch8_mirror`],
   endings: {
     canon: {title: `이젠 익숙해진 수다`, label: `원작 결말`},
     imag:  {title: `붉은 머리를 사랑한 공주`, label: `상상 결말`},
@@ -5585,10 +5598,10 @@ EASY.push({
     {type:`canon`, go:`p_c`, eff:{item:`dye`}, e:`사서 바로 발라요`},
     {type:`imag`, go:`p_i`, eff:{item:`dye`, album:`s8_potion`}, e:`마법 물약이라 상상해요`}
    ]},
-  {id:`p_c`, bg:`ch8_attic`, w:`anne`, in:1, f:`anne_happy`,
+  {id:`p_c`, bg:`ch8_mirror`, w:`anne`, in:1, f:`anne_happy`,
    e:`나는 염색약을 샀어.\n다락방에서 머리에 몽땅 발랐어.`},
   {t:`goto`, to:`p_m`},
-  {id:`p_i`, bg:`ch8_attic`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`,
+  {id:`p_i`, bg:`ch8_mirror`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`,
    e:`"까마귀의 마법이여!"\n나는 주문을 외우며 약을 발랐어.`},
   {id:`p_m`, w:`anne`, in:1, f:`anne_green_hair`, cam:`shake`,
    e:`그런데… 머리가 까매지지 않았어.\n초록색이 됐어!`},
@@ -5633,7 +5646,7 @@ EASY.push({
   {t:`goto`, to:`h_m`},
   {id:`h_i`, w:`anne`, f:`anne_dreamy`, o:`marilla_strict`, fx:`dream`,
    e:`나는 착한 일을 하려고\n머리카락을 판 책 속 주인공이야.`},
-  {id:`h_m`, bg:`ch8_attic`, w:`anne`, in:1, f:`anne_sad`, cam:`in`,
+  {id:`h_m`, bg:`ch8_mirror`, w:`anne`, in:1, f:`anne_sad`, cam:`in`,
    e:`머리가 아주 짧아졌어.\n거울을 보니 너무 어색했어.`},
   {w:`anne`, in:1, f:`anne_happy`,
    e:`하지만 괜찮아.\n머리는 다시 자랄 거야.`},
@@ -5808,7 +5821,7 @@ EASY.push({
 /* 쉬운 이야기 10장 · 길모퉁이 (원작 32~38장) */
 EASY.push({
   key: `ch10`, num: 10, bgm: `bgm_ch10.mp3`, title: `길모퉁이`, orig: `원작 32~38장`, origTitle: `길모퉁이`,
-  bgKeys: [`ch10`, `ch10_pasture`, `ch10_hill`],
+  bgKeys: [`ch10`, `ch10_pasture`, `ch10_hill`, `ch10_home`],
   midReport: true, finalReport: true,
   endings: {
     canon: {title: `세상은 평안하다`, label: `원작 결말`},
@@ -5836,7 +5849,7 @@ EASY.push({
   nodes: [
   {id:`b1`, bg:`ch4`, w:`anne`, in:1, f:`anne_grown`, cam:`out`,
    e:`몇 년이 지났어. 나는 열여섯 살이야.\n열심히 공부해서 큰 상도 받았어.`},
-  {w:`anne`, in:1, f:`anne_grown`, eff:{item:`avery`},
+  {bg:`ch10_home`, w:`anne`, in:1, f:`anne_grown`, eff:{item:`avery`},
    e:`가을에는 먼 곳에 있는\n대학에 가게 됐어!`},
   /* ---------- 매슈 ---------- */
   {bg:`ch10_pasture`, w:`anne`, in:1, f:`anne_grown`, o:`matthew`, cam:`out`,
@@ -6749,7 +6762,7 @@ const SVG_SCENES = {ch1:svgStation, ch1_road:svgRoad, ch1_avenue:svgAvenue, ch1_
   ch7:svgTeaTable, ch7_spring:svgDryadSpring, ch7_garden:svgAnneGarden,
   ch8:svgSpringLane, ch8_porch:svgBackPorch, ch8_attic:svgCandleAttic,
   ch9:svgBirchPond, ch9_drift:svgDriftFlat, ch9_bridge:svgBridgePiles,
-  ch10:svgSummerPorch, ch10_pasture:svgSunsetPasture, ch10_hill:svgBendHill};
+  ch10:svgSummerPorch, ch10_pasture:svgSunsetPasture, ch10_hill:svgBendHill, ch8_mirror:svgRoom, ch10_home:svgHome};
 const svgCache = {};
 
 /* =========================================================
@@ -6901,7 +6914,9 @@ const SCENE_FX = {
   ch9_bridge: {light:"dim",    glints:{n:20, band:[.64,.9]}},
   ch10:       {light:"sunset", motes:{n:16}},
   ch10_pasture:{light:"sunset", petals:{n:8, col:["#e8a04a","#d9733a"], size:[4,7], vy:[12,22], wind:-10}},
-  ch10_hill:  {light:"night",  stars:{n:28, band:[0,.35]}}
+  ch10_hill:  {light:"night",  stars:{n:28, band:[0,.35]}},
+  ch8_mirror: {light:"dim",    motes:{n:14}},
+  ch10_home:  {light:"sunset", petals:{n:6, col:["#ffffff","#f6d36a"], size:[3,6], vy:[10,18], wind:-6}}
 };
 let curFx = null;
 function setSceneFx(bg){
@@ -7164,6 +7179,10 @@ function showChapterCard(){
 function renderCover(){
   setTimeout(bgmUpdate, 0);
   el.cover.classList.remove("hide"); document.body.classList.add("covering"); el.vn.classList.remove("choosing");
+  { const bg = imgFor("ch10_home") || imgFor("ch1_avenue"), an = imgFor("anne_happy"), ca = $("coverAnne");
+    el.cover.classList.toggle("art", !!bg); el.cover.classList.toggle("withanne", !!(bg && an));
+    el.cover.style.backgroundImage = bg ? `url("${bg}")` : "";
+    if(bg && an){ ca.src = an; ca.hidden = false; } else ca.hidden = true; }
   el.coverSub.textContent = (S.started && S.phase !== "cover") ? `지금 읽는 곳: ${CH.num}장 「${CH.title}」` : `초록 지붕 집으로 가는 길 · 전 ${CHAPTERS.length}장`;
   el.coverText.textContent = EASY_MODE ? "짧은 글을 읽고, 내가 앤이라면 어떻게 할지 골라 보세요." : "내가 고른 선택에 따라 앤의 이야기가 달라져요.";
   el.btnContinue.hidden = !S.started || S.phase === "cover";
@@ -7515,7 +7534,7 @@ el.btnHelp.addEventListener("click", e => {
   modal("🖼️ 이미지 파일 이름 안내", `<p>이미지 이름만 맞추면 알맞은 장면에 자동으로 들어가요. 없는 장면은 내장 수채화 그림이 대신 나와요.</p>
     <p style="margin-top:8px"><b>배경 (16:9 권장)</b> · 앞에 <code>bg_</code>를 붙여도 돼요 (예: <code>bg_ch2.png</code>)</p>
     <div class="img-list">${BG_KEYS.map(k => `<span class="${has(k)}">${k}</span>`).join("")}</div>
-    <p style="margin-top:4px;font-size:.8rem;color:#8a7461;line-height:1.7">1장: ch1 = 기차역 · ch1_road = 언덕길 · ch1_avenue = 가로수길 · ch1_pond = 연못 · ch1_home = 초록 지붕 집(밤)<br>2장: ch2 = 초록 지붕 집 부엌 · ch2_room = 앤의 방(동쪽 다락방) · ch2_lane = 노을 진 오솔길 · ch2_lynde = 린드 부인네 부엌 · ch2_night = 밤의 오솔길<br>3장: ch3 = 배리 씨네 거실 · ch3_path = 시냇물 건너 전나무 언덕 지름길 · ch3_garden = 배리 씨네 노을 정원 · ch3_bridge = 통나무 다리와 샘 · 인물 diana, barry<br>4장: ch4 = 에이번리 학교 교실 · ch4_birch = 자작나무 길(아침) · ch4_spruce = 가문비나무 숲(한낮) · ch4_yard = 학교 앞 하굣길 · 인물 gilbert, phillips<br>5장: ch5 = 초록 지붕 집 거실(다과상) · ch5_orchard = 가을 과수원 · ch5_dusk = 해 질 녘 배리 씨네 문간<br>6장: ch6 = 겨울밤 초록 지붕 집 부엌 · ch6_snow = 달빛 눈 들판 · ch6_barry = 배리 씨네 부엌(밤) · ch6_morning = 서리 내린 겨울 아침 오솔길 · 인물 doctor, minnie_may<br>7장: ch7 = 목사님 맞이 차 식탁 · ch7_spring = 해 질 녘 드라이어드의 샘 · ch7_garden = 앤의 꽃밭 · 인물 allan<br>8장: ch8 = 봄 저녁 초록 지붕 집 가는 길 · ch8_porch = 행상인이 온 뒷문 계단 · ch8_attic = 촛불 켜진 밤의 다락방 · 인물 anne_green_hair<br>9장: ch9 = 자작나무 곶이 있는 배리 씨네 연못 · ch9_drift = 평저선을 타고 떠내려가는 일레인 · ch9_bridge = 다리 밑 기둥(물속 그늘)<br>10장: ch10 = 여름 해 질 녘 초록 지붕 집 현관 · ch10_pasture = 노을 진 뒷목장 · ch10_hill = 해 진 뒤 호수로 내려가는 언덕길(길모퉁이) · 인물 anne_grown, diana_grown, gilbert_grown</p>
+    <p style="margin-top:4px;font-size:.8rem;color:#8a7461;line-height:1.7">1장: ch1 = 기차역 · ch1_road = 언덕길 · ch1_avenue = 가로수길 · ch1_pond = 연못 · ch1_home = 초록 지붕 집(밤)<br>2장: ch2 = 초록 지붕 집 부엌 · ch2_room = 앤의 방(동쪽 다락방) · ch2_lane = 노을 진 오솔길 · ch2_lynde = 린드 부인네 부엌 · ch2_night = 밤의 오솔길<br>3장: ch3 = 배리 씨네 거실 · ch3_path = 시냇물 건너 전나무 언덕 지름길 · ch3_garden = 배리 씨네 노을 정원 · ch3_bridge = 통나무 다리와 샘 · 인물 diana, barry<br>4장: ch4 = 에이번리 학교 교실 · ch4_birch = 자작나무 길(아침) · ch4_spruce = 가문비나무 숲(한낮) · ch4_yard = 학교 앞 하굣길 · 인물 gilbert, phillips<br>5장: ch5 = 초록 지붕 집 거실(다과상) · ch5_orchard = 가을 과수원 · ch5_dusk = 해 질 녘 배리 씨네 문간<br>6장: ch6 = 겨울밤 초록 지붕 집 부엌 · ch6_snow = 달빛 눈 들판 · ch6_barry = 배리 씨네 부엌(밤) · ch6_morning = 서리 내린 겨울 아침 오솔길 · 인물 doctor, minnie_may<br>7장: ch7 = 목사님 맞이 차 식탁 · ch7_spring = 해 질 녘 드라이어드의 샘 · ch7_garden = 앤의 꽃밭 · 인물 allan<br>8장: ch8 = 봄 저녁 초록 지붕 집 가는 길 · ch8_porch = 행상인이 온 뒷문 계단 · ch8_attic = 촛불 켜진 밤의 다락방 · ch8_mirror = 낮의 다락방 거울 · 인물 anne_green_hair<br>9장: ch9 = 자작나무 곶이 있는 배리 씨네 연못 · ch9_drift = 평저선을 타고 떠내려가는 일레인 · ch9_bridge = 다리 밑 기둥(물속 그늘)<br>10장: ch10 = 여름 해 질 녘 초록 지붕 집 현관 · ch10_pasture = 노을 진 뒷목장 · ch10_hill = 해 진 뒤 호수로 내려가는 언덕길(길모퉁이) · ch10_home = 여름 초록 지붕 집과 오솔길 · 인물 anne_grown, diana_grown, gilbert_grown</p>
     <p style="margin-top:8px"><b>캐릭터 (투명 PNG 권장 · 흰 배경은 자동으로 지워요)</b></p>
     <div class="img-list">${SPRITE_KEYS.map(k => `<span class="${has(k)}">${k}</span>`).join("")}</div>
     <p style="margin-top:8px;font-size:.82rem;color:#8a7461">초록색 = 지금 적용됨 · 회색 = 아직 없음</p>

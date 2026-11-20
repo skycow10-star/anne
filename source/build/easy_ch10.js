@@ -1,7 +1,7 @@
 /* 쉬운 이야기 10장 · 길모퉁이 (원작 32~38장) */
 EASY.push({
   key: `ch10`, num: 10, bgm: `bgm_ch10.mp3`, title: `길모퉁이`, orig: `원작 32~38장`, origTitle: `길모퉁이`,
-  bgKeys: [`ch10`, `ch10_pasture`, `ch10_hill`],
+  bgKeys: [`ch10`, `ch10_pasture`, `ch10_hill`, `ch10_home`],
   midReport: true, finalReport: true,
   endings: {
     canon: {title: `세상은 평안하다`, label: `원작 결말`},
@@ -29,7 +29,7 @@ EASY.push({
   nodes: [
   {id:`b1`, bg:`ch4`, w:`anne`, in:1, f:`anne_grown`, cam:`out`,
    e:`몇 년이 지났어. 나는 열여섯 살이야.\n열심히 공부해서 큰 상도 받았어.`},
-  {w:`anne`, in:1, f:`anne_grown`, eff:{item:`avery`},
+  {bg:`ch10_home`, w:`anne`, in:1, f:`anne_grown`, eff:{item:`avery`},
    e:`가을에는 먼 곳에 있는\n대학에 가게 됐어!`},
   /* ---------- 매슈 ---------- */
   {bg:`ch10_pasture`, w:`anne`, in:1, f:`anne_grown`, o:`matthew`, cam:`out`,

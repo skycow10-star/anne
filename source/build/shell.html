@@ -154,6 +154,12 @@
   .cover h3{font-size:clamp(.9rem,2vw,1.05rem);color:#7a4a2a}
   .cover .cover-help{font-size:.78rem;font-weight:600;color:#8a7461;max-width:520px}
   .cover p{font-size:clamp(.8rem,1.8vw,.95rem);color:var(--ink2);font-weight:600;line-height:1.6;max-width:540px;word-break:keep-all}
+  .chgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:6px}
+  @media (max-width:520px){.chgrid{grid-template-columns:1fr 1fr;gap:6px}.chgrid button{padding:8px 9px}.chgrid b{font-size:.84rem}}
+  .chgrid button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:10px 12px;border-radius:12px;border:1.5px solid #e6d3b8;background:#fffaf2;color:#4a3626;font:inherit;cursor:pointer}
+  .chgrid button:hover,.chgrid button:focus-visible{border-color:#c9784a;background:#fff3e2}
+  .chgrid button.cur{border-color:#c9504a;background:#fde9e4}
+  .chgrid b{font-size:.95rem}.chgrid small{font-size:.74rem;color:#8a7461}.chgrid .st{font-size:.74rem;color:#5b8a5e}
   .cover .chips{gap:6px;align-items:center;margin-top:8px}
   .cover .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:4px}
   .big{appearance:none;border:none;border-radius:12px;padding:11px 22px;font-weight:900;font-size:1rem;cursor:pointer;color:#fff;
@@ -388,6 +394,7 @@
       <div class="brand">📖 빨강 머리 앤 <span class="pill" id="chapterPill">초록 지붕 집으로 가는 길</span></div>
       <div class="tb-btns">
         <button type="button" class="btn bookbtn" id="btnBook" title="지금 장면의 원작 문장을 책으로 읽어요">📖<span class="tx"> 원문 책장</span></button>
+        <button type="button" class="btn" id="btnChapters" title="다른 장으로 바로 가기">📚<span class="tx"> 장 이동</span></button>
         <button type="button" class="btn" id="btnBox">🎁<span class="tx"> 추억 상자</span></button>
         <button type="button" class="btn level" id="btnLevel">🌱<span class="tx"> 초등 수준</span></button>
         <button type="button" class="btn" id="btnSound">🔊</button>

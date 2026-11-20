@@ -1186,9 +1186,8 @@ function renderCover(){
     : "앤이 초록 지붕 집의 가족이 되어 가는 이야기예요. 무엇을 고르느냐에 따라 결말이 바뀌고, 앞에서 고른 것이 다음 장에 다시 나와요! 📖 원문 책장을 열면 원작 소설 문장도 함께 읽을 수 있어요.";
   el.btnContinue.hidden = !S.started || S.phase === "cover";
   const chips = $("chapChips");
-  const avail = CHAPTERS.filter((c, i) => i === 0 || P.reached[c.key]);
-  chips.innerHTML = avail.length > 1 ? `<span style="font-size:.78rem;font-weight:800;color:#8a6a4a">장 골라서 시작:</span>` + avail.map(c => `<button type="button" class="btn" data-ci="${CHAPTERS.indexOf(c)}">${c.num}장 · ${c.title}</button>`).join("") : "";
-  chips.querySelectorAll("button").forEach(b => b.onclick = e => { e.stopPropagation(); unlockAudio(); const ci = +b.dataset.ci; startChapter(ci, ci === 0 ? null : (P.snaps[CHAPTERS[ci].key] || null)); });
+  chips.innerHTML = `<button type="button" class="btn" id="coverChapters">📚 장 골라서 시작하기</button>`;
+  $("coverChapters").onclick = e => { e.stopPropagation(); openChapterPicker(); };
   el.btnStart.textContent = el.btnContinue.hidden ? "📖 이야기 시작하기" : "📖 처음부터 시작";
   el.dlgText.hidden = false; el.choices.hidden = true; el.note.hidden = true;
   el.nameTag.textContent = "안내"; el.nameTag.className = "nametag sys";
@@ -1483,6 +1482,7 @@ el.miniBook.addEventListener("click", e => { e.stopPropagation(); openBook(); })
 el.bookClose.addEventListener("click", closeBook);
 el.bookNow.addEventListener("click", () => syncBook());
 el.bookSize.addEventListener("click", () => { el.book.classList.toggle("bigtext"); el.bookSize.textContent = el.book.classList.contains("bigtext") ? "가 글자 작게" : "가 글자 크게"; });
+$("btnChapters").addEventListener("click", e => { e.stopPropagation(); openChapterPicker(); });
 el.btnBox.addEventListener("click", e => {
   e.stopPropagation();
   const items = S.items.length ? S.items.map(k => `<div class="item"><span class="ic">${ITEMS[k].ic}</span><span><b>${ITEMS[k].name}</b><br>${esc(fill(ITEMS[k].desc))}</span></div>`).join("") : "<p>아직 모은 물건이 없어요. 이야기를 진행하면 하나씩 생겨요!</p>";
@@ -1510,6 +1510,15 @@ function startChapter(ci, snap){
   showChapterCard(); enter(0);
 }
 function startNew(){ startChapter(0, null); }
+function jumpChapter(ci){ unlockAudio(); startChapter(ci, ci === 0 ? null : (P.snaps[CHAPTERS[ci].key] || null)); }
+function openChapterPicker(){
+  const inPlay = S.phase !== "cover";
+  const html = `<p style="font-size:.86rem;color:#6e5b4b;line-height:1.6">읽고 싶은 장을 누르면 그 장 처음부터 시작해요. 이 기기에서 전에 읽은 장이면 그때까지 모은 마음·추억·이름이 이어지고, 처음 여는 장이면 기본 상태로 시작해요.${inPlay ? "<br><b>지금 읽던 장면은 이 장의 처음으로 돌아가요.</b>" : ""}</p>
+    <div class="chgrid">${CHAPTERS.map((c, i) => { const ends = ["canon","imag","bal"].filter(k => P.endings[c.key + "_" + k]).length;
+      return `<button type="button" data-ci="${i}" class="${inPlay && i === S.ch ? "cur" : ""}"><b>${c.num}장 · ${esc(c.title)}</b><small>${esc(c.orig)}${c.finalReport ? " · 최종 보고서" : c.midReport ? " · 중간 보고서" : ""}</small>${ends ? `<span class="st">🎬 결말 ${ends}/3</span>` : P.reached[c.key] ? `<span class="st">✔ 읽은 적 있음</span>` : ""}</button>`; }).join("")}</div>`;
+  modal("📚 장 이동", html, [{label:"닫기"}]);
+  el.mBody.querySelectorAll(".chgrid button").forEach(b => b.onclick = e => { e.stopPropagation(); closeModal(); jumpChapter(+b.dataset.ci); });
+}
 function replay(){ startChapter(S.ch, S.snap); }
 function nextChapter(){ if(CHAPTERS[S.ch + 1]) startChapter(S.ch + 1, carry()); }
 

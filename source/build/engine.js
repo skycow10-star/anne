@@ -93,7 +93,13 @@ const GLOSS = {
   "카멜롯":`아서 왕 전설 속 왕의 성이 있는 도시예요.`,
   "테니슨":`영국의 유명한 시인이에요. 아서 왕 이야기를 시로 썼어요.`,
   "랜슬롯":`아서 왕의 기사 중 가장 용감한 기사예요.`,
-  "뱃고물":`배의 뒷부분이에요.`
+  "뱃고물":`배의 뒷부분이에요.`,
+  "에이버리 장학금":`퀸스 학원에서 영문학 성적이 가장 좋은 학생에게 주는 대학 장학금이에요.`,
+  "퀸스 학원":`선생님이 되려는 학생들이 다니던 섬의 학교예요.`,
+  "레드먼드":`앤이 가려던 대학이에요.`,
+  "안과":`눈을 치료하는 병원이에요.`,
+  "어음":`나중에 돈을 갚겠다고 약속한 종이예요.`,
+  "접시꽃":`키가 크게 자라고 접시처럼 둥근 꽃이 피는 식물이에요.`
 };
 const GLOSS_RE = new RegExp(Object.keys(GLOSS).sort((a,b) => b.length - a.length).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "g");
 const KIND = {act:`🚶 행동하기`, predict:`🔮 예측하기 · 원작의 앤은?`, talk:`💬 말 걸기`, name:`✍️ 이름 짓기`};
@@ -120,7 +126,7 @@ function setChapter(ci){
 let bookBuiltFor = null;
 setChapter(0);
 const BG_KEYS = [].concat(...CHAPTERS.map(c => c.bgKeys || []));
-const SPRITE_KEYS = [`anne_happy`,`anne_sad`,`anne_surprised`,`anne_angry`,`anne_dreamy`,`matthew`,`lynde`,`marilla_strict`,`marilla_warm`,`diana`,`barry`,`gilbert`,`phillips`,`doctor`,`minnie_may`,`allan`,`anne_green_hair`];
+const SPRITE_KEYS = [`anne_happy`,`anne_sad`,`anne_surprised`,`anne_angry`,`anne_dreamy`,`matthew`,`lynde`,`marilla_strict`,`marilla_warm`,`diana`,`barry`,`gilbert`,`phillips`,`doctor`,`minnie_may`,`allan`,`anne_green_hair`,`anne_grown`,`diana_grown`,`gilbert_grown`];
 
 /* =========================================================
    1. 상태 & 저장
@@ -733,6 +739,39 @@ function svgBridgePiles(){
     ${blossomCloud(rnd, 800, 720, 700, 80, 20, ["#2c5450","#4a7a72"])}<ellipse cx="800" cy="580" rx="520" ry="30" fill="#c8e4e0" opacity=".25"/></g>
     <rect width="1600" height="900" filter="url(#paper34)"/></svg>`;
 }
+function svgSummerPorch(){
+  const rnd = mulberry(193); let holly = "";
+  for(let i=0;i<9;i++){ const x = 980+i*60; holly += `<path d="M${x} 760 V${(430+rnd()*80).toFixed(0)}" stroke="#6f9a58" stroke-width="8"/>`; for(let j=0;j<5;j++) holly += `<circle cx="${x+(j%2?10:-10)}" cy="${(470+j*55+rnd()*20).toFixed(0)}" r="20" fill="${i%2?"#f2a3b8":"#f6d36a"}"/>`; }
+  return SVG_OPEN + DEFS(35) + `<linearGradient id="sk35" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a86c0"/><stop offset=".55" stop-color="#f2b39a"/><stop offset=".85" stop-color="#fbe0b8"/></linearGradient>
+    <rect width="1600" height="900" fill="url(#sk35)"/><g filter="url(#wc35)">
+    <rect x="120" y="120" width="760" height="680" fill="#f3efe4"/><path d="M90 140 L500 0 L910 140Z" fill="#5f9a6a"/><rect x="380" y="380" width="200" height="380" fill="#7d5a40"/><rect x="400" y="400" width="160" height="340" fill="#ffd98a" opacity=".8"/>
+    <rect x="300" y="760" width="360" height="40" fill="#b7a58a"/><rect x="700" y="690" width="240" height="40" fill="#a8a29a"/><rect x="720" y="730" width="20" height="50" fill="#8a8580"/><rect x="900" y="730" width="20" height="50" fill="#8a8580"/>
+    ${holly}<rect y="790" width="1600" height="110" fill="#8fb070"/></g>
+    <rect width="1600" height="900" filter="url(#paper35)"/></svg>`;
+}
+function svgSunsetPasture(){
+  const rnd = mulberry(197); let trees = "";
+  for(let i=0;i<10;i++){ const x = i<4 ? 40+i*110 : 1060+(i-4)*95; trees += `<path d="M${x} 640 Q${x+6} 420 ${x-8} 200" stroke="#5a4636" stroke-width="18" fill="none"/>`; }
+  return SVG_OPEN + DEFS(36) + `<linearGradient id="sk36" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e98a6a"/><stop offset=".5" stop-color="#f9c48a"/><stop offset=".8" stop-color="#fde6b8"/></linearGradient>
+    <rect width="1600" height="900" fill="url(#sk36)"/><g filter="url(#wc36)">${trees}
+    ${blossomCloud(rnd, 230, 230, 300, 150, 30, ["#c9783a","#a8562e","#d9944a"])}${blossomCloud(rnd, 1330, 230, 320, 150, 30, ["#c9783a","#a8562e","#d9944a"])}
+    <rect y="600" width="1600" height="300" fill="#b9a060"/><path d="M640 900 Q760 720 800 600 Q840 720 960 900Z" fill="#d8b77a"/>
+    <path d="M520 640 H1080 M520 670 H1080" stroke="#7d5a40" stroke-width="10"/><rect x="760" y="610" width="80" height="80" fill="none" stroke="#7d5a40" stroke-width="10"/>
+    <ellipse cx="1150" cy="720" rx="70" ry="36" fill="#7a4a30"/><ellipse cx="1210" cy="700" rx="22" ry="18" fill="#7a4a30"/><ellipse cx="420" cy="740" rx="64" ry="32" fill="#f3efe4"/><ellipse cx="370" cy="722" rx="20" ry="16" fill="#f3efe4"/></g>
+    <rect width="1600" height="900" filter="url(#paper36)"/></svg>`;
+}
+function svgBendHill(){
+  const rnd = mulberry(199); let lights = "";
+  for(let i=0;i<10;i++) lights += `<circle cx="${(200+rnd()*1200).toFixed(0)}" cy="${(470+rnd()*90).toFixed(0)}" r="5" fill="#ffd98a"/>`;
+  return SVG_OPEN + DEFS(37) + `<linearGradient id="sk37" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f4a86"/><stop offset=".45" stop-color="#b98aa8"/><stop offset=".7" stop-color="#f4b48a"/></linearGradient>
+    <rect width="1600" height="900" fill="url(#sk37)"/><g filter="url(#wc37)">
+    <rect y="380" width="1600" height="60" fill="#7a6a9a"/><path d="M0 440 Q400 410 800 450 T1600 430 V900 H0Z" fill="#4f6a52"/>
+    <ellipse cx="1050" cy="540" rx="260" ry="40" fill="#c9a6b8"/>${lights}
+    ${blossomCloud(rnd, 260, 480, 220, 70, 20, ["#2f4a3a","#3f5a46"])}${blossomCloud(rnd, 1420, 470, 200, 70, 18, ["#2f4a3a","#3f5a46"])}
+    <path d="M300 900 Q520 760 720 720 Q900 690 980 620" stroke="#c9b28c" stroke-width="80" fill="none" stroke-linecap="round"/>
+    ${blossomCloud(rnd, 1080, 600, 120, 70, 16, ["#2f4a3a","#3a5844"])}</g>
+    <rect width="1600" height="900" filter="url(#paper37)"/></svg>`;
+}
 const SVG_SCENES = {ch1:svgStation, ch1_road:svgRoad, ch1_avenue:svgAvenue, ch1_pond:svgPond, ch1_home:svgHome,
   ch2:svgKitchen, ch2_room:svgRoom, ch2_lane:svgLane, ch2_lynde:svgLyndeRoom, ch2_night:svgNightLane,
   ch3:svgParlor, ch3_path:svgFirPath, ch3_garden:svgGarden, ch3_bridge:svgBridge,
@@ -741,7 +780,8 @@ const SVG_SCENES = {ch1:svgStation, ch1_road:svgRoad, ch1_avenue:svgAvenue, ch1_
   ch6:svgWinterKitchen, ch6_snow:svgSnowField, ch6_barry:svgBarryKitchen, ch6_morning:svgFrostLane,
   ch7:svgTeaTable, ch7_spring:svgDryadSpring, ch7_garden:svgAnneGarden,
   ch8:svgSpringLane, ch8_porch:svgBackPorch, ch8_attic:svgCandleAttic,
-  ch9:svgBirchPond, ch9_drift:svgDriftFlat, ch9_bridge:svgBridgePiles};
+  ch9:svgBirchPond, ch9_drift:svgDriftFlat, ch9_bridge:svgBridgePiles,
+  ch10:svgSummerPorch, ch10_pasture:svgSunsetPasture, ch10_hill:svgBendHill};
 const svgCache = {};
 
 /* =========================================================
@@ -890,7 +930,10 @@ const SCENE_FX = {
   ch8_attic:  {light:"lamp",   motes:{n:8}},
   ch9:        {light:"road",   glints:{n:26, band:[.58,.9]}},
   ch9_drift:  {light:"pond",   glints:{n:36, band:[.1,.95]}, petals:{n:6, col:["#d8e6a0","#ffffff"], size:[3,5], vy:[8,14], wind:-6}},
-  ch9_bridge: {light:"dim",    glints:{n:20, band:[.64,.9]}}
+  ch9_bridge: {light:"dim",    glints:{n:20, band:[.64,.9]}},
+  ch10:       {light:"sunset", motes:{n:16}},
+  ch10_pasture:{light:"sunset", petals:{n:8, col:["#e8a04a","#d9733a"], size:[4,7], vy:[12,22], wind:-10}},
+  ch10_hill:  {light:"night",  stars:{n:28, band:[0,.35]}}
 };
 let curFx = null;
 function setSceneFx(bg){
@@ -1196,12 +1239,12 @@ function renderReport(){
         <h4 style="margin-top:14px">✨ 숨은 장면 (${albumCount()}/${ALBUM.length})</h4><div class="album">${album}</div></div>
     </div>
     <div class="card"><h4>💬 생각 나누기</h4><ol class="talk-q" style="padding-left:20px">${(lit ? CH.talk.l : CH.talk.e).map(q => `<li>${q}</li>`).join("")}</ol></div>
-    ${CH.midReport ? `<div class="mid-banner"><div><b>📜 1~${CH.num}장 중간 보고서가 열렸어요!</b><br><span>지금까지 다섯 장 동안 내가 걸어온 길, 지어 준 이름, 쌓은 마음을 한눈에 볼 수 있어요.</span></div><button type="button" class="big" id="rpMid">📜 중간 보고서 보기</button></div>` : ""}
+    ${CH.midReport ? (CH.finalReport ? `<div class="mid-banner"><div><b>🏁 1~10장 최종 보고서가 열렸어요!</b><br><span>열 장 동안 앤과 함께 걸어온 길, 지어 준 이름, 쌓은 마음을 모두 돌아봐요.</span></div><button type="button" class="big" id="rpMid">🏁 최종 보고서 보기</button></div>` : `<div class="mid-banner"><div><b>📜 1~${CH.num}장 중간 보고서가 열렸어요!</b><br><span>지금까지 다섯 장 동안 내가 걸어온 길, 지어 준 이름, 쌓은 마음을 한눈에 볼 수 있어요.</span></div><button type="button" class="big" id="rpMid">📜 중간 보고서 보기</button></div>`) : ""}
     <div class="rp-btns">
       <button type="button" class="big" id="rpReplay">🔁 다른 선택으로 ${CH.num}장 다시 하기</button>
       <button type="button" class="big sky" id="rpBook">📖 원문으로 ${CH.num}장 전체 읽기</button>
       <button type="button" class="big alt" id="rpPrint">🖨️ 리포트 인쇄</button>
-      ${CHAPTERS[S.ch + 1] ? `<button type="button" class="big sky" id="rpNext">➡ ${CH.num + 1}장 「${CHAPTERS[S.ch + 1].title}」으로</button>` : `<button type="button" class="big alt" disabled title="다음 장은 준비 중이에요">➡ ${CH.num + 1}장 (준비 중)</button>`}
+      ${CH.finalReport ? `<button type="button" class="big alt" disabled>📕 1부 완결 · 끝까지 읽어 줘서 고마워요</button>` : CHAPTERS[S.ch + 1] ? `<button type="button" class="big sky" id="rpNext">➡ ${CH.num + 1}장 「${CHAPTERS[S.ch + 1].title}」으로</button>` : `<button type="button" class="big alt" disabled title="다음 장은 준비 중이에요">➡ ${CH.num + 1}장 (준비 중)</button>`}
     </div></div>`;
   $("rpReplay").onclick = () => replay();
   if($("rpMid")) $("rpMid").onclick = () => renderMidReport();
@@ -1222,7 +1265,8 @@ const NAME_LABELS = [
   {k:`prayer`, ch:6, what:`오늘을 기념하는 새 기도문`, free:true},
   {k:`newday`, ch:7, what:`실수 없는 새날의 도전`, free:true},
   {k:`snood`, ch:8, what:`검은 벨벳 리본`, canon:`스누드`},
-  {k:`romance`, ch:9, what:`간직하고 싶은 낭만`, free:true}
+  {k:`romance`, ch:9, what:`간직하고 싶은 낭만`, free:true},
+  {k:`bend`, ch:10, what:`길모퉁이 너머에 있었으면 하는 것`, free:true}
 ];
 const READER_TYPE = {
   canon:{emoji:`📖`, name:`원작 탐정형`, e:`원작 속 앤의 마음을 정확히 읽어 내는 독자예요. 인물이 왜 그렇게 행동하는지 꼼꼼히 따라가며 읽었어요.`, l:`인물의 성격과 동기를 정확히 읽어 내는 독자입니다. 원작의 흐름을 존중하며 앤의 선택이 지닌 의미를 따라갔습니다.`},
@@ -1250,7 +1294,16 @@ function renderMidReport(){
     return `<div class="c">${x.ch}장 · ${x.what}</div><div class="mine">${v ? `'${esc(v)}'` : `<span style="color:#a08770">—</span>`}</div><div class="orig">${x.free ? `<span style="color:#a08770">정답 없음</span>` : `'${x.canon}'`}</div>`; }).join("");
   const endCount = upto.reduce((s, c) => s + ["canon","imag","bal"].filter(k => P.endings[c.key + "_" + k]).length, 0);
   const itemIcons = S.items.map(k => ITEMS[k] ? `<span title="${esc(ITEMS[k].name)}">${ITEMS[k].ic}</span>` : "").join(" ");
-  const qs = lit
+  const fin = !!CH.finalReport, RN = fin ? "최종 보고서" : "중간 보고서";
+  const qs = fin ? (lit
+    ? [`1~10장 전체에서 앤이 가장 크게 변한 점을 하나 골라, 처음(1~2장)의 앤과 마지막(10장)의 앤을 비교하며 근거를 들어 써 봅시다.`,
+       `"길모퉁이를 돌면 무엇이 있을지는 몰라도, 가장 좋은 것이 있다고 믿겠다." 앤의 이 태도에 대한 나의 생각을, 내 삶의 경험과 연결해 써 봅시다.`,
+       `매슈, 마릴라, 다이애나, 길버트 가운데 한 인물을 골라, 그 인물이 앤의 성장에 어떤 역할을 했는지 분석해 봅시다.`,
+       `열여섯 살 반의 앤에게 편지를 써 봅시다. 앤의 결정에 대해 하고 싶은 말을 담아 봅시다.`]
+    : [`1장의 앤과 10장의 앤은 어떻게 달라졌나요? 가장 크게 자란 점 하나를 골라 써 보세요.`,
+       `"길모퉁이를 돌면 가장 좋은 것이 있다고 믿을래요." 나에게도 이런 '길모퉁이'가 있었나요?`,
+       `매슈 아저씨, 마릴라 아주머니, 다이애나, 길버트 중 한 명을 골라, 그 사람이 앤에게 어떤 사람이었는지 써 보세요.`,
+       `열여섯 살이 된 앤에게 편지를 써 보세요. 하고 싶은 말을 마음껏 담아요.`]) : lit
     ? [`1~${CH.num}장에서 앤이 가장 크게 성장했다고 생각하는 장면을 고르고, 그 근거를 원작 문장에서 찾아 써 봅시다.`,
        `내가 고른 선택 가운데 원작과 가장 달랐던 것 하나를 골라, 그 선택이 이후 이야기에 어떤 영향을 줄 수 있었을지 써 봅시다.`,
        `다이애나와 헤어지고 길버트와 경쟁하게 된 앤. 6~10장에서 두 관계가 어떻게 변할지 근거를 들어 예측해 봅시다.`]
@@ -1258,8 +1311,8 @@ function renderMidReport(){
        `내가 고른 선택 중에 원작과 가장 달랐던 것 하나를 골라 보세요. 왜 그 길을 골랐나요?`,
        `앞으로 앤과 다이애나는 다시 친구가 될 수 있을까요? 앤과 길버트는 어떻게 될까요? 예측해 봐요.`];
   el.report.innerHTML = `<div class="rp-wrap mid">
-    <div class="rp-head"><small>MID-TERM READING REPORT</small><h2>📜 중간 보고서 · 1~${CH.num}장 나의 독서 여정</h2>
-      <p style="font-size:.86rem;color:#6e5b4b;margin-top:6px">원작 2장부터 17장까지, 앤이 초록 지붕 집에 와서 첫 친구를 사귀고 잃기까지의 이야기</p></div>
+    <div class="rp-head"><small>${fin ? "FINAL READING REPORT" : "MID-TERM READING REPORT"}</small><h2>${fin ? "🏁" : "📜"} ${RN} · 1~${CH.num}장 나의 독서 여정</h2>
+      <p style="font-size:.86rem;color:#6e5b4b;margin-top:6px">${fin ? "원작 2장부터 38장까지, 초록 지붕 집에 온 열한 살 소녀가 길모퉁이 앞에 선 열여섯 살 숙녀가 되기까지의 이야기" : "원작 2장부터 17장까지, 앤이 초록 지붕 집에 와서 첫 친구를 사귀고 잃기까지의 이야기"}</p></div>
     <div class="type-card"><div class="type-emoji">${type.emoji}</div><div style="flex:1">
       <h3>나의 독서 유형: ${type.name}</h3><p>${lit ? type.l : type.e}</p>
       <div class="rp-gauge"><span style="width:${pct("canon")}%;background:linear-gradient(90deg,#c9504a,#ec8d84)"></span><span style="width:${pct("bal")}%;background:linear-gradient(90deg,#9cc49a,#5b8a5e)"></span><span style="width:${pct("imag")}%;background:linear-gradient(90deg,#8cbbe6,#3f78b0)"></span></div>
@@ -1279,10 +1332,10 @@ function renderMidReport(){
       <div class="mid-saved" id="midSaved"></div>
       <p style="font-size:.8rem;color:#8a7461;margin-top:4px">쓴 내용은 이 기기에 저절로 저장돼요. 인쇄하면 쓴 글이 함께 인쇄되고, [📋 내 글 복사]로 선생님께 보낼 수도 있어요.</p></div>
     <div class="rp-btns">
-      <button type="button" class="big alt" id="midPrint">🖨️ 중간 보고서 인쇄</button>
+      <button type="button" class="big alt" id="midPrint">🖨️ ${RN} 인쇄</button>
       <button type="button" class="big" id="midCopy">📋 내 글 복사</button>
       <button type="button" class="big sky" id="midBack">⬅ ${CH.num}장 리포트로</button>
-      ${CHAPTERS[S.ch + 1] ? `<button type="button" class="big sky" id="midNext">➡ ${CH.num + 1}장으로</button>` : `<button type="button" class="big alt" disabled>➡ ${CH.num + 1}장 (준비 중)</button>`}
+      ${fin ? "" : CHAPTERS[S.ch + 1] ? `<button type="button" class="big sky" id="midNext">➡ ${CH.num + 1}장으로</button>` : `<button type="button" class="big alt" disabled>➡ ${CH.num + 1}장 (준비 중)</button>`}
     </div></div>`;
   $("midPrint").onclick = () => window.print();
   let saveT = null;
@@ -1295,7 +1348,7 @@ function renderMidReport(){
   });
   $("midName").addEventListener("input", e => { MID().name = e.target.value; el.report.querySelector(".print-name").textContent = e.target.value; save(); flash(); });
   $("midCopy").onclick = () => {
-    const m = MID(), txt = `[빨강 머리 앤 · 1~${CH.num}장 중간 보고서]\n이름: ${m.name || ""}\n독서 유형: ${type.name}\n\n` + qs.map((q, i) => `${i + 1}. ${q}\n→ ${m.a[i] || "(아직 안 썼어요)"}`).join("\n\n");
+    const m = MID(), txt = `[빨강 머리 앤 · 1~${CH.num}장 ${RN}]\n이름: ${m.name || ""}\n독서 유형: ${type.name}\n\n` + qs.map((q, i) => `${i + 1}. ${q}\n→ ${m.a[i] || "(아직 안 썼어요)"}`).join("\n\n");
     const done = () => toast("📋 내 글을 복사했어요. 카톡이나 메모에 붙여 넣으세요!");
     if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, () => fallbackCopy(txt, done)); else fallbackCopy(txt, done);
   };
@@ -1467,7 +1520,7 @@ el.btnHelp.addEventListener("click", e => {
   modal("🖼️ 이미지 파일 이름 안내", `<p>이미지 이름만 맞추면 알맞은 장면에 자동으로 들어가요. 없는 장면은 내장 수채화 그림이 대신 나와요.</p>
     <p style="margin-top:8px"><b>배경 (16:9 권장)</b> · 앞에 <code>bg_</code>를 붙여도 돼요 (예: <code>bg_ch2.png</code>)</p>
     <div class="img-list">${BG_KEYS.map(k => `<span class="${has(k)}">${k}</span>`).join("")}</div>
-    <p style="margin-top:4px;font-size:.8rem;color:#8a7461;line-height:1.7">1장: ch1 = 기차역 · ch1_road = 언덕길 · ch1_avenue = 가로수길 · ch1_pond = 연못 · ch1_home = 초록 지붕 집(밤)<br>2장: ch2 = 초록 지붕 집 부엌 · ch2_room = 앤의 방(동쪽 다락방) · ch2_lane = 노을 진 오솔길 · ch2_lynde = 린드 부인네 부엌 · ch2_night = 밤의 오솔길<br>3장: ch3 = 배리 씨네 거실 · ch3_path = 시냇물 건너 전나무 언덕 지름길 · ch3_garden = 배리 씨네 노을 정원 · ch3_bridge = 통나무 다리와 샘 · 인물 diana, barry<br>4장: ch4 = 에이번리 학교 교실 · ch4_birch = 자작나무 길(아침) · ch4_spruce = 가문비나무 숲(한낮) · ch4_yard = 학교 앞 하굣길 · 인물 gilbert, phillips<br>5장: ch5 = 초록 지붕 집 거실(다과상) · ch5_orchard = 가을 과수원 · ch5_dusk = 해 질 녘 배리 씨네 문간<br>6장: ch6 = 겨울밤 초록 지붕 집 부엌 · ch6_snow = 달빛 눈 들판 · ch6_barry = 배리 씨네 부엌(밤) · ch6_morning = 서리 내린 겨울 아침 오솔길 · 인물 doctor, minnie_may<br>7장: ch7 = 목사님 맞이 차 식탁 · ch7_spring = 해 질 녘 드라이어드의 샘 · ch7_garden = 앤의 꽃밭 · 인물 allan<br>8장: ch8 = 봄 저녁 초록 지붕 집 가는 길 · ch8_porch = 행상인이 온 뒷문 계단 · ch8_attic = 촛불 켜진 밤의 다락방 · 인물 anne_green_hair<br>9장: ch9 = 자작나무 곶이 있는 배리 씨네 연못 · ch9_drift = 평저선을 타고 떠내려가는 일레인 · ch9_bridge = 다리 밑 기둥(물속 그늘)</p>
+    <p style="margin-top:4px;font-size:.8rem;color:#8a7461;line-height:1.7">1장: ch1 = 기차역 · ch1_road = 언덕길 · ch1_avenue = 가로수길 · ch1_pond = 연못 · ch1_home = 초록 지붕 집(밤)<br>2장: ch2 = 초록 지붕 집 부엌 · ch2_room = 앤의 방(동쪽 다락방) · ch2_lane = 노을 진 오솔길 · ch2_lynde = 린드 부인네 부엌 · ch2_night = 밤의 오솔길<br>3장: ch3 = 배리 씨네 거실 · ch3_path = 시냇물 건너 전나무 언덕 지름길 · ch3_garden = 배리 씨네 노을 정원 · ch3_bridge = 통나무 다리와 샘 · 인물 diana, barry<br>4장: ch4 = 에이번리 학교 교실 · ch4_birch = 자작나무 길(아침) · ch4_spruce = 가문비나무 숲(한낮) · ch4_yard = 학교 앞 하굣길 · 인물 gilbert, phillips<br>5장: ch5 = 초록 지붕 집 거실(다과상) · ch5_orchard = 가을 과수원 · ch5_dusk = 해 질 녘 배리 씨네 문간<br>6장: ch6 = 겨울밤 초록 지붕 집 부엌 · ch6_snow = 달빛 눈 들판 · ch6_barry = 배리 씨네 부엌(밤) · ch6_morning = 서리 내린 겨울 아침 오솔길 · 인물 doctor, minnie_may<br>7장: ch7 = 목사님 맞이 차 식탁 · ch7_spring = 해 질 녘 드라이어드의 샘 · ch7_garden = 앤의 꽃밭 · 인물 allan<br>8장: ch8 = 봄 저녁 초록 지붕 집 가는 길 · ch8_porch = 행상인이 온 뒷문 계단 · ch8_attic = 촛불 켜진 밤의 다락방 · 인물 anne_green_hair<br>9장: ch9 = 자작나무 곶이 있는 배리 씨네 연못 · ch9_drift = 평저선을 타고 떠내려가는 일레인 · ch9_bridge = 다리 밑 기둥(물속 그늘)<br>10장: ch10 = 여름 해 질 녘 초록 지붕 집 현관 · ch10_pasture = 노을 진 뒷목장 · ch10_hill = 해 진 뒤 호수로 내려가는 언덕길(길모퉁이) · 인물 anne_grown, diana_grown, gilbert_grown</p>
     <p style="margin-top:8px"><b>캐릭터 (투명 PNG 권장 · 흰 배경은 자동으로 지워요)</b></p>
     <div class="img-list">${SPRITE_KEYS.map(k => `<span class="${has(k)}">${k}</span>`).join("")}</div>
     <p style="margin-top:8px;font-size:.82rem;color:#8a7461">초록색 = 지금 적용됨 · 회색 = 아직 없음</p>

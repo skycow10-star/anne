@@ -860,6 +860,7 @@ function enter(i, note){
 function advance(){
   if(!el.modal.hidden || picking) return;
   if(!el.cover.classList.contains("hide")) return;
+  if(el.vn.classList.contains("peek")){ el.vn.classList.remove("peek"); return; }
   if(typing){ finishTyping(); return; }
   if(S.phase === "play") enter(S.pos + 1);
   else if(S.phase === "endcard"){ S.phase = "report"; save(); render(false); }
@@ -1060,6 +1061,9 @@ function render(instant){
   bgmUpdate();
   updateGauge(); applyLevelUI(); applySoundUI(); setPill(); renderHud();
   el.vn.classList.toggle("choosing", S.phase === "choice" || S.phase === "name");
+  el.vn.classList.toggle("naming", S.phase === "name"); el.vn.classList.remove("peek");
+  { const nt = $("nameTarget"), n = curNode(); nt.hidden = S.phase !== "name"; if(S.phase === "name") nt.textContent = "✍️ " + n.label;
+    $("btnPeek").hidden = !(S.phase === "choice" || S.phase === "name"); }
   document.body.classList.toggle("covering", false);
   el.endcard.classList.toggle("show", S.phase === "endcard");
   if(S.phase === "report"){ el.stage.hidden = true; el.report.hidden = false; renderReport(); return; }
@@ -1513,6 +1517,8 @@ el.bookClose.addEventListener("click", closeBook);
 el.bookNow.addEventListener("click", () => syncBook());
 el.bookSize.addEventListener("click", () => { el.book.classList.toggle("bigtext"); el.bookSize.textContent = el.book.classList.contains("bigtext") ? "가 글자 작게" : "가 글자 크게"; });
 $("btnChapters").addEventListener("click", e => { e.stopPropagation(); openChapterPicker(); });
+$("btnPeek").addEventListener("click", e => { e.stopPropagation(); el.vn.classList.add("peek"); });
+$("peekBack").addEventListener("click", e => { e.stopPropagation(); el.vn.classList.remove("peek"); });
 el.btnBox.addEventListener("click", e => {
   e.stopPropagation();
   const items = S.items.length ? S.items.map(k => `<div class="item"><span class="ic">${ITEMS[k].ic}</span><span><b>${ITEMS[k].name}</b><br>${esc(fill(ITEMS[k].desc))}</span></div>`).join("") : "<p>아직 모은 물건이 없어요. 이야기를 진행하면 하나씩 생겨요!</p>";

@@ -186,6 +186,14 @@
     padding:clamp(16px,2.3cqw,26px) clamp(14px,2.4cqw,28px) clamp(6px,.9cqw,10px);box-shadow:0 10px 30px rgba(50,32,18,.28);cursor:pointer;transition:max-height .4s ease}
   .vn.choosing .dialog{max-height:70%}
   .vn.choosing .viewer::after{content:"";position:absolute;inset:0;z-index:5;background:linear-gradient(180deg,rgba(40,28,18,0) 20%,rgba(40,28,18,.35));pointer-events:none}
+  .vn.naming .spr{opacity:0!important}
+  .vn.naming .viewer::after{display:none}
+  .name-target{position:absolute;z-index:15;top:10px;left:50%;transform:translateX(-50%);background:rgba(255,250,241,.92);border:1.5px solid #e2c08f;color:#7a4a1f;font-weight:800;font-size:clamp(12px,1.6cqw,16px);padding:5px 14px;border-radius:999px;box-shadow:0 3px 10px rgba(60,40,20,.15);white-space:nowrap;max-width:90%;overflow:hidden;text-overflow:ellipsis}
+  .vn.peek .dialog, .vn.peek .hud, .vn.peek .name-target{display:none!important}
+  .vn.peek .spr{opacity:0!important}
+  .vn.peek .viewer::after{display:none}
+  .peek-back{position:absolute;z-index:30;top:10px;left:50%;transform:translateX(-50%);display:none}
+  .vn.peek .peek-back{display:inline-flex}
   body.covering .dialog{display:none}
   body.covering .gauge-row, body.covering .sprites, body.covering .dream-tag, body.covering .hud{display:none!important}
   body.covering .tb-btns > *:not(#btnMusic):not(#btnSound){display:none!important}
@@ -367,16 +375,19 @@
     .choice{padding:5px 12px;font-size:13.5px}
     .q{font-size:13.5px}
   }
-  /* 휴대폰 가로: 글상자는 오른쪽 세로 패널, 그림과 인물은 왼쪽에 */
+  /* 휴대폰 가로: 글상자는 아래쪽 띠, 그림이 위로 넓게 보이게 */
   @media (max-height:520px) and (min-aspect-ratio:1/1){
-    .dialog,.vn.choosing .dialog{left:auto;right:calc(2% + env(safe-area-inset-right));top:9%;bottom:4%;width:45%;min-height:0;max-height:none;
-      padding:20px 12px 6px}
-    .choices{gap:5px}
-    .choice{padding:4px 10px;font-size:13px;line-height:1.4}
-    .dlg-text{font-size:15px;line-height:1.7}
-    .spr{height:90%;max-width:36%}
-    .spr.l{left:calc(1% + env(safe-area-inset-left))} .spr.r{right:auto;left:24%}
-    .vn.choosing .viewer::after{background:linear-gradient(90deg,rgba(40,28,18,0) 40%,rgba(40,28,18,.3))}
+    .dialog{left:calc(2% + env(safe-area-inset-left));right:calc(2% + env(safe-area-inset-right));bottom:3%;top:auto;width:auto;min-height:0;max-height:42%;padding:16px 12px 4px}
+    .vn.choosing .dialog{max-height:74%}
+    #choiceList.choices{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+    #choiceList.choices.feelrow{display:flex}
+    .choice{padding:4px 10px;font-size:13px;line-height:1.35}
+    .dlg-text{font-size:14.5px;line-height:1.6}
+    .note{font-size:12.5px}
+    .spr{height:86%;max-width:30%}
+    .spr.l{left:calc(2% + env(safe-area-inset-left))} .spr.r{right:calc(2% + env(safe-area-inset-right))}
+    html.easy .choice{font-size:15px;padding:5px 10px}
+    html.easy .dlg-text{font-size:16px}
   }
   @media (max-aspect-ratio: 1/1){
     .spr{height:66%;max-width:80%;bottom:16%}
@@ -455,6 +466,8 @@
     <div class="viewer" id="viewer">
       <div class="shk" id="shk"><div class="rig" id="rig"><div class="cue" id="cue">
         <div class="scene" id="scene"></div>
+        <div class="name-target" id="nameTarget" hidden></div>
+        <button type="button" class="big sky peek-back" id="peekBack">✍️ 다시 고르러 가기</button>
         <div class="sprites"><img class="spr l" id="sprL" alt=""><img class="spr r" id="sprR" alt=""></div>
       </div></div></div>
       <div class="light" id="light"></div>
@@ -487,7 +500,7 @@
     <section class="dialog" id="dialog">
       <div class="dlg-head">
         <span class="nametag" id="nameTag">앤 셜리</span>
-        <span class="right"><button type="button" class="mini" id="miniBook" title="이 장면의 원문 보기">📖 원문</button><span class="progress" id="progress"></span></span>
+        <span class="right"><button type="button" class="mini" id="btnPeek" title="글상자를 잠깐 치우고 그림을 크게 봐요" hidden>🖼️ 그림 보기</button><button type="button" class="mini" id="miniBook" title="이 장면의 원문 보기">📖 원문</button><span class="progress" id="progress"></span></span>
       </div>
       <div class="dlg-body" id="dlgBody">
         <div class="dlg-text" id="dlgText"></div>

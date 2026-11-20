@@ -186,6 +186,14 @@
     padding:clamp(16px,2.3cqw,26px) clamp(14px,2.4cqw,28px) clamp(6px,.9cqw,10px);box-shadow:0 10px 30px rgba(50,32,18,.28);cursor:pointer;transition:max-height .4s ease}
   .vn.choosing .dialog{max-height:70%}
   .vn.choosing .viewer::after{content:"";position:absolute;inset:0;z-index:5;background:linear-gradient(180deg,rgba(40,28,18,0) 20%,rgba(40,28,18,.35));pointer-events:none}
+  .vn.naming .spr{opacity:0!important}
+  .vn.naming .viewer::after{display:none}
+  .name-target{position:absolute;z-index:15;top:10px;left:50%;transform:translateX(-50%);background:rgba(255,250,241,.92);border:1.5px solid #e2c08f;color:#7a4a1f;font-weight:800;font-size:clamp(12px,1.6cqw,16px);padding:5px 14px;border-radius:999px;box-shadow:0 3px 10px rgba(60,40,20,.15);white-space:nowrap;max-width:90%;overflow:hidden;text-overflow:ellipsis}
+  .vn.peek .dialog, .vn.peek .hud, .vn.peek .name-target{display:none!important}
+  .vn.peek .spr{opacity:0!important}
+  .vn.peek .viewer::after{display:none}
+  .peek-back{position:absolute;z-index:30;top:10px;left:50%;transform:translateX(-50%);display:none}
+  .vn.peek .peek-back{display:inline-flex}
   body.covering .dialog{display:none}
   body.covering .gauge-row, body.covering .sprites, body.covering .dream-tag, body.covering .hud{display:none!important}
   body.covering .tb-btns > *:not(#btnMusic):not(#btnSound){display:none!important}
@@ -367,16 +375,19 @@
     .choice{padding:5px 12px;font-size:13.5px}
     .q{font-size:13.5px}
   }
-  /* 휴대폰 가로: 글상자는 오른쪽 세로 패널, 그림과 인물은 왼쪽에 */
+  /* 휴대폰 가로: 글상자는 아래쪽 띠, 그림이 위로 넓게 보이게 */
   @media (max-height:520px) and (min-aspect-ratio:1/1){
-    .dialog,.vn.choosing .dialog{left:auto;right:calc(2% + env(safe-area-inset-right));top:9%;bottom:4%;width:45%;min-height:0;max-height:none;
-      padding:20px 12px 6px}
-    .choices{gap:5px}
-    .choice{padding:4px 10px;font-size:13px;line-height:1.4}
-    .dlg-text{font-size:15px;line-height:1.7}
-    .spr{height:90%;max-width:36%}
-    .spr.l{left:calc(1% + env(safe-area-inset-left))} .spr.r{right:auto;left:24%}
-    .vn.choosing .viewer::after{background:linear-gradient(90deg,rgba(40,28,18,0) 40%,rgba(40,28,18,.3))}
+    .dialog{left:calc(2% + env(safe-area-inset-left));right:calc(2% + env(safe-area-inset-right));bottom:3%;top:auto;width:auto;min-height:0;max-height:42%;padding:16px 12px 4px}
+    .vn.choosing .dialog{max-height:74%}
+    #choiceList.choices{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+    #choiceList.choices.feelrow{display:flex}
+    .choice{padding:4px 10px;font-size:13px;line-height:1.35}
+    .dlg-text{font-size:14.5px;line-height:1.6}
+    .note{font-size:12.5px}
+    .spr{height:86%;max-width:30%}
+    .spr.l{left:calc(2% + env(safe-area-inset-left))} .spr.r{right:calc(2% + env(safe-area-inset-right))}
+    html.easy .choice{font-size:15px;padding:5px 10px}
+    html.easy .dlg-text{font-size:16px}
   }
   @media (max-aspect-ratio: 1/1){
     .spr{height:66%;max-width:80%;bottom:16%}
@@ -455,6 +466,8 @@
     <div class="viewer" id="viewer">
       <div class="shk" id="shk"><div class="rig" id="rig"><div class="cue" id="cue">
         <div class="scene" id="scene"></div>
+        <div class="name-target" id="nameTarget" hidden></div>
+        <button type="button" class="big sky peek-back" id="peekBack">✍️ 다시 고르러 가기</button>
         <div class="sprites"><img class="spr l" id="sprL" alt=""><img class="spr r" id="sprR" alt=""></div>
       </div></div></div>
       <div class="light" id="light"></div>
@@ -487,7 +500,7 @@
     <section class="dialog" id="dialog">
       <div class="dlg-head">
         <span class="nametag" id="nameTag">앤 셜리</span>
-        <span class="right"><button type="button" class="mini" id="miniBook" title="이 장면의 원문 보기">📖 원문</button><span class="progress" id="progress"></span></span>
+        <span class="right"><button type="button" class="mini" id="btnPeek" title="글상자를 잠깐 치우고 그림을 크게 봐요" hidden>🖼️ 그림 보기</button><button type="button" class="mini" id="miniBook" title="이 장면의 원문 보기">📖 원문</button><span class="progress" id="progress"></span></span>
       </div>
       <div class="dlg-body" id="dlgBody">
         <div class="dlg-text" id="dlgText"></div>
@@ -532,7 +545,7 @@
 <div class="toast" id="toast"></div>
 <div class="tip" id="tip" hidden></div>
 
-<script id="embedded-images">window.EMBEDDED_IMAGES = {}; window.STUDENT_MODE = true; window.IMAGE_FILES = {"anne_angry": "img/anne_angry.webp", "anne_dreamy": "img/anne_dreamy.webp", "anne_green_hair": "img/anne_green_hair.webp", "anne_grown": "img/anne_grown.webp", "anne_happy": "img/anne_happy.webp", "anne_sad": "img/anne_sad.webp", "anne_surprised": "img/anne_surprised.webp", "barry": "img/barry.webp", "ch1": "img/ch1.webp", "ch10": "img/ch10.webp", "ch10_hill": "img/ch10_hill.webp", "ch10_home": "img/ch10_home.webp", "ch10_pasture": "img/ch10_pasture.webp", "ch1_avenue": "img/ch1_avenue.webp", "ch1_home": "img/ch1_home.webp", "ch1_pond": "img/ch1_pond.webp", "ch1_road": "img/ch1_road.webp", "ch2": "img/ch2.webp", "ch2_lane": "img/ch2_lane.webp", "ch2_lynde": "img/ch2_lynde.webp", "ch2_night": "img/ch2_night.webp", "ch2_room": "img/ch2_room.webp", "ch3": "img/ch3.webp", "ch3_bridge": "img/ch3_bridge.webp", "ch3_garden": "img/ch3_garden.webp", "ch3_path": "img/ch3_path.webp", "ch4": "img/ch4.webp", "ch4_birch": "img/ch4_birch.webp", "ch4_spruce": "img/ch4_spruce.webp", "ch4_yard": "img/ch4_yard.webp", "ch5": "img/ch5.webp", "ch5_dusk": "img/ch5_dusk.webp", "ch5_orchard": "img/ch5_orchard.webp", "ch6": "img/ch6.webp", "ch6_barry": "img/ch6_barry.webp", "ch6_morning": "img/ch6_morning.webp", "ch6_snow": "img/ch6_snow.webp", "ch7": "img/ch7.webp", "ch7_garden": "img/ch7_garden.webp", "ch7_spring": "img/ch7_spring.webp", "ch8": "img/ch8.webp", "ch8_attic": "img/ch8_attic.webp", "ch8_mirror": "img/ch8_mirror.webp", "ch8_porch": "img/ch8_porch.webp", "ch9": "img/ch9.webp", "ch9_bridge": "img/ch9_bridge.webp", "ch9_drift": "img/ch9_drift.webp", "diana": "img/diana.webp", "diana_grown": "img/diana_grown.webp", "doctor": "img/doctor.webp", "gilbert": "img/gilbert.webp", "gilbert_grown": "img/gilbert_grown.webp", "lynde": "img/lynde.webp", "marilla_strict": "img/marilla_strict.webp", "marilla_warm": "img/marilla_warm.webp", "matthew": "img/matthew.webp", "minnie_may": "img/minnie_may.webp", "phillips": "img/phillips.webp"};</script>
+<script id="embedded-images">window.EMBEDDED_IMAGES = {}; window.STUDENT_MODE = true; window.IMAGE_FILES = {"allan": "img/allan.webp", "anne_angry": "img/anne_angry.webp", "anne_dreamy": "img/anne_dreamy.webp", "anne_green_hair": "img/anne_green_hair.webp", "anne_grown": "img/anne_grown.webp", "anne_happy": "img/anne_happy.webp", "anne_sad": "img/anne_sad.webp", "anne_surprised": "img/anne_surprised.webp", "barry": "img/barry.webp", "ch1": "img/ch1.webp", "ch10": "img/ch10.webp", "ch10_hill": "img/ch10_hill.webp", "ch10_home": "img/ch10_home.webp", "ch10_pasture": "img/ch10_pasture.webp", "ch1_avenue": "img/ch1_avenue.webp", "ch1_home": "img/ch1_home.webp", "ch1_pond": "img/ch1_pond.webp", "ch1_road": "img/ch1_road.webp", "ch2": "img/ch2.webp", "ch2_lane": "img/ch2_lane.webp", "ch2_lynde": "img/ch2_lynde.webp", "ch2_night": "img/ch2_night.webp", "ch2_room": "img/ch2_room.webp", "ch3": "img/ch3.webp", "ch3_bridge": "img/ch3_bridge.webp", "ch3_garden": "img/ch3_garden.webp", "ch3_path": "img/ch3_path.webp", "ch4": "img/ch4.webp", "ch4_birch": "img/ch4_birch.webp", "ch4_spruce": "img/ch4_spruce.webp", "ch4_yard": "img/ch4_yard.webp", "ch5": "img/ch5.webp", "ch5_dusk": "img/ch5_dusk.webp", "ch5_orchard": "img/ch5_orchard.webp", "ch6": "img/ch6.webp", "ch6_barry": "img/ch6_barry.webp", "ch6_morning": "img/ch6_morning.webp", "ch6_snow": "img/ch6_snow.webp", "ch7": "img/ch7.webp", "ch7_garden": "img/ch7_garden.webp", "ch7_spring": "img/ch7_spring.webp", "ch8": "img/ch8.webp", "ch8_attic": "img/ch8_attic.webp", "ch8_mirror": "img/ch8_mirror.webp", "ch8_porch": "img/ch8_porch.webp", "ch9": "img/ch9.webp", "ch9_bridge": "img/ch9_bridge.webp", "ch9_drift": "img/ch9_drift.webp", "diana": "img/diana.webp", "diana_grown": "img/diana_grown.webp", "doctor": "img/doctor.webp", "gilbert": "img/gilbert.webp", "gilbert_grown": "img/gilbert_grown.webp", "lynde": "img/lynde.webp", "marilla_strict": "img/marilla_strict.webp", "marilla_warm": "img/marilla_warm.webp", "matthew": "img/matthew.webp", "minnie_may": "img/minnie_may.webp", "phillips": "img/phillips.webp"};</script>
 <script>
 const BOOK = {};
 const CHAPTERS = [];
@@ -6835,6 +6848,7 @@ function enter(i, note){
 function advance(){
   if(!el.modal.hidden || picking) return;
   if(!el.cover.classList.contains("hide")) return;
+  if(el.vn.classList.contains("peek")){ el.vn.classList.remove("peek"); return; }
   if(typing){ finishTyping(); return; }
   if(S.phase === "play") enter(S.pos + 1);
   else if(S.phase === "endcard"){ S.phase = "report"; save(); render(false); }
@@ -7035,6 +7049,9 @@ function render(instant){
   bgmUpdate();
   updateGauge(); applyLevelUI(); applySoundUI(); setPill(); renderHud();
   el.vn.classList.toggle("choosing", S.phase === "choice" || S.phase === "name");
+  el.vn.classList.toggle("naming", S.phase === "name"); el.vn.classList.remove("peek");
+  { const nt = $("nameTarget"), n = curNode(); nt.hidden = S.phase !== "name"; if(S.phase === "name") nt.textContent = "✍️ " + n.label;
+    $("btnPeek").hidden = !(S.phase === "choice" || S.phase === "name"); }
   document.body.classList.toggle("covering", false);
   el.endcard.classList.toggle("show", S.phase === "endcard");
   if(S.phase === "report"){ el.stage.hidden = true; el.report.hidden = false; renderReport(); return; }
@@ -7488,6 +7505,8 @@ el.bookClose.addEventListener("click", closeBook);
 el.bookNow.addEventListener("click", () => syncBook());
 el.bookSize.addEventListener("click", () => { el.book.classList.toggle("bigtext"); el.bookSize.textContent = el.book.classList.contains("bigtext") ? "가 글자 작게" : "가 글자 크게"; });
 $("btnChapters").addEventListener("click", e => { e.stopPropagation(); openChapterPicker(); });
+$("btnPeek").addEventListener("click", e => { e.stopPropagation(); el.vn.classList.add("peek"); });
+$("peekBack").addEventListener("click", e => { e.stopPropagation(); el.vn.classList.remove("peek"); });
 el.btnBox.addEventListener("click", e => {
   e.stopPropagation();
   const items = S.items.length ? S.items.map(k => `<div class="item"><span class="ic">${ITEMS[k].ic}</span><span><b>${ITEMS[k].name}</b><br>${esc(fill(ITEMS[k].desc))}</span></div>`).join("") : "<p>아직 모은 물건이 없어요. 이야기를 진행하면 하나씩 생겨요!</p>";

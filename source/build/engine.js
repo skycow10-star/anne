@@ -1493,7 +1493,7 @@ async function bgmUpdate(){
   if(!BGM.el){
     BGM.el = new Audio(); BGM.el.loop = true; BGM.el.preload = "auto";
     const ctx = unlockAudio();
-    if(ctx){ try{ BGM.gain = ctx.createGain(); BGM.gain.gain.value = 0; ctx.createMediaElementSource(BGM.el).connect(BGM.gain); BGM.gain.connect(ctx.destination); }catch(e){ BGM.gain = null; } }
+    if(ctx && /^https?:$/.test(location.protocol)){ try{ BGM.gain = ctx.createGain(); BGM.gain.gain.value = 0; ctx.createMediaElementSource(BGM.el).connect(BGM.gain); BGM.gain.connect(ctx.destination); }catch(e){ BGM.gain = null; } }
     BGM.el.addEventListener("timeupdate", () => {
       const a = BGM.el; if(!a.duration || BGM.cur !== a.dataset.f) return;
       if(a.duration - a.currentTime < 2.2 && !BGM.fading){ BGM.fading = true; bgmSetVol(0.02, 2); }

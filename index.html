@@ -241,7 +241,7 @@
   .bp.poem{text-align:center;color:#6b5848}
   .bp.extra{background:#f3eef8;margin-top:16px}
   .book-sz{font-size:1.06rem}
-  .book.big .book-body{font-size:1.14rem}
+  .book.bigtext .book-body{font-size:1.16rem}
 
   /* ---------- 리포트 ---------- */
   .report{flex:1;min-height:0;overflow-y:auto;background:var(--paper);padding:18px 18px 30px}
@@ -4144,7 +4144,7 @@ el.btnBook.addEventListener("click", e => { e.stopPropagation(); el.book.classLi
 el.miniBook.addEventListener("click", e => { e.stopPropagation(); openBook(); });
 el.bookClose.addEventListener("click", closeBook);
 el.bookNow.addEventListener("click", () => syncBook());
-el.bookSize.addEventListener("click", () => { el.book.classList.toggle("big"); el.bookSize.textContent = el.book.classList.contains("big") ? "가 글자 작게" : "가 글자 크게"; });
+el.bookSize.addEventListener("click", () => { el.book.classList.toggle("bigtext"); el.bookSize.textContent = el.book.classList.contains("bigtext") ? "가 글자 작게" : "가 글자 크게"; });
 el.btnBox.addEventListener("click", e => {
   e.stopPropagation();
   const items = S.items.length ? S.items.map(k => `<div class="item"><span class="ic">${ITEMS[k].ic}</span><span><b>${ITEMS[k].name}</b><br>${esc(fill(ITEMS[k].desc))}</span></div>`).join("") : "<p>아직 모은 물건이 없어요. 이야기를 진행하면 하나씩 생겨요!</p>";

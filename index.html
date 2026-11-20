@@ -1,0 +1,2443 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>빨강 머리 앤 — 초록 지붕 집으로 가는 길</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#6f9a72">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="빨강 머리 앤">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<style>
+  :root{
+    --paper:#fbf6ec; --line:#dccbb0; --ink:#3d3027; --ink2:#6e5b4b;
+    --red:#d9645c; --red2:#b9473f; --blue:#5b93c9; --blue2:#3d73a8; --green:#6f9a72; --amber:#c97b45;
+    --shadow:0 8px 24px rgba(70,48,30,.18);
+    --serif:"Nanum Myeongjo","AppleMyungjo","Batang","Noto Serif KR",serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;color:var(--ink);
+    background:radial-gradient(circle at 20% 10%,#f3e6cf 0,#e6d5b8 60%,#dcc7a5 100%);overflow:hidden}
+  button,input{font-family:inherit}
+  [hidden]{display:none!important}
+  .app{max-width:1100px;height:100dvh;margin:0 auto;display:flex;flex-direction:column;background:var(--paper);position:relative;
+    box-shadow:0 0 40px rgba(60,40,20,.25);
+    background-image:radial-gradient(rgba(160,120,70,.06) 1px,transparent 1px),radial-gradient(rgba(160,120,70,.04) 1px,transparent 1px);
+    background-size:7px 7px,13px 13px;background-position:0 0,3px 5px}
+
+  /* ---------- 툴바 ---------- */
+  .toolbar{flex-shrink:0;padding:8px 14px;border-bottom:1.5px solid var(--line);background:linear-gradient(180deg,#f6ecdb,#fbf6ec);z-index:30}
+  .tb-row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:1rem;white-space:nowrap}
+  .pill{background:#efe0c6;border:1px solid #d6bd96;color:#6a4a2e;font-size:.76rem;font-weight:800;padding:3px 10px;border-radius:999px}
+  .tb-btns{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+  .btn{appearance:none;border:1.5px solid var(--line);background:#fffaf1;color:var(--ink);font-size:.78rem;font-weight:700;padding:5px 10px;border-radius:9px;
+    cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;transition:background .15s,transform .1s}
+  .btn:hover{background:#f6e7cf}
+  .btn:active{transform:scale(.97)}
+  .btn.bookbtn{background:#fff3df;border-color:#e2c08f;color:#7a4a1f}
+  .btn.level{background:#eaf3e6;border-color:#b9d1b2;color:#3f6a42}
+  .btn.level.lit{background:#f3e7f1;border-color:#d4b8cf;color:#6e3f66}
+  .btn.teach{background:#6f9a72;border-color:#5a805d;color:#fff}
+  .btn.teach:hover{background:#5f8762}
+  .btn.export{background:#5b93c9;border-color:#3d73a8;color:#fff}
+  .btn.export:hover{background:#4c83b8}
+  .btn:disabled{opacity:.5;cursor:default}
+  .btn.off{opacity:.55;text-decoration:line-through}
+  .tb-sep{width:1px;height:22px;background:var(--line);margin:0 3px}
+  body.student .teacher-only{display:none!important}
+  .gauge-row{display:flex;align-items:center;gap:10px;margin-top:7px;font-size:.78rem;font-weight:800}
+  .g-l{color:var(--red2);min-width:78px}
+  .g-r{color:var(--blue2);min-width:78px;text-align:right}
+  .gauge{position:relative;flex:1;height:14px;border-radius:999px;background:#eadfcd;border:1.5px solid #d3bf9f;display:flex}
+  .gauge .fl{height:100%;background:linear-gradient(90deg,#c9504a,#ec8d84);border-radius:999px 0 0 999px;transition:width .9s cubic-bezier(.3,1.4,.5,1)}
+  .gauge .fr{height:100%;background:linear-gradient(90deg,#8cbbe6,#3f78b0);border-radius:0 999px 999px 0;transition:width .9s cubic-bezier(.3,1.4,.5,1)}
+  .gauge .mid{position:absolute;left:50%;top:-3px;bottom:-3px;width:2px;background:#fff;opacity:.85;transform:translateX(-50%)}
+  .gauge.flash{animation:gflash .9s ease}
+  @keyframes gflash{0%,100%{box-shadow:none}40%{box-shadow:0 0 0 4px rgba(255,214,120,.65)}}
+  .pop{position:absolute;top:-1px;font-size:.8rem;font-weight:900;opacity:0;pointer-events:none;white-space:nowrap;text-shadow:0 0 3px #fff,0 0 3px #fff}
+  .pop.l{left:10px;color:var(--red2)} .pop.r{right:10px;color:var(--blue2)}
+  .pop.show{animation:popUp 1.4s ease forwards}
+  @keyframes popUp{0%{opacity:0;transform:translateY(4px) scale(.8)}20%{opacity:1;transform:translateY(-2px) scale(1.2)}80%{opacity:1}100%{opacity:0;transform:translateY(-8px)}}
+
+  /* ---------- 무대 ---------- */
+  .stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:10px 12px;container-type:size}
+  .vn{position:relative;width:min(100cqw, 100cqh * 16 / 9);aspect-ratio:16/9;container-type:inline-size}
+  .viewer{position:absolute;inset:0;border-radius:16px;overflow:hidden;border:2px solid #d8c3a0;box-shadow:var(--shadow);background:#efe3cf;cursor:pointer}
+  .shk,.rig,.cue{position:absolute;inset:0}
+  .rig{animation:drift 28s ease-in-out infinite alternate;transform-origin:50% 45%}
+  @keyframes drift{from{transform:scale(1.02) translate(0,0)}to{transform:scale(1.045) translate(-.6%,-.4%)}}
+  .cue{transition:transform 2s cubic-bezier(.25,1,.5,1);transform-origin:50% 45%}
+  .cue.in{transform:scale(1.07)} .cue.out{transform:scale(.975)} .cue.up{transform:scale(1.06) translateY(3%)}
+  .cue.left{transform:scale(1.05) translateX(2.4%)} .cue.right{transform:scale(1.05) translateX(-2.4%)}
+  .shk.shake{animation:shake .55s ease}
+  @keyframes shake{20%{transform:translate(-6px,2px)}40%{transform:translate(5px,-2px)}60%{transform:translate(-3px,1px)}80%{transform:translate(2px,0)}}
+  .scene{position:absolute;inset:0;transition:filter 1s}
+  .layer{position:absolute;inset:0;transition:opacity .9s ease}
+  .layer.enter{opacity:0}
+  .layer img,.layer svg{width:100%;height:100%;object-fit:cover;display:block}
+  .fxc{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}
+  .light{position:absolute;inset:0;pointer-events:none;z-index:2;opacity:0;transition:opacity 1.5s}
+  .light.on{opacity:1}
+  .light.sunset{background:radial-gradient(circle at 78% 12%,rgba(255,214,160,.38),rgba(255,214,160,0) 55%);animation:breathe 9s ease-in-out infinite}
+  .light.road{background:linear-gradient(180deg,rgba(255,236,210,.22),rgba(255,236,210,0) 50%);animation:breathe 11s ease-in-out infinite}
+  .light.rose{background:radial-gradient(ellipse at 50% 50%,rgba(255,206,170,.42),rgba(255,206,170,0) 45%),repeating-conic-gradient(from 0deg at 50% 52%,rgba(255,235,210,.05) 0 4deg,rgba(255,235,210,0) 4deg 13deg);animation:breathe 7s ease-in-out infinite}
+  .light.pond{background:linear-gradient(180deg,rgba(255,200,170,.18),rgba(255,200,170,0) 45%);animation:breathe 10s ease-in-out infinite}
+  .light.warm{background:radial-gradient(ellipse at 78% 35%,rgba(255,200,140,.32),rgba(255,200,140,0) 60%);animation:breathe 10s ease-in-out infinite}
+  .light.dim{background:linear-gradient(90deg,rgba(60,50,80,.16),rgba(60,50,80,0) 40%,rgba(255,210,160,.18) 55%,rgba(60,50,80,.12))}
+  .light.lamp{background:radial-gradient(circle at 24% 42%,rgba(255,226,150,.38),rgba(255,226,150,0) 40%);animation:breathe 4s ease-in-out infinite}
+  .light.night{background:linear-gradient(180deg,rgba(18,24,60,.05),rgba(18,24,60,.22))}
+  @keyframes breathe{0%,100%{filter:brightness(1)}50%{filter:brightness(1.25)}}
+  body.nofx .rig,body.nofx .light,body.nofx .dreamfx{animation:none!important}
+  body.nofx .cue{transition:none;transform:none!important}
+  body.nofx .shk{animation:none!important}
+  body.nofx .fxc{display:none}
+  .viewer.dream .scene{filter:saturate(1.1) hue-rotate(-8deg)}
+  .dreamfx{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 1s;
+    background:radial-gradient(circle at 20% 30%,rgba(255,255,255,.55) 0 2px,transparent 3px),radial-gradient(circle at 70% 20%,rgba(255,240,250,.7) 0 2px,transparent 3px),
+      radial-gradient(circle at 45% 65%,rgba(255,255,255,.6) 0 1.5px,transparent 2.5px),radial-gradient(circle at 85% 70%,rgba(255,230,245,.7) 0 2px,transparent 3px),
+      radial-gradient(ellipse at center,rgba(255,220,240,0) 55%,rgba(214,170,230,.28) 100%);
+    background-size:220px 200px,260px 240px,180px 210px,240px 230px,100% 100%;animation:twinkle 6s linear infinite}
+  .viewer.dream .dreamfx{opacity:1}
+  .dream-tag{position:absolute;z-index:15;top:10px;right:10px;background:rgba(120,90,170,.85);color:#fff;font-size:.74rem;font-weight:800;padding:3px 10px;border-radius:999px;opacity:0;transition:opacity .6s}
+  .viewer.dream .dream-tag{opacity:1}
+  @keyframes twinkle{from{background-position:0 0,0 0,0 0,0 0,0 0}to{background-position:0 -200px,0 240px,0 -210px,0 230px,0 0}}
+  .sprites{position:absolute;inset:0;pointer-events:none}
+  .spr{position:absolute;bottom:0;height:92%;max-width:46%;object-fit:contain;object-position:bottom;opacity:0;
+    transition:opacity .45s,transform .45s,filter .45s;filter:drop-shadow(0 6px 10px rgba(50,30,15,.25))}
+  .spr.l{left:5%} .spr.r{right:5%}
+  .spr.on{opacity:1}
+  .spr.dim{filter:brightness(.82) saturate(.85) drop-shadow(0 4px 8px rgba(0,0,0,.15));transform:scale(.96) translateY(4px)}
+  .spr.talk{transform:scale(1.03)}
+  .spr.hop{animation:hop .4s ease}
+  @keyframes hop{40%{translate:0 -1.6%}}
+  .vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,rgba(80,50,20,.22) 100%)}
+  .paper-grain{position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.35;background-image:radial-gradient(rgba(120,90,50,.18) 1px,transparent 1.2px);background-size:5px 5px}
+  .hud{position:absolute;left:10px;top:10px;display:flex;gap:6px;pointer-events:none;z-index:15}
+  .hud span{background:rgba(255,250,240,.88);border:1.5px solid #e2cba6;border-radius:999px;padding:2px 10px;font-size:.76rem;font-weight:800;color:#8a4a2a}
+  .hud .hearts{color:#d9645c;letter-spacing:1px}
+  .hud span.bump{animation:bump .8s ease}
+  @keyframes bump{30%{transform:scale(1.25)}}
+  .chapter-card{position:absolute;inset:0;z-index:28;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+    background:rgba(251,246,236,.8);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .6s;text-align:center}
+  .chapter-card.show{opacity:1}
+  .chapter-card small{font-size:.72rem;letter-spacing:.2em;color:#a07049;font-weight:800}
+  .chapter-card h2{font-size:clamp(1.3rem,3.4vw,2.1rem);color:#4b3626;font-family:var(--serif);font-weight:800}
+  .chapter-card p{font-size:.85rem;color:var(--ink2);font-weight:600}
+  .badge{position:absolute;z-index:26;left:50%;top:34%;transform:translate(-50%,-50%);padding:12px 22px;border-radius:999px;font-weight:900;
+    font-size:clamp(.95rem,2.4vw,1.25rem);color:#fff;opacity:0;pointer-events:none;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.25);border:3px solid rgba(255,255,255,.85)}
+  .badge.canon{background:linear-gradient(135deg,#d9645c,#b9473f)}
+  .badge.imag,.badge.name{background:linear-gradient(135deg,#6aa5dc,#3d73a8)}
+  .badge.bal{background:linear-gradient(135deg,#8cb68a,#5b8a5e)}
+  .badge.show{animation:badgeFloat 2.4s ease forwards}
+  @keyframes badgeFloat{0%{opacity:0;transform:translate(-50%,-30%) scale(.6)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}25%{transform:translate(-50%,-50%) scale(1)}75%{opacity:1;transform:translate(-50%,-60%)}100%{opacity:0;transform:translate(-50%,-90%)}}
+  .endcard{position:absolute;inset:0;z-index:18;display:flex;align-items:flex-start;padding-top:9%;justify-content:center;background:rgba(40,28,20,.45);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .6s}
+  .endcard.show{opacity:1;pointer-events:auto}
+  .endcard .in{background:linear-gradient(180deg,#fffdf8,#f6ebda);border:2px solid #c9ad86;border-radius:18px;padding:18px 28px;text-align:center;box-shadow:0 14px 36px rgba(0,0,0,.35);max-width:90%}
+  .endcard small{font-size:.74rem;letter-spacing:.16em;color:#a07049;font-weight:800}
+  .endcard h2{font-family:var(--serif);font-size:clamp(1.2rem,3vw,1.7rem);margin:4px 0 2px}
+  .endcard .lbl{display:inline-block;margin-top:4px;font-size:.78rem;font-weight:900;color:#fff;padding:2px 12px;border-radius:999px}
+  .slots{display:flex;gap:8px;justify-content:center;margin-top:12px}
+  .slots span{font-size:.74rem;font-weight:800;padding:4px 10px;border-radius:10px;border:1.5px dashed #d5bd96;color:#a08770;background:#fbf3e4}
+  .slots span.got{border-style:solid;color:#5a3d26;background:#fff}
+  .cover{position:absolute;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;
+    background:linear-gradient(180deg,rgba(251,246,236,.55),rgba(251,246,236,.92));padding:16px;cursor:default}
+  .cover.hide{display:none}
+  .cover small{letter-spacing:.24em;font-size:.72rem;color:#a07049;font-weight:800}
+  .cover h1{font-family:var(--serif);font-size:clamp(1.6rem,4.6vw,2.8rem);color:#4b3626;font-weight:800}
+  .cover h3{font-size:clamp(.9rem,2vw,1.05rem);color:#7a4a2a}
+  .cover .cover-help{font-size:.78rem;font-weight:600;color:#8a7461;max-width:520px}
+  .cover p{font-size:clamp(.8rem,1.8vw,.95rem);color:var(--ink2);font-weight:600;line-height:1.6;max-width:540px;word-break:keep-all}
+  .cover .chips{gap:6px;align-items:center;margin-top:8px}
+  .cover .row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:4px}
+  .big{appearance:none;border:none;border-radius:12px;padding:11px 22px;font-weight:900;font-size:1rem;cursor:pointer;color:#fff;
+    background:linear-gradient(180deg,#d77a4a,#bb5f33);box-shadow:0 5px 0 #8f4524,0 8px 16px rgba(0,0,0,.18);transition:transform .1s}
+  .big:active{transform:translateY(3px);box-shadow:0 2px 0 #8f4524}
+  .big.alt{background:linear-gradient(180deg,#7fa983,#5f8a63);box-shadow:0 5px 0 #456a48,0 8px 16px rgba(0,0,0,.18)}
+  .big.alt:active{box-shadow:0 2px 0 #456a48}
+  .big.sky{background:linear-gradient(180deg,#7aaedc,#4c83b8);box-shadow:0 5px 0 #33628f,0 8px 16px rgba(0,0,0,.18)}
+  .big:disabled{opacity:.5;cursor:default}
+
+  /* ---------- 대화창 ---------- */
+  .dialog{position:absolute;left:2.4%;right:2.4%;bottom:3%;z-index:20;min-height:27%;max-height:46%;display:flex;flex-direction:column;
+    background:rgba(255,252,245,.9);backdrop-filter:blur(6px) saturate(1.1);-webkit-backdrop-filter:blur(6px);border:2px solid rgba(214,190,150,.95);border-radius:16px;
+    padding:clamp(16px,2.3cqw,26px) clamp(14px,2.4cqw,28px) clamp(6px,.9cqw,10px);box-shadow:0 10px 30px rgba(50,32,18,.28);cursor:pointer;transition:max-height .4s ease}
+  .vn.choosing .dialog{max-height:70%}
+  .vn.choosing .viewer::after{content:"";position:absolute;inset:0;z-index:5;background:linear-gradient(180deg,rgba(40,28,18,0) 20%,rgba(40,28,18,.35));pointer-events:none}
+  body.covering .dialog{display:none}
+  .dlg-head .nametag{position:absolute;top:-15px;left:18px}
+  .dlg-head{min-height:6px}
+  .dlg-head .right{position:absolute;top:8px;right:12px}
+  .dlg-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+  .dlg-head .right{display:flex;gap:6px;align-items:center}
+  .nametag{color:#fff;font-weight:800;font-size:.86rem;padding:3px 14px;border-radius:999px;background:linear-gradient(180deg,#d77a4a,#c0663a);box-shadow:0 2px 0 #96482a}
+  .nametag.inner{background:linear-gradient(180deg,#b08ab8,#916c9b);box-shadow:0 2px 0 #6c4c75}
+  .nametag.matthew{background:linear-gradient(180deg,#7d9c6e,#5f7f52);box-shadow:0 2px 0 #46613b}
+  .nametag.station{background:linear-gradient(180deg,#8094a8,#64788c);box-shadow:0 2px 0 #4a5a6b}
+  .nametag.lynde{background:linear-gradient(180deg,#8f6fa6,#715489);box-shadow:0 2px 0 #533d66}
+  .nametag.marilla{background:linear-gradient(180deg,#9c6b7c,#7f4f61);box-shadow:0 2px 0 #5f3646}
+  .nametag.sys{background:linear-gradient(180deg,#c7a15a,#a9823c);box-shadow:0 2px 0 #7d5f28}
+  .progress{font-size:.76rem;font-weight:800;color:var(--ink2);background:#f3e7d2;padding:2px 10px;border-radius:999px}
+  .mini{appearance:none;border:1.5px solid #e2c08f;background:#fff3df;color:#7a4a1f;font-size:.72rem;font-weight:800;padding:2px 9px;border-radius:999px;cursor:pointer}
+  .dlg-body{flex:1;min-height:0;overflow-y:auto}
+  .dlg-text{font-size:clamp(14px,1.75cqw,22px);line-height:1.75;font-weight:600;word-break:keep-all;white-space:pre-wrap}
+  body.lit .dlg-text,body.lit .choice,body.lit .q{font-family:var(--serif);font-weight:700}
+  .note{margin-top:10px;padding:9px 13px;border-radius:12px;background:#f6efe2;border:1.5px dashed #d5bd96;font-size:.86rem;line-height:1.6;color:#5a4433;word-break:keep-all;animation:fadeIn .5s}
+  .note b{color:#a0552c}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .dlg-foot{display:flex;justify-content:space-between;align-items:center;margin-top:6px;min-height:18px}
+  .bar{flex:1;max-width:240px;height:6px;border-radius:999px;background:#efe3cf;overflow:hidden;margin-right:10px}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,#e6a877,#c0663a);transition:width .4s}
+  .next{font-size:.8rem;font-weight:800;color:var(--amber);animation:bob 1.1s infinite ease-in-out;visibility:hidden}
+  .next.on{visibility:visible}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+  .choices{display:flex;flex-direction:column;gap:8px}
+  .kind{display:inline-block;font-size:.74rem;font-weight:900;padding:2px 10px;border-radius:999px;margin-bottom:5px}
+  .kind.act{background:#fbe6d4;color:#9a4f22}
+  .kind.predict{background:#f8e1e0;color:#a63d37}
+  .kind.talk{background:#e5efe0;color:#46703f}
+  .kind.name{background:#e2ecf7;color:#33628f}
+  .q{font-size:clamp(14px,1.6cqw,19px);font-weight:800;color:#6b4426;line-height:1.55;word-break:keep-all}
+  .choice{appearance:none;width:100%;text-align:left;background:#fffaf1;border:2px solid #e0cdb0;border-radius:13px;padding:clamp(7px,1cqw,11px) 14px;
+    font-size:clamp(13px,1.55cqw,19px);font-weight:600;color:var(--ink);cursor:pointer;display:flex;gap:10px;align-items:flex-start;line-height:1.55;
+    word-break:keep-all;transition:background .15s,border-color .15s,transform .15s}
+  .choice:hover,.choice:focus-visible{background:#fbefdc;border-color:#d4a57a;transform:translateX(3px);outline:none}
+  .choice .num{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:#f0e2ca;color:#6a4a2e;font-weight:900;font-size:.8rem;display:inline-flex;align-items:center;justify-content:center;margin-top:1px}
+  .choice:disabled{opacity:.55;cursor:default;transform:none}
+  .choice.picked{opacity:1;border-color:#c0663a;background:#fbe9d6}
+  .name-row{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+  .name-row input{flex:1;min-width:180px;font-size:1.1rem;font-weight:700;padding:10px 14px;border:2px solid #d4a57a;border-radius:12px;background:#fffaf1;color:var(--ink);font-family:var(--serif)}
+  .name-row input:focus{outline:none;border-color:#c0663a;box-shadow:0 0 0 3px rgba(201,123,69,.2)}
+  .name-help{font-size:.78rem;color:#8a7461;margin-top:4px}
+  .gl{border-bottom:1.5px dotted #c97b45;cursor:help}
+  .tip{position:fixed;z-index:200;max-width:260px;background:#4b3626;color:#fff;font-size:.8rem;line-height:1.5;padding:7px 10px;border-radius:9px;pointer-events:none;box-shadow:0 6px 16px rgba(0,0,0,.25);word-break:keep-all}
+  .tip b{color:#ffd9a8}
+
+  /* ---------- 원문 책장 ---------- */
+  .book{position:fixed;top:0;right:0;bottom:0;width:min(480px,100%);z-index:70;background:#fdf8ee;border-left:2px solid #d8c3a0;
+    box-shadow:-12px 0 30px rgba(60,40,20,.25);transform:translateX(105%);transition:transform .4s cubic-bezier(.3,1,.4,1);display:flex;flex-direction:column}
+  .book.open{transform:none}
+  .book-head{padding:14px 16px 10px;border-bottom:1.5px dashed #d8c3a0;background:linear-gradient(180deg,#f7ecd9,#fdf8ee)}
+  .book-head .t{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .book-head h3{font-family:var(--serif);font-size:1.08rem}
+  .book-head p{font-size:.76rem;color:#8a7461;margin-top:4px;line-height:1.5}
+  .book-tools{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+  .book-banner{margin:10px 16px 0;padding:8px 12px;border-radius:10px;background:#efe4f6;color:#5d3f75;font-size:.82rem;font-weight:700}
+  .book-body{flex:1;overflow-y:auto;padding:12px 16px 40px;font-family:var(--serif);font-size:1rem;line-height:1.95;word-break:keep-all}
+  .bp{padding:6px 10px 6px 30px;border-radius:9px;margin-bottom:6px;position:relative;transition:background .4s}
+  .bp i{position:absolute;left:6px;top:9px;font-style:normal;font-size:.66rem;color:#b9a184;font-family:sans-serif}
+  .bp.now{background:#fff0d4;box-shadow:inset 3px 0 0 #c97b45}
+  .bp.poem{text-align:center;color:#6b5848}
+  .bp.extra{background:#f3eef8;margin-top:16px}
+  .book-sz{font-size:1.06rem}
+  .book.big .book-body{font-size:1.14rem}
+
+  /* ---------- 리포트 ---------- */
+  .report{flex:1;min-height:0;overflow-y:auto;background:var(--paper);padding:18px 18px 30px}
+  .rp-wrap{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+  .rp-head{text-align:center;padding:12px 0 14px;border-bottom:2px dashed var(--line)}
+  .rp-head small{letter-spacing:.2em;font-size:.72rem;color:#a07049;font-weight:800}
+  .rp-head h2{font-family:var(--serif);font-size:clamp(1.3rem,3.2vw,1.8rem);margin-top:4px}
+  .type-card{display:flex;gap:16px;align-items:center;background:linear-gradient(135deg,#fff8ec,#f7ead4);border:2px solid #dcc29b;border-radius:18px;padding:16px 18px}
+  .type-emoji{font-size:3rem;flex-shrink:0}
+  .type-card h3{font-size:1.2rem;margin-bottom:4px}
+  .type-card p{font-size:.92rem;line-height:1.65;word-break:keep-all}
+  .rp-gauge{margin-top:10px;height:16px;border-radius:999px;overflow:hidden;display:flex;border:1.5px solid #d3bf9f}
+  .rp-gauge span{display:block;height:100%}
+  .rp-legend{display:flex;justify-content:space-between;font-size:.8rem;font-weight:800;margin-top:4px}
+  .card{background:#fffdf8;border:1.5px solid var(--line);border-radius:16px;padding:14px 16px}
+  .card h4{font-size:1rem;margin-bottom:10px;padding-left:9px;border-left:4px solid var(--amber)}
+  .cmp{display:grid;grid-template-columns:130px 1fr 1fr;gap:6px 10px;font-size:.86rem;line-height:1.55;word-break:keep-all}
+  .cmp .h{font-weight:800;color:var(--ink2);font-size:.78rem}
+  .cmp .c{font-weight:800;font-size:.84rem}
+  .cmp .mine{background:#fbf1e2;border-radius:10px;padding:6px 9px}
+  .cmp .orig{background:#f8e8e6;border-radius:10px;padding:6px 9px}
+  .tag{display:inline-block;font-size:.72rem;font-weight:900;padding:1px 8px;border-radius:999px;color:#fff;margin-bottom:3px}
+  .tag.canon{background:#c9504a}.tag.imag,.tag.name{background:#3f78b0}.tag.bal{background:#5b8a5e}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .items{display:flex;flex-direction:column;gap:6px}
+  .item{display:flex;gap:10px;align-items:flex-start;background:#fbf5ea;border-radius:10px;padding:7px 10px;font-size:.84rem;line-height:1.5}
+  .item .ic{font-size:1.4rem}
+  .album{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+  .album div{border-radius:12px;padding:8px 10px;font-size:.8rem;font-weight:700;text-align:center;border:1.5px solid #e2cba6;background:#fff}
+  .album div.lock{border-style:dashed;color:#b3a08a;background:#f8f1e5}
+  .album div .ic{display:block;font-size:1.5rem;margin-bottom:2px}
+  .talk-q{font-size:.9rem;line-height:1.8;padding-left:4px}
+  .rp-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+
+  /* ---------- 모달 ---------- */
+  .modal{position:fixed;inset:0;z-index:100;background:rgba(50,35,22,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+  .modal-box{background:var(--paper);border:2px solid #d8c3a0;border-radius:18px;max-width:560px;width:100%;max-height:90dvh;overflow-y:auto;padding:18px 20px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+  .modal-box h3{font-size:1.08rem;margin-bottom:10px}
+  .modal-body{font-size:.9rem;line-height:1.65;word-break:keep-all}
+  .modal-body code{background:#f1e5d1;padding:1px 6px;border-radius:6px;font-size:.84rem}
+  .modal-body textarea{width:100%;height:120px;margin-top:8px;font-size:.72rem;font-family:monospace;border:1.5px solid var(--line);border-radius:10px;padding:8px}
+  .m-btns{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:14px}
+  .m-btns .big{font-size:.9rem;padding:9px 16px}
+  .chk{display:flex;gap:8px;align-items:flex-start;margin-top:10px;font-weight:700;cursor:pointer}
+  .img-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+  .img-list span{background:#eef4ea;border:1px solid #bcd3b6;border-radius:999px;padding:1px 9px;font-size:.76rem;font-weight:700}
+  .img-list span.miss{background:#f5ece0;border-color:#e0cdb0;color:#a08770}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#4b3626;color:#fff;padding:9px 18px;border-radius:999px;font-size:.86rem;font-weight:700;z-index:120;opacity:0;transition:opacity .3s;pointer-events:none;max-width:92%;text-align:center}
+  .toast.show{opacity:.95}
+
+  @media (max-width:640px){
+    .brand .pill{display:none}
+    .stage{padding:6px}
+    .cmp{grid-template-columns:1fr}
+    .cmp .h{display:none}
+    .grid2{grid-template-columns:1fr}
+    .tb-btns .btn{padding:4px 8px;font-size:.74rem}
+  }
+  @media (max-aspect-ratio: 1/1){
+    .stage{container-type:normal;align-items:stretch}
+    .vn{width:100%;aspect-ratio:auto;display:flex;flex-direction:column;gap:10px;height:100%}
+    .viewer{position:relative;aspect-ratio:16/9;flex-shrink:0}
+    .dialog{position:relative;left:auto;right:auto;bottom:auto;flex:1;min-height:0;max-height:none;background:#fffdf8;backdrop-filter:none}
+    .vn.choosing .dialog{max-height:none}
+    .dlg-text{font-size:clamp(15px,4.2cqw,18px)}
+    .choice{font-size:15px}
+    .q{font-size:15px}
+  }
+  @media (prefers-reduced-motion: reduce){ .rig,.light{animation:none} .cue{transition:none} }
+  @media print{
+    body{overflow:visible;background:#fff}
+    .app{height:auto;box-shadow:none}
+    .toolbar,.stage,.rp-btns,.book{display:none!important}
+    .report{overflow:visible}
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="toolbar">
+    <div class="tb-row">
+      <div class="brand">📖 빨강 머리 앤 <span class="pill" id="chapterPill">초록 지붕 집으로 가는 길</span></div>
+      <div class="tb-btns">
+        <button type="button" class="btn bookbtn" id="btnBook" title="지금 장면의 원작 문장을 책으로 읽어요">📖 원문 책장</button>
+        <button type="button" class="btn" id="btnBox">🎁 추억 상자</button>
+        <button type="button" class="btn level" id="btnLevel">🌱 초등 수준</button>
+        <button type="button" class="btn" id="btnSound">🔊</button>
+        <button type="button" class="btn" id="btnFx" title="꽃잎·카메라 움직임 효과">✨ 효과</button>
+        <button type="button" class="btn" id="btnReset" title="처음부터 다시">↺ 처음</button>
+        <span class="tb-sep teacher-only"></span>
+        <label class="btn teach teacher-only" title="배경·캐릭터 이미지를 한꺼번에 선택하세요">🖼️ 이미지 불러오기
+          <input type="file" id="fileInput" multiple accept="image/*" hidden>
+        </label>
+        <button type="button" class="btn export teacher-only" id="btnExport">💾 배포용 저장</button>
+        <button type="button" class="btn teacher-only" id="btnHelp" title="이미지 파일 이름 안내">❓</button>
+      </div>
+    </div>
+    <div class="gauge-row" aria-label="독서 성향 게이지">
+      <span class="g-l">📖 원작 <b id="gL">50</b>%</span>
+      <div class="gauge" id="gauge">
+        <div class="fl" id="gFillL" style="width:50%"></div>
+        <div class="fr" id="gFillR" style="width:50%"></div>
+        <i class="mid"></i>
+        <span class="pop l" id="popL"></span><span class="pop r" id="popR"></span>
+      </div>
+      <span class="g-r"><b id="gR">50</b>% 상상 ✨</span>
+    </div>
+  </header>
+
+  <main class="stage" id="stage">
+   <div class="vn" id="vn">
+    <div class="viewer" id="viewer">
+      <div class="shk" id="shk"><div class="rig" id="rig"><div class="cue" id="cue">
+        <div class="scene" id="scene"></div>
+        <div class="sprites"><img class="spr l" id="sprL" alt=""><img class="spr r" id="sprR" alt=""></div>
+      </div></div></div>
+      <div class="light" id="light"></div>
+      <canvas class="fxc" id="fxc"></canvas>
+      <div class="dreamfx"></div>
+      <div class="paper-grain"></div>
+      <div class="vignette"></div>
+      <div class="dream-tag">✨ 상상 장면</div>
+      <div class="hud" id="hud"></div>
+      <div class="chapter-card" id="chapterCard"><small>ANNE OF GREEN GABLES</small><h2 id="ccTitle"></h2><p id="ccSub"></p></div>
+      <div class="badge" id="badge"></div>
+      <div class="endcard" id="endcard"><div class="in" id="endIn"></div></div>
+      <div class="cover" id="cover">
+        <small>ANNE OF GREEN GABLES</small>
+        <h1>빨강 머리 앤</h1>
+        <h3 id="coverSub"></h3>
+        <p id="coverText"></p>
+        <p class="cover-help" id="coverHelp"></p>
+        <div class="row">
+          <button type="button" class="big" id="btnStart">📖 이야기 시작하기</button>
+          <button type="button" class="big alt" id="btnContinue" hidden>▶ 이어서 하기</button>
+        </div>
+        <div class="row chips" id="chapChips"></div>
+      </div>
+    </div>
+
+    <section class="dialog" id="dialog">
+      <div class="dlg-head">
+        <span class="nametag" id="nameTag">앤 셜리</span>
+        <span class="right"><button type="button" class="mini" id="miniBook" title="이 장면의 원문 보기">📖 원문</button><span class="progress" id="progress"></span></span>
+      </div>
+      <div class="dlg-body" id="dlgBody">
+        <div class="dlg-text" id="dlgText"></div>
+        <div class="note" id="note" hidden></div>
+        <div class="choices" id="choices" hidden>
+          <div><span class="kind" id="kind"></span><div class="q" id="question"></div></div>
+          <div class="choices" id="choiceList"></div>
+          <div id="nameBox" hidden>
+            <div class="name-row"><input type="text" id="nameInput" maxlength="16" autocomplete="off"><button type="button" class="big sky" id="nameOk">이름 짓기</button></div>
+            <div class="name-help">16글자까지 쓸 수 있어요. 다 쓰고 Enter를 눌러도 돼요.</div>
+          </div>
+        </div>
+      </div>
+      <div class="dlg-foot"><span class="bar"><i id="barFill" style="width:0"></i></span><span class="next" id="nextHint">▼ 클릭해서 계속</span></div>
+    </section>
+   </div>
+  </main>
+
+  <section class="report" id="report" hidden></section>
+</div>
+
+<aside class="book" id="book" aria-label="원문 책장">
+  <div class="book-head">
+    <div class="t"><h3 id="bookTitle">📖 원문 책장</h3><button type="button" class="btn" id="bookClose">✕ 닫기</button></div>
+    <p id="bookSub"></p>
+    <div class="book-tools">
+      <button type="button" class="mini" id="bookNow">📍 지금 장면으로</button>
+      <button type="button" class="mini" id="bookSize">가 글자 크게</button>
+    </div>
+  </div>
+  <div class="book-banner" id="bookBanner" hidden>✨ 지금은 원작에 없는 '상상 장면'이에요. 원작에서는 아래 표시된 부분이 이어져요.</div>
+  <div class="book-body" id="bookBody"></div>
+</aside>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true">
+    <h3 id="mTitle"></h3>
+    <div class="modal-body" id="mBody"></div>
+    <div class="m-btns" id="mBtns"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<div class="tip" id="tip" hidden></div>
+
+<script id="embedded-images">window.EMBEDDED_IMAGES = {}; window.STUDENT_MODE = false;</script>
+<script>
+const BOOK = {};
+const CHAPTERS = [];
+</script>
+<script>
+/* 원문 책장: L. M. 몽고메리 《Anne of Green Gables》(1908) 2장 — 이 앱을 위해 새로 우리말로 옮김 */
+BOOK.ch1 = {
+  title: `매슈 커스버트, 깜짝 놀라다`,
+  orig: `원작 2장`,
+  paras: [
+[2, `매슈 커스버트와 밤색 암말은 브라이트 리버까지 8마일 길을 느긋하게 달렸다. 아늑한 농가들 사이로 난 아름다운 길이었다. 이따금 향긋한 전나무 숲을 지나기도 하고, 야생 자두나무가 하늘하늘한 꽃을 늘어뜨린 우묵한 골짜기를 지나기도 했다. 공기는 수많은 사과 과수원이 내쉬는 숨결로 달콤했고, 초원은 저 멀리 진줏빛과 보랏빛 지평선 안개 속으로 비스듬히 펼쳐져 있었다. 그리고`],
+[3, `“작은 새들은 노래했네, 마치 그날이<br>한 해에 단 하루뿐인 여름날인 듯이.”`],
+[4, `매슈는 나름의 방식으로 이 마찻길을 즐겼다. 다만 길에서 여자들을 마주쳐 고개를 숙여 인사해야 하는 순간만은 예외였다. 프린스 에드워드 섬에서는 아는 사이든 모르는 사이든 길에서 만나는 사람이면 누구에게나 고개를 끄덕여 인사하는 것이 예의였기 때문이다.`],
+[5, `매슈는 마릴라와 레이첼 부인을 뺀 세상의 모든 여자를 무서워했다. 그 알 수 없는 존재들이 속으로 자기를 비웃고 있다는 불편한 느낌이 들었던 것이다. 어쩌면 그 생각이 틀리지 않았을지도 모른다. 매슈는 꽤 별나 보이는 사람이었으니까. 몸집은 어색하게 컸고, 쇳빛이 도는 회색 머리카락은 길게 자라 구부정한 어깨에 닿았으며, 스무 살 때부터 길러 온 부드럽고 숱 많은 갈색 수염이 얼굴을 덮고 있었다. 사실 그는 스무 살 때나 예순 살인 지금이나 생김새가 거의 같았다. 스무 살 때 머리가 조금 덜 희었을 뿐이다.`],
+[6, `브라이트 리버에 닿았을 때 기차는 그림자도 보이지 않았다. 너무 일찍 왔나 보다 생각한 매슈는 브라이트 리버의 작은 여관 마당에 말을 매어 두고 역사로 걸어갔다. 기다란 승강장은 거의 텅 비어 있었다. 눈에 띄는 살아 있는 것이라고는 승강장 맨 끝에 쌓인 지붕널 더미 위에 앉아 있는 여자아이 하나뿐이었다. 매슈는 그게 여자아이라는 것만 겨우 알아채고는 쳐다보지도 않은 채 될 수 있는 대로 빨리 그 곁을 지나쳤다. 만약 쳐다보았다면, 아이의 자세와 표정에 서린 팽팽한 긴장과 기대를 놓치기는 어려웠을 것이다. 아이는 무언가를, 혹은 누군가를 기다리며 앉아 있었다. 그 순간 할 수 있는 일이라고는 앉아서 기다리는 것뿐이었기에, 아이는 온 힘을 다해 앉아서 기다리고 있었다.`],
+[7, `매슈는 저녁을 먹으러 집에 가려고 매표소 문을 잠그던 역장을 만나, 다섯 시 반 기차가 곧 들어오느냐고 물었다.`],
+[8, `“다섯 시 반 기차는 삼십 분 전에 들어왔다가 떠났습니다.” 그 부지런한 역장이 대답했다. “그런데 댁 앞으로 내린 승객이 하나 있어요. 어린 여자아이인데, 저기 지붕널 더미에 앉아 있지요. 여자 대합실에 들어가 있으라고 했더니, 밖에 있는 게 더 좋다고 아주 진지하게 말하더군요. ‘바깥이 상상할 여지가 더 많거든요.’라나요. 참 별난 아이예요.”`],
+[9, `“나는 여자아이를 기다린 게 아닌데요.” 매슈가 멍하니 말했다. “내가 데리러 온 건 사내아이입니다. 여기 와 있어야 하는데. 알렉산더 스펜서 부인이 노바스코샤에서 데려다주기로 했거든요.”`],
+[10, `역장이 휘파람을 불었다.`],
+[11, `“뭔가 착오가 있었나 보네요.” 그가 말했다. “스펜서 부인이 저 여자아이와 함께 기차에서 내려서 저한테 맡기고 갔어요. 댁과 댁 누이가 고아원에서 저 아이를 입양하기로 했고, 곧 데리러 올 거라고 하더군요. 제가 아는 건 그게 전부예요. 그리고 이 근처에 고아를 더 숨겨 두지도 않았고요.”`],
+[12, `“무슨 영문인지 모르겠군요.” 매슈는 어쩔 줄 몰라 하며 말했다. 이럴 때 마릴라가 곁에 있어서 대신 처리해 주면 좋으련만.`],
+[13, `“그럼 아이한테 직접 물어보시죠.” 역장이 대수롭지 않게 말했다. “그 애라면 설명할 수 있을 겁니다. 말솜씨가 보통이 아니거든요, 그건 확실해요. 어쩌면 댁이 원하던 종류의 사내아이가 다 떨어졌나 보죠.”`],
+[14, `배가 고팠던 역장은 경쾌한 걸음으로 가 버렸다. 그리고 불운한 매슈에게는 사자 굴에 들어가 사자 수염을 잡아당기는 것보다도 어려운 일이 남았다. 여자아이에게, 그것도 낯선 여자아이에게, 그것도 고아 여자아이에게 걸어가서 왜 사내아이가 아니냐고 따져 묻는 일 말이다. 매슈는 속으로 끙끙 앓으며 돌아서서, 승강장을 따라 아이 쪽으로 조심조심 발을 끌며 걸어갔다.`],
+[15, `아이는 매슈가 자기 곁을 지나간 순간부터 줄곧 그를 지켜보고 있었고, 지금도 눈을 떼지 않고 있었다. 매슈는 아이를 보고 있지 않았고, 설령 보았다 한들 아이가 정말 어떤 모습인지 알아보지 못했을 것이다. 하지만 평범한 관찰자라면 이런 모습을 보았으리라.`],
+[16, `열한 살쯤 된 아이였다. 누르스름한 회색 윈시 천으로 만든, 아주 짧고 아주 꽉 끼고 아주 볼품없는 원피스를 입고 있었다. 색이 바랜 갈색 세일러 모자를 썼는데, 모자 아래로 아주 숱이 많고 누가 봐도 빨간 머리카락이 두 갈래로 땋아져 등까지 늘어져 있었다. 얼굴은 작고 하얗고 야위었으며 주근깨투성이였다. 입이 컸고 눈도 컸는데, 그 눈은 빛과 기분에 따라 초록빛으로도 보이고 회색빛으로도 보였다.`],
+[17, `평범한 관찰자의 눈에는 여기까지만 보였을 것이다. 하지만 비범한 관찰자라면 더 많은 것을 알아보았을 것이다. 턱이 아주 뾰족하고 또렷하다는 것, 커다란 눈에 생기와 활기가 가득하다는 것, 입술이 다정하고 표정이 풍부하다는 것, 이마가 넓고 반듯하다는 것. 한마디로, 눈 밝은 비범한 관찰자라면 수줍은 매슈 커스버트가 우스울 만큼 겁내고 있는 이 길 잃은 소녀의 몸 안에 결코 평범하지 않은 영혼이 깃들어 있다고 결론지었을 것이다.`],
+[18, `그러나 매슈는 먼저 말을 꺼내는 고역을 치르지 않아도 되었다. 그가 자기에게 오고 있다는 것을 알아차리자마자 아이가 벌떡 일어났기 때문이다. 아이는 가냘프고 햇볕에 그을린 한 손으로 낡고 구식인 융단 가방의 손잡이를 움켜쥐고, 다른 한 손을 그에게 내밀었다.`],
+[19, `“초록 지붕 집의 매슈 커스버트 씨지요?” 아이가 유난히 맑고 고운 목소리로 말했다. “만나서 정말 반가워요. 아저씨가 저를 데리러 오지 않으시는 게 아닐까 슬슬 걱정이 되기 시작해서, 아저씨가 못 오시게 된 온갖 이유를 상상하고 있었어요. 만약 오늘 밤에 아저씨가 안 오시면, 철길을 따라 저 모퉁이에 있는 커다란 산벚나무까지 가서 나무 위로 올라가 밤을 새우기로 마음먹었었어요. 조금도 무섭지 않았을 거예요. 달빛 속에서 하얀 꽃이 활짝 핀 산벚나무 위에서 잠드는 건 정말 멋질 거예요, 그렇죠? 대리석 궁전에 살고 있다고 상상할 수도 있잖아요. 그리고 오늘 밤에 안 오시더라도 아침에는 꼭 저를 데리러 오실 거라고 굳게 믿고 있었어요.”`],
+[20, `매슈는 앙상한 작은 손을 어색하게 잡았다. 그리고 그 자리에서 어떻게 할지 결정했다. 반짝이는 눈을 한 이 아이에게 착오가 있었다고 말할 수는 없었다. 일단 집에 데려가서 그 일은 마릴라에게 맡기기로 했다. 무슨 착오가 있었든 아이를 브라이트 리버에 두고 갈 수는 없는 노릇이었다. 그러니 묻고 설명하는 일은 모두 무사히 초록 지붕 집에 돌아간 뒤로 미루는 편이 나았다.`],
+[21, `“늦어서 미안하구나.” 매슈가 수줍게 말했다. “가자꾸나. 말은 저쪽 마당에 있단다. 가방은 이리 주렴.”`],
+[22, `“아, 제가 들 수 있어요.” 아이가 쾌활하게 대답했다. “무겁지 않아요. 제 세상 재산이 몽땅 들어 있지만 무겁지는 않아요. 그리고 꼭 정해진 방법으로 들지 않으면 손잡이가 빠져 버리거든요. 그러니까 요령을 정확히 아는 제가 드는 게 나아요. 아주아주 오래된 융단 가방이거든요. 아, 아저씨가 와 주셔서 정말 기뻐요. 산벚나무 위에서 자는 것도 멋졌겠지만요. 꽤 먼 길을 가야 하죠? 스펜서 부인이 8마일이라고 하셨어요. 저는 마차 타는 걸 정말 좋아하니까 기뻐요. 아, 제가 아저씨네와 함께 살고 아저씨네 식구가 된다니 정말 꿈만 같아요. 저는 한 번도 누군가의 식구였던 적이 없거든요. 정말로요. 그중에서도 고아원이 제일 끔찍했어요. 겨우 넉 달 있었지만 그걸로 충분했어요. 아저씨는 고아원에서 지내 본 적 없으시죠? 그러니 그게 어떤 건지 절대 모르실 거예요. 상상할 수 있는 그 어떤 것보다도 나빠요. 스펜서 부인은 제가 그런 식으로 말하는 건 나쁜 거라고 하셨지만, 저는 나쁘게 굴려던 게 아니었어요. 모르는 사이에 나쁜 아이가 되기란 정말 쉽잖아요, 그렇죠? 고아원 사람들은 좋은 분들이었어요. 하지만 고아원에는 상상할 거리가 너무 없어요. 다른 고아 아이들밖에 없거든요. 그 아이들에 대해 이것저것 상상하는 건 꽤 재미있었어요. 이를테면 옆자리에 앉은 여자아이가 사실은 백작의 딸인데, 아기였을 때 못된 유모에게 납치당했고, 그 유모는 사실을 털어놓기도 전에 죽어 버렸다고 상상하는 거예요. 밤마다 잠 못 들고 누워서 그런 걸 상상하곤 했어요. 낮에는 그럴 시간이 없었으니까요. 아마 그래서 제가 이렇게 마른가 봐요. 저 정말 끔찍하게 말랐죠, 그렇죠? 뼈에 살이 한 점도 없어요. 저는 제가 통통하고, 팔꿈치에 보조개가 쏙 들어가 있다고 상상하는 걸 정말 좋아해요.”`],
+[23, `여기까지 말하고 매슈의 길동무는 입을 다물었다. 숨이 차기도 했고, 마차에 다 왔기 때문이기도 했다. 아이는 마을을 벗어나 가파른 언덕길을 내려갈 때까지 한마디도 하지 않았다. 그 길은 부드러운 흙을 깊이 깎아 낸 길이라, 꽃 핀 산벚나무와 가느다란 하얀 자작나무가 줄지어 선 양쪽 둑이 머리보다 몇 자나 높이 솟아 있었다.`],
+[24, `아이가 손을 뻗어 마차 옆을 스치는 야생 자두나무 가지 하나를 꺾었다.`],
+[25, `“아름답지 않아요? 둑에서 몸을 내민 저 나무, 온통 하얗고 레이스 같은 저 나무를 보니 무엇이 떠오르세요?” 아이가 물었다.`],
+[26, `“글쎄다, 모르겠구나.” 매슈가 말했다.`],
+[27, `“어머, 당연히 신부죠. 안개 같은 고운 면사포를 쓰고 온통 하얀 옷을 입은 신부요. 저는 신부를 한 번도 본 적은 없지만, 어떤 모습일지는 상상할 수 있어요. 저는 제가 신부가 될 거라고는 기대하지 않아요. 저는 너무 못생겨서 아무도 저랑 결혼하고 싶어 하지 않을 테니까요. 외국에 나가는 선교사라면 몰라도요. 외국 선교사라면 그렇게 까다롭게 고르지 않을 것 같아요. 그래도 언젠가 하얀 드레스를 한 벌 가져 보고 싶어요. 그게 제가 이 세상에서 바라는 최고의 행복이에요. 저는 예쁜 옷이 정말 좋아요. 그런데 기억나는 한 예쁜 옷을 한 번도 가져 본 적이 없어요. 하지만 그만큼 더 기대할 게 많은 거잖아요, 그렇죠? 그리고 제가 화려하게 차려입었다고 상상할 수도 있고요. 오늘 아침 고아원을 떠날 때 이 끔찍하고 낡은 윈시 원피스를 입어야 해서 너무 창피했어요. 고아원 아이들은 모두 이 옷을 입어야 했거든요. 지난겨울에 호프턴의 한 상인이 고아원에 윈시 천 300야드를 기부했대요. 팔리지 않아서 그랬다는 사람들도 있었지만, 저는 그분이 따뜻한 마음에서 그러셨다고 믿고 싶어요. 아저씨도 그렇죠? 기차에 탔을 때는 모든 사람이 저를 쳐다보며 불쌍하게 여기는 것 같았어요. 그래서 저는 곧바로 상상을 시작했어요. 제가 아주 아름다운 연하늘색 비단 드레스를 입고 있다고요. 이왕 상상할 거라면 정말 근사한 걸 상상하는 게 낫잖아요. 꽃과 하늘거리는 깃털로 장식한 커다란 모자도 쓰고, 금시계도 차고, 부드러운 가죽 장갑과 구두도 신었다고요. 그랬더니 금세 기운이 나서 섬까지 오는 여행을 마음껏 즐겼어요. 배를 타고 건너올 때도 멀미를 조금도 안 했어요. 스펜서 부인도 안 하셨어요. 평소에는 늘 하신대요. 제가 배에서 떨어지지 않나 지켜보느라 멀미할 틈이 없었다고 하셨어요. 저처럼 여기저기 쏘다니는 애는 처음 봤대요. 그래도 그 덕분에 부인이 멀미를 안 하셨으니 제가 돌아다닌 게 다행이죠, 그렇죠? 저는 그 배에서 볼 수 있는 건 전부 보고 싶었어요. 다시 그런 기회가 올지 몰랐으니까요. 아, 저기 꽃이 활짝 핀 벚나무가 또 잔뜩 있어요! 이 섬은 정말 꽃이 가득한 곳이에요. 벌써 이 섬이 정말 좋아요. 여기서 살게 돼서 너무 기뻐요. 프린스 에드워드 섬이 세상에서 제일 아름다운 곳이라고 늘 들었고, 여기서 사는 상상도 했었지만, 정말로 그렇게 될 거라고는 생각 못 했어요. 상상이 현실이 되는 건 정말 기쁜 일이에요, 그렇죠? 그런데 저 빨간 길들은 정말 신기해요. 샬럿타운에서 기차를 탔는데 빨간 길이 휙휙 지나가기 시작하자, 스펜서 부인께 길이 왜 빨가냐고 여쭤 봤어요. 부인은 모르겠다고, 제발 더는 질문하지 말라고 하셨어요. 제가 벌써 천 개는 물어봤을 거라고요. 사실 그랬을지도 몰라요. 하지만 질문을 안 하면 어떻게 이것저것 알아내겠어요? 그런데 정말 길은 왜 빨간 거예요?”`],
+[28, `“글쎄다, 모르겠구나.” 매슈가 말했다.`],
+[29, `“그럼, 그건 언젠가 알아내야 할 것 중 하나네요. 알아낼 것들이 이렇게 많다고 생각하면 정말 멋지지 않아요? 그런 생각을 하면 살아 있다는 게 그냥 기뻐져요. 세상은 정말 재미있는 곳이에요. 우리가 모든 걸 다 안다면 세상이 지금의 반만큼도 재미있지 않을 거예요, 그렇죠? 그러면 상상할 여지가 하나도 없을 테니까요, 안 그래요? 그런데 제가 말을 너무 많이 하나요? 사람들이 늘 그렇다고 하거든요. 제가 말을 안 하는 게 좋으세요? 그렇다고 하시면 그만할게요. 마음만 먹으면 그만할 수 있어요. 어렵긴 하지만요.”`],
+[30, `매슈는 스스로도 놀랍게도 이 시간이 즐거웠다. 말수 적은 사람들이 대개 그렇듯, 그는 말 많은 사람을 좋아했다. 단, 그들이 자기 몫까지 기꺼이 떠들어 주고 그에게 맞장구를 기대하지 않을 때에 한해서였다. 하지만 어린 여자아이와 함께 있는 게 즐거울 줄은 꿈에도 몰랐다. 여자들도 충분히 곤란했지만, 어린 여자아이들은 더 곤란했다. 그 애들은 그를 곁눈질하며 쭈뼛쭈뼛 옆으로 지나가곤 했는데, 마치 한마디라도 했다가는 그가 자기들을 한입에 꿀꺽 삼켜 버릴 거라고 생각하는 것 같았다. 매슈는 그런 모습이 정말 싫었다. 그게 에이번리의 얌전하게 자란 여자아이들의 모습이었다. 하지만 이 주근깨투성이 꼬마 마녀는 아주 달랐다. 재빠르게 돌아가는 아이의 생각을 굼뜬 머리로 따라가기는 꽤 버거웠지만, 그래도 매슈는 아이의 수다가 ‘왠지 좋다’고 생각했다. 그래서 여느 때처럼 수줍게 말했다.`],
+[31, `“아, 하고 싶은 만큼 얼마든지 이야기하렴. 나는 괜찮단다.”`],
+[32, `“아, 정말 기뻐요. 아저씨랑 저는 아주 잘 지낼 거라는 걸 알겠어요. 말하고 싶을 때 말할 수 있다니, 그리고 ‘아이들은 눈에 띄되 소리를 내서는 안 된다’는 말을 듣지 않아도 된다니 정말 속이 시원해요. 그 말을 백만 번은 들었을 거예요. 그리고 사람들은 제가 어려운 낱말을 쓴다고 비웃어요. 하지만 큰 생각을 하면 그걸 표현하려면 큰 낱말을 써야 하잖아요, 그렇죠?”`],
+[33, `“글쎄다, 그건 일리가 있는 말 같구나.” 매슈가 말했다.`],
+[34, `“스펜서 부인은 제 혀가 가운데에 매달려 있는 게 틀림없다고 하셨어요. 하지만 아니에요. 한쪽 끝에 단단히 붙어 있어요. 스펜서 부인이 아저씨네 집 이름이 초록 지붕 집이라고 하셨어요. 그래서 그 집에 대해 이것저것 다 여쭤 봤죠. 집 둘레에 나무가 빙 둘러 있다고 하셔서 더더욱 기뻤어요. 저는 나무가 정말 좋거든요. 고아원 둘레에는 나무가 하나도 없었어요. 앞마당에 하얗게 회칠한 새장 같은 울타리를 두른 조그맣고 가엾은 나무 몇 그루가 있었을 뿐이에요. 그 나무들도 꼭 고아처럼 보였어요. 그 나무들을 보면 울고 싶어지곤 했어요. 저는 나무들에게 이렇게 말하곤 했어요. ‘아, 가엾은 작은 나무들아! 너희가 커다란 숲속에서 다른 나무들에게 둘러싸여 있고, 뿌리 위로는 작은 이끼와 린네풀이 자라고, 가까이에 시냇물이 흐르고, 가지에서는 새들이 노래한다면 너희도 쑥쑥 자랄 수 있을 텐데. 그렇지? 하지만 거기서는 그럴 수가 없구나. 작은 나무들아, 나는 너희 마음을 정말 잘 알아.’ 오늘 아침 그 나무들을 두고 떠나려니 마음이 아팠어요. 그런 것들에도 정이 들잖아요, 그렇죠? 초록 지붕 집 근처에 시냇물이 있나요? 스펜서 부인께 그걸 여쭤 보는 걸 깜빡했어요.”`],
+[35, `“글쎄다, 그래, 집 바로 아래에 하나 있지.”`],
+[36, `“어머나! 시냇가에 사는 건 늘 꿈꾸던 일 중 하나였어요. 정말 그렇게 될 줄은 몰랐지만요. 꿈은 좀처럼 이루어지지 않잖아요, 그렇죠? 이루어진다면 얼마나 좋을까요? 그래도 지금 저는 거의 완벽하게 행복해요. 완전히 완벽하게 행복할 수는 없어요. 왜냐하면, 음… 이건 무슨 색이라고 하시겠어요?”`],
+[37, `아이는 윤기 나는 기다란 땋은 머리 한 가닥을 야윈 어깨 너머로 휙 넘겨 매슈의 눈앞에 들어 보였다. 매슈는 숙녀의 머리 색깔을 판정하는 일에 익숙하지 않았지만, 이번에는 의심의 여지가 별로 없었다.`],
+[38, `“빨간색이지, 아니냐?” 매슈가 말했다.`],
+[39, `아이는 한숨을 쉬며 땋은 머리를 다시 떨어뜨렸다. 발끝에서부터 올라와 세상의 모든 슬픔을 내뿜는 듯한 한숨이었다.`],
+[40, `“네, 빨간색이에요.” 아이가 체념한 듯 말했다. “이제 왜 제가 완벽하게 행복할 수 없는지 아시겠죠. 빨간 머리를 가진 사람은 아무도 그럴 수 없어요. 다른 건 별로 신경 쓰이지 않아요. 주근깨도, 초록 눈도, 깡마른 몸도요. 그런 건 상상으로 없앨 수 있거든요. 제 피부가 장미 꽃잎처럼 곱고 눈은 별처럼 반짝이는 보랏빛이라고 상상할 수 있어요. 하지만 빨간 머리만큼은 도저히 상상으로 없앨 수가 없어요. 최선을 다해 봐요. ‘내 머리는 까마귀 날개처럼 새까만, 눈부신 흑발이야.’ 하고 속으로 생각하죠. 하지만 그러는 내내 그냥 빨간색이라는 걸 알고 있어서 가슴이 찢어져요. 이건 제 평생의 슬픔이 될 거예요. 언젠가 소설에서 평생의 슬픔을 지닌 여자아이 이야기를 읽은 적이 있는데, 그 애의 슬픔은 빨간 머리가 아니었어요. 그 애 머리는 설화석고 같은 이마에서 뒤로 물결치는 순금빛이었대요. 설화석고 같은 이마가 뭐예요? 아무리 해도 알아낼 수가 없었어요. 아저씨는 아세요?”`],
+[41, `“글쎄다, 나도 모르겠구나.” 매슈가 말했다. 그는 머리가 조금 어질어질해지고 있었다. 젊은 시절 철없던 때, 소풍에서 다른 남자아이의 꾐에 넘어가 회전목마를 탔을 때와 비슷한 기분이었다.`],
+[42, `“어쨌든 그게 뭐든 멋진 거였을 거예요. 그 아이는 천상의 아름다움을 지녔다고 했거든요. 천상의 아름다움을 지니면 어떤 기분일지 상상해 보신 적 있으세요?”`],
+[43, `“글쎄다, 아니, 없구나.” 매슈가 순진하게 털어놓았다.`],
+[44, `“저는 자주 해요. 아저씨라면, 고를 수 있다면 어떤 사람이 되고 싶으세요? 천상의 아름다움을 지닌 사람, 눈부시게 똑똑한 사람, 아니면 천사처럼 착한 사람?”`],
+[45, `“글쎄다, 나는… 잘 모르겠구나.”`],
+[46, `“저도요. 아무리 해도 못 정하겠어요. 하지만 별 상관없어요. 어느 쪽도 될 것 같지 않거든요. 천사처럼 착한 사람이 절대 못 될 건 확실해요. 스펜서 부인 말씀으로는… 아, 커스버트 씨! 아, 커스버트 씨!! 아, 커스버트 씨!!!”`],
+[47, `스펜서 부인이 그렇게 말했다는 것은 아니었다. 아이가 마차에서 굴러떨어진 것도, 매슈가 무슨 놀라운 일을 한 것도 아니었다. 그저 길모퉁이를 돌았더니 ‘가로수길’이 나타난 것이었다.`],
+[48, `뉴브리지 사람들이 ‘가로수길’이라고 부르는 그곳은 400~500야드쯤 이어지는 길이었는데, 오래전 한 괴짜 늙은 농부가 심은, 가지를 넓게 뻗은 커다란 사과나무들이 길 위를 완전히 아치처럼 덮고 있었다. 머리 위로는 눈처럼 희고 향기로운 꽃이 기다란 차양처럼 끝없이 이어졌다. 나뭇가지 아래의 공기는 보랏빛 어스름으로 가득했고, 저 멀리 앞쪽으로는 노을로 물든 하늘이 대성당 통로 끝의 커다란 장미창처럼 빛나고 있었다.`],
+[49, `그 아름다움에 아이는 말문이 막힌 것 같았다. 아이는 마차 등받이에 몸을 기대고, 야윈 두 손을 앞으로 모아 쥔 채, 머리 위의 하얀 장관을 향해 황홀하게 얼굴을 들었다. 가로수길을 빠져나와 뉴브리지로 이어지는 긴 비탈을 내려갈 때도 아이는 꼼짝도 하지 않고 말도 없었다. 여전히 넋을 잃은 얼굴로, 노을 진 서쪽 하늘 저 멀리를 바라보았다. 그 눈은 빛나는 하늘을 배경으로 화려하게 줄지어 지나가는 환상들을 보고 있었다. 개들이 짖어 대고, 꼬마들이 소리를 지르고, 호기심 어린 얼굴들이 창문 밖을 내다보는 북적이는 작은 마을 뉴브리지를 지나는 동안에도 둘은 말없이 달렸다. 다시 3마일을 더 달렸는데도 아이는 입을 열지 않았다. 아이는 떠들 때만큼이나 열렬하게 침묵을 지킬 수도 있는 게 분명했다.`],
+[50, `“꽤 피곤하고 배가 고픈 모양이구나.” 마침내 매슈가 용기를 내어 말했다. 아이가 오랫동안 말이 없는 까닭을 그는 그것 말고는 떠올릴 수 없었다. “하지만 이제 그리 멀지 않았단다. 1마일만 더 가면 돼.”`],
+[51, `아이는 깊은 한숨과 함께 공상에서 깨어나, 별에 이끌려 먼 곳을 헤매다 돌아온 영혼처럼 꿈꾸는 눈빛으로 매슈를 바라보았다.`],
+[52, `“아, 커스버트 씨.” 아이가 속삭였다. “아까 지나온 그곳, 그 하얀 곳은 뭐였어요?”`],
+[53, `“글쎄다, 가로수길을 말하는 모양이구나.” 매슈가 한참 깊이 생각한 끝에 말했다. “꽤 예쁜 곳이지.”`],
+[54, `“예쁘다고요? 아, ‘예쁘다’는 맞는 말이 아닌 것 같아요. ‘아름답다’도 아니고요. 그런 말로는 모자라요. 아, 그건 굉장했어요, 정말 굉장했어요. 제가 본 것 중에 상상으로도 더 낫게 만들 수 없는 건 그게 처음이에요. 그냥 여기가 꽉 차는 느낌이에요.” 아이는 한 손을 가슴에 얹었다. “이상하고 묘하게 아팠어요. 그런데 기분 좋은 아픔이었어요. 아저씨도 그런 아픔을 느껴 보신 적 있어요, 커스버트 씨?”`],
+[55, `“글쎄다, 그런 적이 있었는지 도무지 기억이 안 나는구나.”`],
+[56, `“저는 자주 느껴요. 정말 근사하게 아름다운 걸 볼 때마다요. 그런데 그렇게 멋진 곳을 ‘가로수길’이라고 부르면 안 돼요. 그런 이름에는 아무 뜻도 없잖아요. 그곳은 이렇게 불러야 해요. 음, 어디 보자… ‘기쁨의 하얀 길’. 정말 상상력 넘치는 멋진 이름이지 않아요? 저는 어떤 장소나 사람의 이름이 마음에 안 들면 늘 새 이름을 상상해서 그 이름으로 생각해요. 고아원에 헵지바 젠킨스라는 여자아이가 있었는데, 저는 늘 그 애를 로잘리아 드비어라고 상상했어요. 다른 사람들은 그곳을 가로수길이라고 부르겠지만, 저는 언제까지나 기쁨의 하얀 길이라고 부를 거예요. 정말 1마일만 더 가면 집에 도착하는 거예요? 기쁘기도 하고 아쉽기도 해요. 이 마찻길이 너무 즐거웠으니까 아쉬워요. 저는 즐거운 일이 끝날 때면 늘 아쉬워요. 뒤에 더 즐거운 일이 올 수도 있지만 그건 아무도 장담할 수 없잖아요. 그리고 더 즐겁지 않은 경우가 아주 많고요. 적어도 제 경험으로는 그랬어요. 그래도 집에 간다고 생각하니 기뻐요. 저는 기억하는 한 진짜 집을 가져 본 적이 한 번도 없거든요. 정말 진짜인 집에 간다는 생각만 해도 그 기분 좋은 아픔이 또 느껴져요. 어머, 저기 정말 예쁘다!”`],
+[57, `언덕 꼭대기를 넘자 아래로 연못 하나가 보였다. 어찌나 길고 구불구불한지 거의 강처럼 보였다. 연못 한가운데에는 다리가 걸쳐 있었고, 다리에서 아래쪽 끝까지, 호박색 모래 언덕이 띠처럼 둘러 저 너머 짙푸른 만과 갈라놓은 곳까지, 물빛은 시시각각 변하는 수많은 색으로 찬란했다. 크로커스와 장미와 투명한 초록빛이 어우러진 더없이 신비로운 빛깔들, 그리고 아직 아무도 이름 붙이지 못한 미묘한 빛깔들이었다. 다리 위쪽으로 연못은 가장자리를 두른 전나무와 단풍나무 숲까지 이어졌고, 일렁이는 나무 그림자 속에 어둡고 투명하게 누워 있었다. 군데군데 야생 자두나무가 둑에서 몸을 내밀고 있었는데, 그 모습이 마치 하얀 옷을 입은 소녀가 발끝으로 서서 물에 비친 제 모습을 들여다보는 것 같았다. 연못 위쪽 늪에서는 맑고도 구슬프게 달콤한 개구리들의 합창이 들려왔다. 건너편 비탈에는 하얀 사과 과수원 뒤로 작은 회색 집 한 채가 빼꼼 얼굴을 내밀고 있었는데, 아직 완전히 어둡지 않은데도 창문 하나에서 불빛이 비치고 있었다.`],
+[58, `“저건 배리 씨네 연못이란다.” 매슈가 말했다.`],
+[59, `“아, 그 이름도 마음에 안 들어요. 저는 이렇게 부를래요. 음, 어디 보자… ‘반짝이는 호수’. 그래요, 그게 딱 맞는 이름이에요. 전율이 느껴지니까 알아요. 딱 들어맞는 이름이 떠오르면 전율이 느껴지거든요. 아저씨도 무언가에 전율을 느끼신 적 있어요?”`],
+[60, `매슈는 곰곰이 생각했다.`],
+[61, `“글쎄다, 그래. 오이밭을 삽으로 파 엎을 때 나오는 그 징그러운 하얀 굼벵이들을 보면 늘 좀 전율이 느껴지지. 그 생김새가 정말 싫거든.”`],
+[62, `“아, 그건 정확히 같은 종류의 전율은 아닌 것 같아요. 같은 거라고 생각하세요? 굼벵이랑 반짝이는 호수는 별로 관계가 없는 것 같잖아요, 그렇죠? 그런데 다른 사람들은 왜 저걸 배리 씨네 연못이라고 불러요?”`],
+[63, `“아마 배리 씨가 저 위에 있는 집에 살아서 그럴 게다. 그 집 이름은 ‘과수원 비탈’이란다. 저 뒤에 커다란 덤불만 없으면 여기서 초록 지붕 집이 보일 텐데. 하지만 다리를 건너 큰길로 돌아가야 하니까 반 마일쯤 더 가야 한단다.”`],
+[64, `“배리 씨네는 어린 여자아이가 있어요? 음, 아주 어리지 않아도 돼요. 제 또래쯤이요.”`],
+[65, `“열한 살쯤 된 딸이 하나 있지. 이름은 다이애나란다.”`],
+[66, `“어머나!” 아이는 숨을 길게 들이마셨다. “정말 완벽하게 아름다운 이름이에요!”`],
+[67, `“글쎄다, 난 잘 모르겠구나. 내 보기엔 어딘가 지독히 이교도 같은 이름이야. 나라면 제인이나 메리처럼 착실한 이름이 더 좋겠다. 그런데 다이애나가 태어났을 때 그 집에 하숙하던 학교 선생이 있었는데, 그 사람한테 이름을 지어 달라고 했더니 다이애나라고 지었다는구나.”`],
+[68, `“그럼 제가 태어났을 때도 그런 선생님이 근처에 계셨더라면 좋았을 텐데요. 아, 다리에 다 왔어요. 눈을 꼭 감을 거예요. 저는 다리를 건널 때마다 늘 무서워요. 우리가 딱 한가운데에 왔을 때 다리가 주머니칼처럼 접혀서 우리를 꽉 물어 버릴지도 모른다는 상상을 멈출 수가 없거든요. 그래서 눈을 감아요. 하지만 한가운데쯤 왔다 싶으면 결국 늘 눈을 뜨고 말아요. 왜냐하면, 만약 정말로 다리가 접힌다면 접히는 걸 보고 싶으니까요. 덜컹덜컹 소리가 정말 신나요! 저는 늘 이 덜컹거리는 부분이 좋아요. 세상에 좋아할 게 이렇게 많다니 정말 멋지지 않아요? 다 건넜다. 이제 뒤돌아볼래요. 잘 자, 사랑하는 반짝이는 호수야. 저는 사랑하는 것들에게 늘 잘 자라고 인사해요. 사람에게 하듯이요. 그것들도 좋아할 것 같거든요. 저 물이 저를 보고 웃고 있는 것 같아요.”`],
+[69, `건너편 언덕을 올라 모퉁이를 돌았을 때 매슈가 말했다.`],
+[70, `“이제 집에 거의 다 왔다. 저기 보이는 게 초록 지붕—”`],
+[71, `“아, 말하지 마세요.” 아이가 숨 가쁘게 그의 말을 가로막았다. 아이는 반쯤 들어 올린 매슈의 팔을 붙잡고, 그가 가리키는 손짓을 보지 않으려고 눈을 감았다. “제가 맞혀 볼게요. 꼭 맞힐 수 있을 거예요.”`],
+[72, `아이는 눈을 뜨고 주위를 둘러보았다. 둘은 언덕 꼭대기에 있었다. 해는 진 지 좀 되었지만, 은은한 잔광 속에서 풍경은 아직 또렷했다. 서쪽으로는 금잔화 빛 하늘을 배경으로 교회의 검은 첨탑이 솟아 있었다. 아래로는 작은 골짜기가 있었고, 그 너머로 완만하게 오르는 긴 비탈을 따라 아늑한 농가들이 흩어져 있었다. 아이의 눈은 간절하고도 애틋하게 이 집에서 저 집으로 바삐 옮겨 다녔다. 마침내 그 눈길은 길에서 멀리 떨어진 왼쪽의 한 집에 머물렀다. 주위 숲의 어스름 속에서 꽃 핀 나무들로 희미하게 하얀 집이었다. 그 집 위, 티 없이 맑은 남서쪽 하늘에는 수정처럼 하얀 커다란 별 하나가 길잡이와 약속의 등불처럼 빛나고 있었다.`],
+[73, `“저기죠, 맞죠?” 아이가 손으로 가리키며 말했다.`],
+[74, `매슈는 신이 나서 밤색 암말의 등을 고삐로 찰싹 쳤다.`],
+[75, `“글쎄다, 맞혔구나! 하지만 스펜서 부인이 알아볼 수 있게 설명해 줬겠지.”`],
+[76, `“아니에요, 안 해 주셨어요. 정말이에요. 부인이 해 주신 말씀은 저기 다른 집들 대부분에 해당될 만한 얘기였어요. 저는 그 집이 어떻게 생겼는지 전혀 몰랐어요. 그런데 보자마자 바로 우리 집이라는 느낌이 들었어요. 아, 꼭 꿈을 꾸고 있는 것 같아요. 그거 아세요? 제 팔은 팔꿈치 위로 시퍼렇게 멍이 들었을 거예요. 오늘 하도 여러 번 꼬집어서요. 자꾸만 끔찍하고 메스꺼운 기분이 밀려와서, 이게 다 꿈일까 봐 너무 무서웠어요. 그래서 진짜인지 확인하려고 저를 꼬집었어요. 그러다 문득 깨달았어요. 설령 이게 꿈이라 해도 할 수 있는 한 오래오래 꿈을 꾸는 게 낫겠다는 걸요. 그래서 꼬집는 걸 그만뒀어요. 그런데 이건 진짜예요. 그리고 우리는 이제 집에 거의 다 왔어요.”`],
+[77, `황홀한 한숨과 함께 아이는 다시 말없이 잠겨 들었다. 매슈는 불안하게 몸을 뒤척였다. 이 세상의 떠돌이 아이에게, 그토록 바라던 집이 결국 네 집이 아니라고 말해야 할 사람이 자기가 아니라 마릴라라는 사실이 다행스러웠다. 둘은 이미 꽤 어두워진 린드 골짜기를 지났다. 그래도 레이첼 부인이 창가 명당자리에서 둘을 못 알아볼 만큼 어둡지는 않았다. 마차는 언덕을 올라 초록 지붕 집으로 이어지는 긴 오솔길로 들어섰다. 집에 다다를 무렵 매슈는 다가오는 그 폭로의 순간이 자기도 이해할 수 없을 만큼 두려워 몸이 움츠러들었다. 이 착오가 마릴라나 자기에게 가져올 골칫거리를 생각한 게 아니었다. 아이가 얼마나 실망할지를 생각한 것이었다. 아이의 눈에 깃든 그 황홀한 빛이 꺼지는 모습을 떠올리자, 무언가를 죽이는 일에 손을 보태게 될 것 같은 불편한 기분이 들었다. 새끼 양이나 송아지, 그 밖의 죄 없는 작은 생명을 잡아야 할 때 밀려오던 바로 그 기분이었다.`],
+[78, `마차가 마당으로 들어섰을 때 마당은 아주 어두웠고, 사방에서 포플러 잎이 비단결처럼 사각사각 소리를 내고 있었다.`],
+[79, `“나무들이 잠꼬대하는 소리 좀 들어 보세요.” 매슈가 아이를 땅에 내려 줄 때 아이가 속삭였다. “얼마나 좋은 꿈을 꾸고 있을까요!”`],
+[80, `그러고는 ‘세상 재산 전부’가 든 융단 가방을 꼭 쥐고 아이는 매슈를 따라 집 안으로 들어갔다.`]
+  ],
+  extra: [
+[`x1`, `원작 3장 첫 장면 (다음 이야기)`, `매슈가 문을 열자 마릴라가 바삐 걸어 나왔다. 그러나 뻣뻣하고 볼품없는 옷에 기다란 빨간 머리를 땋아 내리고 간절하게 반짝이는 눈을 한 이상한 작은 아이를 보는 순간, 마릴라는 깜짝 놀라 우뚝 멈춰 섰다. “매슈 커스버트, 그 애는 누구예요?” 마릴라가 소리쳤다. “사내아이는 어디 있고요?”`]
+  ]
+};
+
+/* 원문 책장: 원작 9~10장 — 이 앱을 위해 새로 우리말로 옮김 */
+BOOK.ch2 = {
+  title: `레이첼 린드 부인, 기겁하다 · 앤의 사과`,
+  orig: `원작 9~10장`,
+  paras: [
+[`h`, `원작 9장 「레이첼 린드 부인, 기겁하다」`],
+[`9-1`, `앤이 초록 지붕 집에 온 지 두 주가 지나서야 린드 부인이 앤을 살펴보러 왔다. 공정하게 말하자면 레이첼 부인 탓은 아니었다. 지난번 초록 지붕 집을 다녀간 뒤로 철에 맞지 않는 지독한 독감에 걸려 집 안에만 갇혀 지냈던 것이다. 레이첼 부인은 좀처럼 앓는 일이 없었고 아픈 사람들을 대놓고 업신여겼다. 하지만 독감만큼은 이 세상 어떤 병과도 다른, 하느님이 특별히 내리신 시련으로밖에 볼 수 없다는 것이 부인의 주장이었다. 의사가 바깥에 발을 내디뎌도 좋다고 허락하자마자, 부인은 매슈와 마릴라네 고아를 보고 싶은 호기심에 터질 듯한 마음으로 초록 지붕 집으로 서둘러 올라갔다. 그 고아에 대해서는 에이번리에 온갖 이야기와 추측이 나돌고 있었다.`],
+[`9-2`, `앤은 그 두 주 동안 깨어 있는 매 순간을 알차게 보냈다. 벌써 집 둘레의 나무와 덤불을 하나하나 다 알게 되었다. 사과 과수원 아래로 오솔길이 하나 나 있어 숲 사이로 이어진다는 것도 알아냈다. 그리고 그 길을 맨 끝까지 탐험했다. 시냇물과 다리, 전나무 덤불과 산벚나무 아치, 고사리가 우거진 모퉁이, 단풍나무와 마가목 사이로 갈라지는 샛길까지, 그 길이 부리는 온갖 즐거운 변덕을 남김없이 맛보았다.`],
+[`9-3`, `앤은 골짜기 아래 샘물과도 친구가 되었다. 깊고 맑고 얼음처럼 차가운 그 멋진 샘은 매끄러운 붉은 사암으로 둘러싸여 있었고, 야자수 잎 같은 커다란 물고사리 덤불이 가장자리를 두르고 있었다. 그 너머에는 시냇물 위로 통나무 다리가 놓여 있었다.`],
+[`9-4`, `그 다리를 건너면 앤의 춤추는 발걸음은 숲이 우거진 언덕으로 이어졌다. 곧게 빽빽이 자란 전나무와 가문비나무 아래로는 늘 어스름이 깔려 있었다. 그곳에 피는 꽃이라고는 수줍고 향긋한 숲속 꽃인 가냘픈 '린네풀'이 무수히 피어 있는 것과, 지난해 핀 꽃들의 넋처럼 창백하고 하늘하늘한 별꽃 몇 송이가 전부였다. 나무 사이로는 거미줄이 은실처럼 반짝였고, 전나무 가지와 꽃술은 다정하게 말을 건네는 것 같았다.`],
+[`9-5`, `이 황홀한 탐험은 모두 놀아도 좋다고 허락받은 짬짬이 30분 동안 이루어졌다. 앤은 자기가 발견한 것들을 이야기하느라 매슈와 마릴라의 귀가 반쯤 먹먹해질 만큼 떠들었다. 물론 매슈는 불평하지 않았다. 그는 말없이 즐거운 미소를 띤 채 그 이야기를 다 들어 주었다. 마릴라는 그 '수다'를 참아 주다가, 자기가 너무 이야기에 빠져든다 싶으면 곧바로 "입 좀 다물어라" 하고 짧게 명령해 앤의 입을 막았다.`],
+[`9-6`, `레이첼 부인이 왔을 때 앤은 과수원에 나가 있었다. 붉은 저녁 햇살이 흩뿌려진, 무성하게 일렁이는 풀밭 사이를 마음 내키는 대로 거닐고 있었던 것이다. 그래서 그 선량한 부인은 자기 병 이야기를 마음껏 늘어놓을 수 있었다. 아팠던 곳 하나하나, 맥박 하나하나를 어찌나 신나게 설명하는지, 마릴라는 독감에도 나름의 보상이 있나 보다 생각했을 정도였다. 자세한 이야기가 바닥나자 레이첼 부인은 찾아온 진짜 이유를 꺼냈다.`],
+[`9-7`, `"자네와 매슈에 대해 놀라운 이야기를 듣고 있다네."`],
+[`9-8`, `"놀라기로는 나만큼이야 하겠어요." 마릴라가 말했다. "이제 조금씩 놀란 마음이 가라앉는 중이에요."`],
+[`9-9`, `"그런 착오가 생기다니 참 안됐네." 레이첼 부인이 동정하듯 말했다. "돌려보낼 수는 없었나?"`],
+[`9-10`, `"그럴 수도 있었겠지만, 그러지 않기로 했어요. 매슈가 그 아이를 마음에 들어 했거든요. 그리고 솔직히 나도 그 애가 좋아요. 물론 단점도 있다는 건 인정하지만요. 집이 벌써 딴 곳처럼 달라졌어요. 정말 영리한 아이예요."`],
+[`9-11`, `마릴라는 처음 마음먹은 것보다 더 많은 말을 해 버렸다. 레이첼 부인의 얼굴에 못마땅한 기색이 떠올랐기 때문이다.`],
+[`9-12`, `"엄청난 책임을 떠맡았구먼." 부인이 침울하게 말했다. "특히 아이를 키워 본 적도 없으면서 말이야. 그 아이에 대해서도, 그 애의 진짜 성품에 대해서도 잘 모를 테고, 그런 아이가 커서 어떻게 될지는 아무도 모르는 법이지. 그렇다고 자네 기를 꺾으려는 건 절대 아니야, 마릴라."`],
+[`9-13`, `"기 꺾일 일 없어요." 마릴라가 무뚝뚝하게 대답했다. "나는 한번 마음먹으면 바꾸지 않으니까요. 앤을 보고 싶으시겠지요. 불러올게요."`],
+[`9-14`, `곧 앤이 뛰어 들어왔다. 과수원을 쏘다닌 기쁨으로 얼굴이 반짝이고 있었다. 하지만 뜻밖에 낯선 사람이 있는 것을 보고는 당황해서 문 안쪽에 멈춰 섰다. 고아원에서부터 입고 온 짧고 꽉 끼는 윈시 원피스 아래로 깡마른 다리가 볼품없이 길어 보여서, 정말이지 별나게 생긴 아이였다. 주근깨는 그 어느 때보다 많고 도드라져 보였다. 모자를 쓰지 않은 머리는 바람에 헝클어져 지나치게 눈부신 엉망이 되어 있었다. 그 순간만큼 앤의 머리가 빨개 보인 적은 없었다.`],
+[`9-15`, `"세상에, 생김새 보고 고른 건 아닌 게 확실하구먼." 레이첼 린드 부인이 단호하게 말했다. 레이첼 부인은 누구 눈치도 보지 않고 할 말은 하는 것을 자랑으로 여기는, 유쾌하고 인기 있는 사람들 가운데 하나였다. "지독하게 말랐고 못생겼네, 마릴라. 이리 와 봐라, 얘야. 어디 좀 보자. 맙소사, 세상에 이런 주근깨를 본 적이 있나? 머리는 또 홍당무처럼 빨갛고! 이리 오라니까, 얘야."`],
+[`9-16`, `앤은 '갔다'. 그러나 레이첼 부인이 기대한 방식은 아니었다. 앤은 단숨에 부엌 바닥을 가로질러 레이첼 부인 앞에 섰다. 얼굴은 분노로 새빨갰고, 입술은 떨렸고, 가냘픈 온몸이 머리부터 발끝까지 부들부들 떨리고 있었다.`],
+[`9-17`, `"아주머니가 미워요." 앤이 목멘 소리로 외치며 발을 쿵 굴렀다. "미워요, 미워요, 미워요." 밉다고 외칠 때마다 발 구르는 소리가 더 커졌다. "어떻게 저더러 말라깽이에 못생겼다고 하실 수 있어요? 어떻게 주근깨투성이에 빨간 머리라고 하실 수 있어요? 아주머니는 무례하고 버릇없고 인정머리 없는 분이에요!"`],
+[`9-18`, `"앤!" 마릴라가 깜짝 놀라 소리쳤다.`],
+[`9-19`, `그러나 앤은 꿋꿋하게 레이첼 부인을 마주 보고 서 있었다. 고개를 쳐들고, 두 눈은 이글거리고, 두 주먹을 꽉 쥔 채, 온몸에서 격렬한 분노가 아지랑이처럼 피어오르고 있었다.`],
+[`9-20`, `"어떻게 저한테 그런 말을 하실 수 있어요?" 앤이 맹렬하게 되풀이했다. "누가 아주머니한테 그런 말을 하면 좋으시겠어요? 아주머니더러 뚱뚱하고 굼뜨고 상상력이라곤 한 톨도 없을 거라고 하면 좋으시겠어요? 이렇게 말해서 아주머니 마음이 상해도 상관없어요! 상했으면 좋겠어요. 아주머니는 제 마음을 그 어느 때보다도 아프게 했어요. 토머스 아주머니네 술주정뱅이 남편보다도 더요. 저는 절대로 아주머니를 용서하지 않을 거예요. 절대로, 절대로요!"`],
+[`9-21`, `쿵! 쿵!`],
+[`9-22`, `"세상에 이런 성질머리를 본 적이 있나!" 레이첼 부인이 기겁해서 외쳤다.`],
+[`9-23`, `"앤, 네 방에 올라가서 내가 갈 때까지 거기 있어라." 마릴라가 간신히 말문을 되찾고 말했다.`],
+[`9-24`, `앤은 울음을 터뜨리며 복도 문으로 달려가더니, 바깥 현관 벽에 걸린 양철 그릇들이 덩달아 덜그럭거릴 만큼 문을 쾅 닫고, 회오리바람처럼 복도를 지나 계단을 뛰어 올라갔다. 위층에서 둔탁하게 쾅 하는 소리가 들려, 동쪽 다락방 문도 똑같이 세차게 닫혔다는 것을 알려 주었다.`],
+[`9-25`, `"글쎄, 저런 걸 키워야 하다니 하나도 안 부럽구먼, 마릴라." 레이첼 부인이 더없이 엄숙하게 말했다.`],
+[`9-26`, `마릴라는 사과인지 변명인지 자기도 모를 말을 하려고 입을 열었다. 그런데 정작 입에서 나온 말은 그때도, 그 뒤로도 내내 마릴라 자신을 놀라게 했다.`],
+[`9-27`, `"아이 생김새를 가지고 놀리시면 안 됐어요, 레이첼."`],
+[`9-28`, `"마릴라 커스버트, 방금 우리가 본 그 끔찍한 성질을 편들겠다는 말은 아니겠지?" 레이첼 부인이 분개해서 따졌다.`],
+[`9-29`, `"아니에요." 마릴라가 천천히 말했다. "그 애를 감싸려는 게 아니에요. 아주 버릇없게 굴었으니 단단히 타일러야겠지요. 하지만 그 애 사정도 헤아려 줘야 해요. 그 애는 무엇이 옳은지 한 번도 배운 적이 없거든요. 그리고 레이첼, 당신도 그 애한테 너무 심했어요."`],
+[`9-30`, `마릴라는 마지막 한마디를 덧붙이지 않을 수 없었다. 그러고는 또다시 그런 자신에게 놀랐다. 레이첼 부인은 기분이 상했다는 듯 위엄 있게 자리에서 일어났다.`],
+[`9-31`, `"그래, 앞으로는 말조심을 단단히 해야겠구먼, 마릴라. 어디서 왔는지도 모르는 고아의 고상한 기분을 무엇보다 먼저 헤아려야 하니 말이야. 아, 아니, 화난 거 아니야. 걱정 말게. 자네가 너무 딱해서 화낼 틈도 없어. 저 애 때문에 자네 고생 좀 할 거야. 하지만 내 충고를 듣겠다면, 안 듣겠지만, 내가 아이를 열 명이나 키우고 둘을 묻었다네, 자네가 말한 그 '타이르기'는 꽤 굵은 자작나무 회초리로 하게. 저런 아이한테는 그게 제일 잘 통하는 말일 거야. 성질이 꼭 머리 색깔 같구먼. 그럼, 잘 있게, 마릴라. 전처럼 자주 놀러 오게. 하지만 나는 한동안 여기 올 생각 없네. 이런 식으로 달려들어 모욕을 당할 수도 있다면 말이야. 내 평생 처음 겪는 일일세."`],
+[`9-32`, `그러고는 레이첼 부인은 휙 나가 버렸다. 늘 뒤뚱뒤뚱 걷는 뚱뚱한 부인을 두고 '휙' 나갔다고 할 수 있다면 말이다. 마릴라는 아주 엄숙한 얼굴로 동쪽 다락방으로 향했다.`],
+[`9-33`, `계단을 올라가며 마릴라는 어떻게 해야 할지 불안하게 곰곰이 생각했다. 방금 벌어진 일에 적잖이 당황스러웠다. 하필이면 레이첼 린드 부인 앞에서 앤이 그런 성질을 부리다니, 이 무슨 불운이란 말인가! 그러다 마릴라는 문득 불편하고 부끄러운 사실을 깨달았다. 앤의 성품에 그런 심각한 결점이 있다는 걸 알게 된 슬픔보다, 망신을 당했다는 창피함이 더 크다는 것이었다. 그리고 앤을 어떻게 벌해야 할까? 자작나무 회초리를 쓰라는 친절한 충고는, 그 효과라면 레이첼 부인의 아이들이 모두 쓰라리게 증언할 수 있겠지만, 마릴라의 마음을 끌지 못했다. 아이를 때릴 수 있을 것 같지 않았다. 아니, 앤이 자기 잘못이 얼마나 큰지 제대로 깨닫게 할 다른 벌을 찾아야 했다.`],
+[`9-34`, `마릴라가 들어가 보니 앤은 침대에 엎드려 서럽게 울고 있었다. 깨끗한 침대보 위에 흙 묻은 신발을 올려놓은 것도 까맣게 모른 채였다.`],
+[`9-35`, `"앤." 마릴라가 그리 엄하지 않게 불렀다.`],
+[`9-36`, `대답이 없었다.`],
+[`9-37`, `"앤." 이번에는 더 엄하게. "당장 침대에서 내려와서 내 말 들어라."`],
+[`9-38`, `앤은 꼼지락거리며 침대에서 내려와 옆 의자에 뻣뻣하게 앉았다. 얼굴은 퉁퉁 붓고 눈물 자국투성이였으며, 눈은 고집스럽게 바닥만 노려보고 있었다.`],
+[`9-39`, `"이게 무슨 버릇이니, 앤! 부끄럽지도 않니?"`],
+[`9-40`, `"그 아주머니는 저더러 못생겼다고, 빨간 머리라고 할 권리가 없었어요." 앤이 대답을 피하며 반항적으로 맞받았다.`],
+[`9-41`, `"너도 그렇게 길길이 날뛰며 그분께 그런 식으로 말할 권리는 없었다, 앤. 네가 부끄러웠다. 정말 부끄러웠어. 린드 부인께 얌전하게 굴길 바랐는데, 너는 나를 망신시켰어. 린드 부인이 너더러 빨간 머리에 못생겼다고 했다고 왜 그렇게 성을 내는지 모르겠구나. 너도 그런 말을 입에 달고 살면서."`],
+[`9-42`, `"아, 하지만 자기가 그렇게 말하는 거랑 남한테서 그런 말을 듣는 건 완전히 달라요." 앤이 울부짖었다. "그게 사실이라는 걸 알아도, 다른 사람들은 그렇게까지 생각하지 않았으면 하고 바랄 수밖에 없잖아요. 제가 성질이 지독하다고 생각하시겠지만, 어쩔 수 없었어요. 그분이 그런 말을 하니까 뭔가가 속에서 확 치밀어 올라서 숨이 막혔어요. 그분한테 달려들 수밖에 없었어요."`],
+[`9-43`, `"그래, 아주 볼만한 구경거리가 됐구나. 린드 부인은 이제 여기저기 다니며 네 이야기를 신나게 할 거다. 정말로 할 거야. 그렇게 성질을 부린 건 끔찍한 일이었다, 앤."`],
+[`9-44`, `"누가 아주머니 면전에서 말라깽이에 못생겼다고 하면 어떤 기분이실지 상상해 보세요." 앤이 눈물을 글썽이며 애원했다.`],
+[`9-45`, `옛 기억 하나가 갑자기 마릴라 앞에 떠올랐다. 아주 어렸을 때, 이모 한 분이 다른 이모에게 자기를 두고 하는 말을 들은 적이 있었다. "가엾게도 저 애는 어쩜 저렇게 까무잡잡하고 못생겼을까." 마릴라는 쉰 살이 다 되어서야 그 기억의 아픔에서 벗어날 수 있었다.`],
+[`9-46`, `"린드 부인이 너한테 한 말이 꼭 옳았다고는 하지 않겠다, 앤." 마릴라가 한결 부드러운 목소리로 인정했다. "레이첼은 말이 너무 거침없지. 하지만 그렇다고 네가 그렇게 행동한 게 용서되는 건 아니다. 그분은 낯선 사람이고, 어른이고, 내 손님이었어. 셋 다 네가 그분을 공손히 대했어야 할 충분한 이유지. 너는 무례하고 버릇없었어. 그러니까" 마릴라에게 구원 같은 벌이 떠올랐다. "그분께 가서 성질부린 걸 정말 죄송하다고 말씀드리고 용서를 빌어야 한다."`],
+[`9-47`, `"그건 절대 못 해요." 앤이 단호하고 어둡게 말했다. "어떤 벌이든 내리셔도 좋아요, 마릴라. 뱀과 두꺼비가 우글거리는 어둡고 축축한 지하 감옥에 가두고 빵과 물만 주셔도 불평하지 않을게요. 하지만 린드 부인께 용서해 달라고는 못 하겠어요."`],
+[`9-48`, `"우리는 사람을 어둡고 축축한 지하 감옥에 가두는 버릇이 없단다." 마릴라가 무뚝뚝하게 말했다. "게다가 에이번리엔 그런 감옥이 좀처럼 없거든. 하지만 린드 부인께는 꼭 사과해야 하고, 또 사과하게 될 거다. 사과할 마음이 생겼다고 나한테 말할 수 있을 때까지 이 방에 있거라."`],
+[`9-49`, `"그럼 저는 영원히 여기 있어야겠네요." 앤이 구슬프게 말했다. "그런 말을 해서 죄송하다고 린드 부인께 말할 수 없으니까요. 어떻게 그래요? 저는 죄송하지 않은걸요. 아주머니를 속상하게 해서 죄송하긴 해요. 하지만 그분께 그 말을 그대로 해 준 건 기뻐요. 정말 속이 시원했어요. 죄송하지 않은데 죄송하다고 할 수는 없잖아요? 죄송하다고 상상하는 것조차 안 돼요."`],
+[`9-50`, `"아침이 되면 네 상상력이 좀 더 제대로 돌아가겠지." 마릴라가 나가려고 일어서며 말했다. "밤새 네 행동을 곰곰이 생각하고 마음을 고쳐먹어라. 우리가 초록 지붕 집에 있게 해 주면 아주 착한 아이가 되려고 노력하겠다고 했지만, 오늘 저녁엔 아무래도 그래 보이지 않는구나."`],
+[`9-51`, `이 마지막 한 방을 앤의 폭풍 같은 가슴에 꽂아 두고, 마릴라는 마음이 몹시 괴롭고 심란한 채로 부엌에 내려갔다. 앤에게 화가 난 만큼 자기 자신에게도 화가 났다. 레이첼 부인의 어안이 벙벙한 얼굴이 떠오를 때마다 입꼬리가 씰룩거리며, 아주 못마땅하게도 웃고 싶은 마음이 들었기 때문이다.`],
+[`h`, `원작 10장 「앤의 사과」`],
+[`10-1`, `마릴라는 그날 저녁 매슈에게 이 일에 대해 아무 말도 하지 않았다. 하지만 다음 날 아침에도 앤이 계속 고집을 부리자, 앤이 아침 식탁에 나타나지 않은 까닭을 설명해야 했다. 마릴라는 매슈에게 자초지종을 다 이야기하며, 앤의 행동이 얼마나 끔찍했는지 제대로 알아듣게 하려고 애를 썼다.`],
+[`10-2`, `"레이첼 린드가 한 소리 들은 건 잘된 일이지. 그 사람은 참견 잘하는 늙은 수다쟁이니까." 매슈가 위로하듯 대꾸했다.`],
+[`10-3`, `"매슈 커스버트, 오라버니한테 놀랐어요. 앤이 한 짓이 끔찍했다는 걸 알면서 그 애 편을 들다니요! 다음엔 그 애를 아예 벌주지 말자고 하시겠네요."`],
+[`10-4`, `"글쎄다, 아니, 꼭 그런 건 아니고." 매슈가 불안하게 말했다. "조금은 벌을 받아야겠지. 하지만 너무 모질게 하지는 마라, 마릴라. 그 애는 옳은 걸 가르쳐 준 사람이 한 번도 없었다는 걸 기억해라. 너, 너 그 애 먹을 건 갖다줄 거지?"`],
+[`10-5`, `"내가 굶겨서 버릇 고친다는 소리 들어 본 적 있어요?" 마릴라가 발끈했다. "끼니는 꼬박꼬박 먹을 거고, 내가 직접 들고 올라갈 거예요. 하지만 린드 부인께 사과하겠다고 할 때까지는 거기 있어야 해요. 그걸로 끝이에요, 오라버니."`],
+[`10-6`, `아침, 점심, 저녁 식사가 모두 아주 조용했다. 앤이 여전히 고집을 꺾지 않았기 때문이다. 식사 때마다 마릴라는 음식을 가득 담은 쟁반을 동쪽 다락방에 갖다 놓았고, 나중에 가지고 내려올 때 보면 음식은 별로 줄어 있지 않았다. 매슈는 마지막 쟁반이 내려오는 것을 걱정스러운 눈으로 지켜보았다. 앤이 뭘 먹기는 한 걸까?`],
+[`10-7`, `그날 저녁 마릴라가 뒷목장에서 소를 몰고 오려고 나가자, 헛간 근처를 서성이며 지켜보던 매슈는 도둑처럼 슬그머니 집 안으로 들어가 위층으로 살금살금 올라갔다. 평소 매슈는 부엌과 복도 옆 자기 작은 침실 사이만 오갔다. 목사님이 차를 마시러 오시면 가끔 마지못해 거실에 들어가는 정도였다. 그러나 자기 집 위층에 올라온 것은 마릴라를 도와 손님방에 벽지를 바른 그해 봄 이후 처음이었다. 4년 전의 일이었다.`],
+[`10-8`, `매슈는 발끝으로 복도를 걸어가 동쪽 다락방 문밖에 몇 분 동안이나 서 있다가, 겨우 용기를 내어 손가락으로 문을 똑똑 두드리고 살그머니 문을 열어 안을 들여다보았다.`],
+[`10-9`, `앤은 창가의 노란 의자에 앉아 슬픈 얼굴로 정원을 내다보고 있었다. 무척 작고 불행해 보여서 매슈는 가슴이 아팠다. 그는 문을 살며시 닫고 발끝으로 앤에게 다가갔다.`],
+[`10-10`, `"앤." 누가 엿들을까 봐 겁나는 듯 매슈가 속삭였다. "좀 어떠냐, 앤?"`],
+[`10-11`, `앤은 힘없이 웃었다.`],
+[`10-12`, `"그럭저럭 지내요. 이것저것 상상을 많이 하니까 시간이 좀 가요. 물론 꽤 외롭긴 해요. 하지만 이제 익숙해지는 게 좋겠죠."`],
+[`10-13`, `앤은 앞으로 펼쳐질 기나긴 독방 생활을 용감하게 마주하며 다시 미소 지었다.`],
+[`10-14`, `매슈는 마릴라가 일찍 돌아오기 전에 하러 온 말을 얼른 해야 한다는 것을 떠올렸다.`],
+[`10-15`, `"글쎄다, 앤, 그냥 해 버리고 끝내는 게 어떻겠니?" 그가 속삭였다. "어차피 언젠가는 해야 할 거다. 마릴라는 지독히 고집이 센 사람이거든. 지독하게 말이다, 앤. 당장 해 버리고 끝내라, 응?"`],
+[`10-16`, `"린드 부인께 사과하라는 말씀이세요?"`],
+[`10-17`, `"그래, 사과. 바로 그 말이다." 매슈가 반갑게 말했다. "말하자면 그냥 좋게 마무리하라는 거지. 내가 하려던 말이 그거다."`],
+[`10-18`, `"아저씨를 위해서라면 할 수도 있을 것 같아요." 앤이 생각에 잠겨 말했다. "죄송하다고 말하는 건 거짓말이 아니에요. 지금은 정말 죄송하거든요. 어젯밤엔 조금도 죄송하지 않았어요. 속속들이 화가 났고, 밤새 화가 나 있었어요. 세 번 깼는데 깰 때마다 화가 펄펄 났으니까 확실해요. 그런데 오늘 아침엔 다 사라졌어요. 더는 화가 나지 않았어요. 그리고 뭔가 텅 빈 끔찍한 느낌이 남았어요. 제 자신이 너무 부끄러웠어요. 하지만 린드 부인께 가서 그렇게 말씀드린다는 건 도저히 생각할 수 없었어요. 너무 굴욕적일 테니까요. 그럴 바엔 여기 영원히 갇혀 있겠다고 마음먹었어요. 그래도… 아저씨를 위해서라면 뭐든 할게요. 정말로 원하신다면…"`],
+[`10-19`, `"글쎄다, 물론 원하지. 네가 없으니 아래층이 지독히 쓸쓸하구나. 가서 좋게 마무리하렴. 착하지."`],
+[`10-20`, `"좋아요." 앤이 체념한 듯 말했다. "마릴라 아주머니가 들어오시자마자 뉘우쳤다고 말씀드릴게요."`],
+[`10-21`, `"그래, 그래야지, 앤. 그런데 내가 이런 말 했다고 마릴라한테는 말하지 마라. 내가 참견했다고 생각할 거다. 참견 안 하겠다고 약속했거든."`],
+[`10-22`, `"야생마가 끌어도 이 비밀은 안 말할게요." 앤이 엄숙하게 약속했다. "그런데 야생마가 어떻게 사람한테서 비밀을 끌어낼까요?"`],
+[`10-23`, `그러나 매슈는 이미 사라지고 없었다. 자기가 해낸 일에 스스로 겁을 먹은 것이다. 그는 마릴라가 무슨 일을 꾸몄는지 눈치채지 못하도록 말 목장의 가장 먼 구석으로 허겁지겁 달아났다. 마릴라는 집에 돌아왔다가 난간 너머로 "마릴라 아주머니" 하고 부르는 애처로운 목소리를 듣고 기분 좋게 놀랐다.`],
+[`10-24`, `"그래?" 마릴라가 복도로 나가며 말했다.`],
+[`10-25`, `"성질부리고 무례한 말을 해서 죄송해요. 린드 부인께 가서 그렇게 말씀드릴게요."`],
+[`10-26`, `"좋다." 마릴라의 딱딱한 말투에서는 안도하는 기색이 조금도 드러나지 않았다. 앤이 끝내 굽히지 않으면 대체 어떻게 해야 하나 고민하던 참이었다. "젖 짜고 나서 데려가마."`],
+[`10-27`, `그리하여 젖을 다 짠 뒤, 마릴라와 앤은 오솔길을 걸어 내려갔다. 마릴라는 꼿꼿하고 의기양양했고, 앤은 고개를 푹 숙인 채 풀이 죽어 있었다. 그런데 반쯤 내려갔을 때 앤의 풀 죽은 모습이 마법처럼 사라졌다. 앤은 고개를 들고 사뿐사뿐 걸었다. 두 눈은 노을 진 하늘에 고정되어 있었고, 어딘지 모르게 들뜬 기운이 감돌았다. 마릴라는 그 변화가 못마땅했다. 이건 마음이 상한 린드 부인 앞에 데려가야 할 얌전한 참회자의 모습이 아니었다.`],
+[`10-28`, `"무슨 생각을 하니, 앤?" 마릴라가 날카롭게 물었다.`],
+[`10-29`, `"린드 부인께 뭐라고 말씀드릴지 상상하고 있어요." 앤이 꿈꾸듯 대답했다.`],
+[`10-30`, `만족스러운 대답이었다. 아니, 만족스러워야 했다. 하지만 마릴라는 자기가 짠 벌의 계획이 어딘가 어긋나고 있다는 생각을 떨칠 수 없었다. 앤이 저렇게 황홀하고 환한 얼굴을 할 까닭이 없었다.`],
+[`10-31`, `앤은 린드 부인 바로 앞에 이를 때까지 황홀하고 환한 얼굴을 하고 있었다. 부인은 부엌 창가에 앉아 뜨개질을 하고 있었다. 그때 환한 빛이 사라졌다. 얼굴 구석구석에 구슬픈 뉘우침이 떠올랐다. 말 한마디 꺼내기도 전에 앤은 깜짝 놀란 레이첼 부인 앞에 갑자기 무릎을 꿇고 애원하듯 두 손을 내밀었다.`],
+[`10-32`, `"아, 린드 부인, 정말 너무너무 죄송해요." 앤이 떨리는 목소리로 말했다. "제 슬픔을 다 표현할 수는 없어요. 사전 한 권을 다 쓴다 해도 안 될 거예요. 그냥 상상해 주셔야 해요. 저는 부인께 끔찍하게 굴었어요. 그리고 제가 남자아이가 아닌데도 초록 지붕 집에 있게 해 준 소중한 분들, 매슈 아저씨와 마릴라 아주머니께 망신을 드렸어요. 저는 지독하게 못되고 은혜를 모르는 아이예요. 벌을 받아 마땅하고, 점잖은 사람들한테 영원히 쫓겨나야 마땅해요. 부인께서 사실을 말씀하셨다고 성질을 부린 건 정말 못된 짓이었어요. 그건 사실이었어요. 부인이 하신 말씀은 한마디 한마디 다 사실이었어요. 제 머리는 빨갛고, 저는 주근깨투성이에 깡마르고 못생겼어요. 제가 부인께 한 말도 사실이긴 했지만, 그런 말을 하지 말았어야 했어요. 아, 린드 부인, 제발, 제발 용서해 주세요. 용서해 주지 않으시면 그건 제 평생의 슬픔이 될 거예요. 아무리 성질이 지독하다 해도, 가엾은 어린 고아 소녀에게 평생의 슬픔을 안기고 싶지는 않으시겠죠? 아, 분명 그러실 거예요. 제발 용서한다고 말씀해 주세요, 린드 부인."`],
+[`10-33`, `앤은 두 손을 맞잡고 고개를 숙인 채 심판의 말을 기다렸다.`],
+[`10-34`, `앤의 진심은 틀림없었다. 목소리 한 마디 한 마디에 진심이 묻어났다. 마릴라도 린드 부인도 그 틀림없는 울림을 알아들었다. 그러나 마릴라는 앤이 이 굴욕의 골짜기를 실제로 즐기고 있다는 것, 철저하게 몸을 낮추는 것에 푹 빠져 있다는 것을 알아차리고 당황했다. 마릴라 자신이 그토록 뿌듯해하던 그 건전한 벌은 어디로 갔단 말인가? 앤은 그것을 일종의 즐거움으로 바꿔 놓고 만 것이다.`],
+[`10-35`, `눈치가 그리 빠르지 않은 선량한 린드 부인은 그것을 알아채지 못했다. 앤이 아주 철저하게 사과했다는 것만 알아차렸을 뿐이다. 그러자 조금 참견하기 좋아하긴 해도 친절한 부인의 마음에서 노여움이 말끔히 사라졌다.`],
+[`10-36`, `"자, 자, 일어나라, 얘야." 부인이 시원스레 말했다. "물론 용서하고말고. 아무튼 나도 너한테 좀 심했던 것 같구나. 내가 워낙 말을 거침없이 하는 사람이라서 말이다. 내 말은 그냥 마음에 두지 마라. 네 머리가 지독하게 빨간 건 부정할 수 없다만, 내가 아는 여자아이가 하나 있었는데, 사실 학교 동창이다만, 어릴 땐 머리가 너만큼이나 빨갰는데 크면서 정말 멋진 적갈색으로 짙어지더구나. 네 머리도 그렇게 된대도 나는 조금도 놀라지 않을 거다. 조금도."`],
+[`10-37`, `"아, 린드 부인!" 앤은 일어서며 숨을 길게 들이마셨다. "부인께서 제게 희망을 주셨어요. 부인은 언제까지나 제 은인이세요. 아, 크면 제 머리가 멋진 적갈색이 될 거라고만 생각할 수 있다면 무엇이든 견딜 수 있어요. 머리가 멋진 적갈색이라면 착하게 사는 게 훨씬 쉬울 것 같지 않으세요? 그런데 부인과 마릴라 아주머니가 이야기 나누시는 동안 정원에 나가서 사과나무 아래 벤치에 앉아 있어도 될까요? 바깥이 상상할 여지가 훨씬 많거든요."`],
+[`10-38`, `"아무렴, 그래라, 얘야. 저쪽 구석에 핀 하얀 유월 백합도 마음에 들면 한 다발 꺾어 가려무나."`],
+[`10-39`, `앤이 나가고 문이 닫히자 린드 부인은 바지런히 일어나 등불을 켰다.`],
+[`10-40`, `"정말 별난 아이야. 이 의자에 앉게, 마릴라. 자네가 앉은 것보다 편하다네. 그건 일꾼 아이 앉으라고 둔 거야. 그래, 확실히 별난 아이야. 그래도 어딘가 사람 마음을 끄는 데가 있어. 이제는 자네와 매슈가 저 애를 데리고 있겠다는 게 그리 놀랍지 않아. 자네가 그렇게 딱하지도 않고. 잘 자랄지도 모르지. 물론 말하는 투가 좀 별나긴 하지. 좀, 그러니까, 좀 지나치게 힘이 들어가 있다고나 할까. 하지만 이제 점잖은 사람들 사이에서 살게 됐으니 차차 나아지겠지. 그리고 성질이 꽤 급한 것 같아. 하지만 한 가지 다행인 건, 성질이 급한 아이는 확 타올랐다가 금세 식어 버리니까 음흉하거나 남을 속이는 일은 없다는 거야. 음흉한 아이만은 질색이야, 정말이지. 대체로 보면, 마릴라, 나는 저 애가 좀 마음에 드네."`],
+[`10-41`, `마릴라가 집에 가려고 나서자, 앤은 향기로운 과수원의 어스름 속에서 흰 수선화 한 아름을 안고 나왔다.`],
+[`10-42`, `"저 사과 꽤 잘했죠, 그렇죠?" 오솔길을 내려가며 앤이 뿌듯하게 말했다. "어차피 해야 한다면 철저하게 하는 게 낫겠다고 생각했어요."`],
+[`10-43`, `"철저하게 하긴 했지, 그래." 마릴라가 대꾸했다. 마릴라는 그 장면을 떠올리며 웃고 싶어지는 자신에게 당황했다. 사과를 너무 잘했다고 앤을 꾸짖어야 할 것 같은 불편한 기분도 들었다. 하지만 그건 말도 안 되는 일이었다! 그래서 양심과 타협하는 셈 치고 엄하게 말했다.`],
+[`10-44`, `"앞으로는 이런 사과를 할 일이 많지 않았으면 좋겠구나. 이제부터는 성질을 다스리도록 노력해라, 앤."`],
+[`10-45`, `"사람들이 제 생김새를 가지고 놀리지만 않으면 그리 어렵지 않을 거예요." 앤이 한숨을 쉬며 말했다. "다른 일로는 화가 안 나요. 그런데 머리 가지고 놀림받는 데는 정말 지쳤어요. 그런 말을 들으면 속이 부글부글 끓어 넘쳐요. 정말 제가 크면 머리가 멋진 적갈색이 될까요?"`],
+[`10-46`, `"생김새를 너무 신경 쓰면 안 된다, 앤. 너는 허영심이 아주 많은 아이 같구나."`],
+[`10-47`, `"못생긴 걸 아는데 어떻게 허영심이 있겠어요?" 앤이 항변했다. "저는 예쁜 게 좋아요. 그래서 거울을 봤는데 예쁘지 않은 게 보이면 싫어요. 그러면 너무 서글퍼져요. 못생긴 걸 볼 때랑 똑같이요. 아름답지 않아서 가엾게 느껴지거든요."`],
+[`10-48`, `"생김새보다 행실이 고와야 아름다운 거다." 마릴라가 옛말을 인용했다.`],
+[`10-49`, `"전에도 그 말을 들어 봤지만, 저는 좀 의심스러워요." 앤이 수선화 향기를 맡으며 미심쩍다는 듯 말했다. "아, 이 꽃 정말 향기롭지 않아요! 린드 부인께서 주시다니 정말 고마운 일이에요. 이제 린드 부인께 서운한 마음은 하나도 없어요. 사과하고 용서받는 건 참 기분 좋고 마음 편한 일이네요, 그렇죠? 오늘 밤 별이 참 밝지 않아요? 별에 가서 살 수 있다면 어느 별을 고르시겠어요? 저는 저 어두운 언덕 위에 있는 크고 맑은 예쁜 별이 좋아요."`],
+[`10-50`, `"앤, 제발 입 좀 다물어라." 앤의 생각이 빙글빙글 돌아가는 걸 따라가느라 녹초가 된 마릴라가 말했다.`],
+[`10-51`, `둘이 자기네 오솔길로 접어들 때까지 앤은 더 말하지 않았다. 이슬 젖은 어린 고사리의 알싸한 향기를 실은 떠돌이 바람이 오솔길을 따라 내려와 둘을 맞았다. 저 멀리 그늘 속, 나무 사이로 초록 지붕 집 부엌 불빛이 반갑게 반짝였다. 앤이 갑자기 마릴라에게 바싹 다가와 그녀의 거친 손바닥에 자기 손을 쏙 밀어 넣었다.`],
+[`10-52`, `"집에 가는데, 그곳이 집이라는 걸 아는 건 참 좋네요." 앤이 말했다. "저는 벌써 초록 지붕 집이 좋아요. 지금까지 어떤 곳도 좋아해 본 적이 없었어요. 어떤 곳도 집 같지 않았거든요. 아, 마릴라 아주머니, 저 정말 행복해요. 지금 당장 기도하라고 해도 조금도 어렵지 않을 것 같아요."`],
+[`10-53`, `작고 야윈 손이 자기 손에 닿자 마릴라의 가슴속에서 따뜻하고 기분 좋은 무언가가 솟아올랐다. 어쩌면 그녀가 놓쳐 버린 모성의 떨림이었을지도 모른다. 너무 낯설고 달콤해서 오히려 마음이 흔들렸다. 마릴라는 서둘러 교훈을 늘어놓으며 마음을 평소처럼 차분하게 되돌리려 했다.`],
+[`10-54`, `"착한 아이가 되면 언제나 행복할 거다, 앤. 그리고 기도하는 게 어려워서는 안 되는 거란다."`],
+[`10-55`, `"기도문을 외는 거랑 기도하는 건 꼭 같지 않아요." 앤이 생각에 잠겨 말했다. "그런데 저는 지금부터 저 나무 꼭대기에 부는 바람이라고 상상할 거예요. 나무가 지겨워지면 여기 아래 고사리 사이에서 살랑살랑 흔들린다고 상상하고, 그다음엔 린드 부인네 정원으로 날아가서 꽃들을 춤추게 하고, 그다음엔 토끼풀 밭 위로 한 번에 휙 날아가고, 그다음엔 반짝이는 호수 위로 불어서 반짝이는 잔물결을 일으킬 거예요. 아, 바람에는 상상할 여지가 정말 많아요! 그러니까 지금은 더 말하지 않을게요, 마릴라 아주머니."`],
+[`10-56`, `"아이고, 고마워라." 마릴라가 진심으로 안도하며 숨을 내쉬었다.`]
+  ]
+};
+
+
+</script>
+<script>
+/* =========================================================
+   1장 대본  (e = 초등 수준, l = 원작 수준, b = 두 수준 공통)
+   w: 화자 (anne / matthew / station / marilla), in: 속마음
+   f: 앤 표정, o: 상대 캐릭터, bk: 원문 책장 문단 번호
+   ========================================================= */
+CHAPTERS.push({
+  key: `ch1`, num: 1, title: `기차역의 기다림`, orig: `원작 2장`, origTitle: `매슈 커스버트, 깜짝 놀라다`,
+  endings: {
+    canon: {title: `꿈이 아니기를`, label: `원작 결말`},
+    imag:  {title: `별빛 아래의 코델리아`, label: `상상 결말`},
+    bal:   {title: `고마워요, 매슈 아저씨`, label: `균형 결말`}
+  },
+  talk: {
+    e: [`앤은 왜 마음에 들지 않는 이름을 바꿔 부를까요? 나라면 우리 동네 어디에 어떤 이름을 붙이고 싶나요?`,
+        `매슈 아저씨는 왜 앤에게 '사내아이를 기다렸다'는 말을 하지 못했을까요?`,
+        `내가 고른 결말과 친구가 고른 결말을 비교해 보고, 어떤 선택이 결말을 바꿨는지 이야기해 봐요.`],
+    l: [`앤에게 '이름 짓기'는 어떤 의미일까요? 고아원 시절과 연결해 생각해 봅시다.`,
+        `매슈가 진실을 마릴라에게 미룬 선택은 옳았을까요? 앤과 매슈의 입장에서 각각 생각해 봅시다.`,
+        `원작 결말과 내가 만난 결말을 비교하고, 그 차이를 만든 선택이 무엇이었는지 설명해 봅시다.`]
+  },
+  nodes: [
+  /* ---------- 기차역 ---------- */
+  {id:`s1`, bg:`ch1`, w:`anne`, in:1, f:`anne_dreamy`, bk:[6],
+   e:`나는 앤 셜리, 열한 살이야. 오늘 아침 고아원을 떠나 기차를 타고 여기 브라이트 리버 역까지 왔어. 기차는 벌써 떠났고, 긴 승강장에는 나 혼자뿐이야.`,
+   l:`나, 앤 셜리는 열한 살이다. 그날 아침 고아원을 떠나 기차에 몸을 싣고 프린스 에드워드 섬의 브라이트 리버 역에 내렸다. 기차가 떠나고 나자 기다란 승강장에는 나 혼자만 남았다.`},
+  {w:`anne`, in:1, f:`anne_sad`, bk:[16],
+   e:`내 옷은 누리끼리한 회색 윈시 원피스야. 짧고, 꽉 끼고, 정말 못생겼어. 고아원 아이들은 다 이 옷을 입어야 했거든. 모자 밑으로는 빨간 머리를 두 갈래로 땋아 내렸어.`,
+   l:`나는 누르스름한 회색 윈시 천으로 지은, 짧고 꽉 끼고 볼품없는 원피스를 입고 있었다. 고아원 아이들이 모두 입어야 했던 옷이다. 빛바랜 갈색 세일러 모자 아래로는 숱 많은 빨간 머리가 두 갈래로 땋여 등까지 늘어져 있었다.`},
+  {w:`anne`, in:1, f:`anne_dreamy`, bk:[6],
+   e:`나를 데리러 올 사람은 초록 지붕 집의 커스버트 씨래. 이제 나도 진짜 집이 생기는 거야! 나는 온 힘을 다해 기다리고 있어.`,
+   l:`나를 데리러 올 사람은 에이번리 초록 지붕 집의 커스버트 씨라고 했다. 마침내 내게도 집이 생기는 것이다. 지금 할 수 있는 일은 앉아서 기다리는 것뿐이었기에, 나는 온 힘을 다해 기다렸다.`},
+  {w:`station`, f:`anne_surprised`, bk:[8],
+   e:`"얘야, 여기서 혼자 기다리지 말고 저기 여자 대합실 안에 들어가 있으렴. 곧 누가 데리러 오실 거야."`,
+   l:`"얘야, 바깥에 그러고 있지 말고 여자 대합실에 들어가 기다리려무나. 곧 누가 데리러 올 게다."`},
+  {t:`choice`, id:`C1`, kind:`act`, label:`기다릴 곳`, f:`anne_dreamy`,
+   q:{e:`역장님이 대합실에 들어가 있으라고 하셨어요. 앤은 어디서 기다릴까요?`, l:`역장은 대합실에 들어가 있으라고 권합니다. 앤은 어디에서 기다리기로 할까요?`},
+   note:{e:`원작의 앤은 "바깥이 상상할 여지가 더 많아요"라며 대합실에 들어가지 않고 지붕널 더미에 앉아 기다려요.`,
+         l:`원작에서 앤은 "바깥이 상상할 여지가 더 많다"며 대합실 대신 지붕널 더미 위를 고집합니다. 역장은 그런 앤을 두고 "참 별난 아이"라고 말하지요.`},
+   opts:[
+    {type:`canon`, go:`c1a`, e:`고맙지만 괜찮다고 말하고, 바깥 지붕널 더미에 앉아서 기다린다.`, l:`정중히 사양하고, 승강장 끝 지붕널 더미 위에 앉아 기다린다.`, s:{e:`바깥 지붕널 더미에서 기다렸다`, l:`지붕널 더미 위에서 기다렸다`}},
+    {type:`bal`, go:`c1b`, e:`역장님 말씀대로 여자 대합실 안에 들어가서 얌전히 기다린다.`, l:`역장의 말을 따라 여자 대합실에 들어가 얌전히 기다린다.`, s:{e:`대합실에 들어갔다가 다시 나왔다`, l:`대합실에 들어갔다가 되돌아 나왔다`}},
+    {type:`imag`, go:`c1c`, e:`철길 모퉁이에 서 있는 하얀 벚나무까지 살짝 가 본다.`, l:`철길 모퉁이에 선 새하얀 산벚나무까지 몰래 걸어가 본다.`, s:{e:`벚나무 위 궁전에 올라가 봤다`, l:`산벚나무 위 궁전에 올라 보았다`}}
+   ]},
+  {id:`c1a`, w:`anne`, f:`anne_happy`, bk:[8],
+   e:`"고맙습니다, 역장님. 하지만 저는 밖에 있을래요. 밖이 상상할 거리가 훨씬 많거든요!" 역장님은 고개를 갸웃하시더니 "참 별난 아이로군." 하고 중얼거리셨어.`,
+   l:`"감사하지만 저는 바깥에 있을래요. 바깥이 상상할 여지가 더 많거든요." 역장은 고개를 갸웃하더니 참 별난 아이라며 중얼거렸다.`},
+  {t:`goto`, to:`m1`},
+  {id:`c1b`, w:`anne`, in:1, f:`anne_sad`, eff:{album:`waiting`},
+   e:`대합실 안은 깨끗했지만 답답했어. 의자는 딱딱하고, 벽은 회색이고, 창문은 작았어. 여기서는 아무것도 상상이 안 돼!`,
+   l:`대합실은 정갈했지만 숨이 막혔다. 딱딱한 의자, 잿빛 벽, 손바닥만 한 창. 그곳에는 상상이 깃들 틈이 한 뼘도 없었다.`},
+  {w:`anne`, f:`anne_happy`, bk:[8],
+   e:`결국 나는 살금살금 다시 밖으로 나왔어. 역장님께는 "밖이 상상할 거리가 더 많아서요." 하고 말씀드렸지. 역시 지붕널 더미 위가 훨씬 나아!`,
+   l:`결국 나는 슬그머니 바깥으로 되돌아 나왔다. 역장에게는 "바깥이 상상할 여지가 더 많아서요."라고 설명했다. 지붕널 더미 위가 훨씬 나았다.`},
+  {t:`goto`, to:`m1`},
+  {id:`c1c`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`, cam:`right`, eff:{album:`cherry`, flag:`cherry`},
+   e:`나는 가방을 들고 철길을 따라 모퉁이까지 걸어갔어. 하얀 꽃이 가득 핀 산벚나무가 저녁 햇빛을 받아 반짝반짝 빛나고 있었어.`,
+   l:`나는 가방을 든 채 철길을 따라 모퉁이까지 걸었다. 꽃을 가득 피운 산벚나무가 저녁 빛을 받아 은은하게 빛나고 있었다.`},
+  {w:`anne`, in:1, f:`anne_happy`, fx:`dream`, eff:{item:`petal`}, cam:`in`,
+   e:`낮은 가지를 밟고 올라가 앉으니까 꽃잎이 내 머리 위로 사르르 떨어졌어. 여긴 대리석 궁전이고, 나는 이 궁전의 공주야! 나는 벚꽃잎 하나를 주머니에 꼭 넣어 두었어.`,
+   l:`낮은 가지를 디디고 올라앉자 꽃잎이 머리 위로 소리 없이 흩날렸다. 이곳은 대리석 궁전이고, 나는 그 궁전의 주인이었다. 나는 꽃잎 한 장을 주머니 깊숙이 넣어 두었다.`},
+  {w:`anne`, in:1, f:`anne_surprised`, cam:`shake`,
+   e:`그때 멀리 역 쪽에서 말발굽 소리가 들렸어. 혹시 나를 데리러 오신 걸까? 나는 얼른 나무에서 내려와 승강장으로 달려갔어.`,
+   l:`그때 역 쪽에서 말발굽 소리가 아련히 들려왔다. 혹시 나를 데리러 온 걸까? 나는 서둘러 나무에서 내려와 승강장으로 달음질쳤다.`},
+  {id:`m1`, w:`anne`, in:1, f:`anne_surprised`, bk:[6,7], cam:``,
+   e:`지붕널 더미에 앉아 있는데, 키가 크고 등이 구부정한 할아버지 한 분이 나를 쳐다보지도 않고 휙 지나가셨어. 그러고는 역장님과 무슨 이야기를 나누셨어.`,
+   l:`지붕널 더미에 앉아 있는데, 키 크고 등이 구부정한 노신사 한 분이 나를 쳐다보지도 않은 채 서둘러 지나쳤다. 그는 매표소를 잠그던 역장과 무언가 이야기를 나누었다.`},
+  {w:`anne`, in:1, f:`anne_surprised`, o:`matthew`, bk:[9,10,11,12,13,14], cam:`right`, eff:{flag:`metMatthew`},
+   e:`역장님이 손으로 나를 가리키셨어. 할아버지는 몹시 당황한 얼굴이었어. 어깨까지 닿는 회색 머리에 부드러운 갈색 수염… 저분이 매슈 커스버트 아저씨일까?`,
+   l:`역장이 손가락으로 나를 가리켰다. 노신사의 얼굴에 당혹이 번졌다. 어깨까지 닿는 쇳빛 머리, 부드러운 갈색 수염. 저분이 초록 지붕 집의 매슈 커스버트 씨일까?`},
+  {t:`choice`, id:`C2`, kind:`predict`, label:`첫인사`, f:`anne_surprised`, o:`matthew`,
+   q:{e:`그 할아버지가 머뭇머뭇 앤 쪽으로 걸어와요. 원작의 앤은 어떻게 했을까요?`, l:`노신사가 주저하며 다가옵니다. 원작의 앤은 어떻게 했을까요?`},
+   note:{e:`원작의 앤은 매슈가 다가오자마자 먼저 벌떡 일어나 손을 내밀며 인사해요. 수줍음이 많은 매슈는 먼저 말을 꺼내지 않아도 되어서 오히려 다행이었대요.`,
+         l:`원작에서 앤은 매슈가 다가오자마자 먼저 일어나 손을 내밀며 인사를 건넵니다. 여자아이를 무서워하던 수줍은 매슈는 먼저 말을 꺼내는 고역을 면하게 되지요.`},
+   opts:[
+    {type:`canon`, go:`m3`, e:`벌떡 일어나 가방을 쥐고, 먼저 손을 내밀며 인사한다.`, l:`먼저 일어나 한 손으로 가방을 쥐고, 다른 손을 내밀며 인사를 건넨다.`, s:{e:`먼저 손을 내밀며 인사했다`, l:`먼저 일어나 손을 내밀었다`}},
+    {type:`imag`, go:`c2b`, e:`기차역의 공주님처럼 우아하게 앉아서, 할아버지가 먼저 인사하실 때까지 기다린다.`, l:`기차역의 공주처럼 우아하게 앉은 채, 신사가 먼저 예를 갖추기를 기다린다.`, s:{e:`공주님처럼 앉아서 기다렸다`, l:`공주처럼 앉아 인사를 기다렸다`}},
+    {type:`bal`, go:`c2c`, e:`할아버지가 편하게 말씀하실 수 있게, 가방을 꼭 쥐고 조용히 기다린다.`, l:`상대가 먼저 말할 수 있도록 가방을 품에 안고 조용히 기다린다.`, s:{e:`조용히 기다리다 용기를 냈다`, l:`조용히 기다리다 먼저 용기를 냈다`}}
+   ]},
+  {id:`c2b`, w:`anne`, in:1, f:`anne_dreamy`, o:`matthew`, fx:`dream`, eff:{album:`princess`},
+   e:`나는 턱을 살짝 들고, 두 손을 무릎 위에 포개고, 공주님처럼 앉아 있었어. 그런데 할아버지는 내 앞에서 모자만 만지작거리시며 한마디도 못 하셨어!`,
+   l:`나는 턱을 살짝 들고 두 손을 무릎에 포갠 채 공주처럼 앉아 있었다. 그러나 신사는 내 앞에서 모자챙만 만지작거릴 뿐 한마디도 꺼내지 못했다.`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`matthew`,
+   e:`한참을 기다리다가 나는 그만 웃음이 터졌어. 공주 놀이는 여기까지! 결국 내가 먼저 손을 내밀었지.`,
+   l:`그 침묵이 너무 길어 나는 그만 웃음을 터뜨렸다. 공주 놀이는 여기까지. 결국 내가 먼저 손을 내밀었다.`},
+  {t:`goto`, to:`m3`},
+  {id:`c2c`, w:`anne`, in:1, f:`anne_happy`, o:`matthew`, eff:{heart:{matthew:1}},
+   e:`할아버지는 내 앞에 서서 입을 열었다 닫았다 하셨어. 너무너무 수줍어하시는 것 같았어. 그래서 아저씨가 곤란하지 않게 내가 먼저 용기를 냈어.`,
+   l:`신사는 내 앞에 서서 입술만 달싹였다. 지독히도 수줍음을 타는 분이었다. 나는 그분이 곤란하지 않도록 먼저 용기를 내기로 했다.`},
+  {id:`m3`, w:`anne`, f:`anne_happy`, o:`matthew`, bk:[18,19], cam:`left`,
+   e:`"초록 지붕 집의 매슈 커스버트 아저씨 맞으시죠? 만나서 정말 반가워요! 안 오시면 어쩌나 걱정하던 참이었어요."`,
+   l:`"초록 지붕 집의 매슈 커스버트 씨지요? 만나서 정말 반가워요. 저를 데리러 오지 않으시는 건 아닐까 슬슬 걱정하던 참이었어요."`},
+  {w:`anne`, f:`anne_dreamy`, o:`matthew`, bk:[19], when:s => s.flags.cherry,
+   e:`"오늘 안 오시면 철길 모퉁이 산벚나무 위에서 자려고 했어요. 사실 아까 미리 올라가 봤거든요! 정말 대리석 궁전 같았어요."`,
+   l:`"오늘 밤 안 오시면 모퉁이의 산벚나무에 올라가 밤을 지새울 생각이었어요. 실은 아까 미리 올라가 봤는데, 정말 대리석 궁전 같았답니다."`},
+  {w:`anne`, f:`anne_dreamy`, o:`matthew`, bk:[19], when:s => !s.flags.cherry,
+   e:`"오늘 안 오시면 철길 모퉁이의 커다란 산벚나무에 올라가서 자려고 했어요. 달빛 아래 하얀 꽃 속에서 자면 대리석 궁전에 사는 기분일 거예요!"`,
+   l:`"오늘 밤 안 오시면 철길 모퉁이의 커다란 산벚나무에 올라가 밤을 새우려고 했어요. 달빛 속 하얀 꽃 위에서 잠들면 대리석 궁전에 산다고 상상할 수 있잖아요?"`},
+  {w:`anne`, in:1, f:`anne_surprised`, o:`matthew`, bk:[20],
+   e:`아저씨는 내 손을 어색하게 잡으시고, 잠깐 무언가 망설이는 얼굴이셨어. 그때는 몰랐지만, 아저씨는 그 순간 아주 중요한 결심을 하셨던 거야.`,
+   l:`아저씨는 내 앙상한 손을 어색하게 쥔 채 잠시 무언가를 망설였다. 그때의 나는 몰랐지만, 그 짧은 순간 그분은 중요한 결심을 내린 것이었다.`},
+  {w:`matthew`, f:`anne_happy`, o:`matthew`, bk:[21], cam:`right`,
+   e:`"늦어서 미안하구나. 가자꾸나. 말은 저쪽 마당에 있단다. 가방은 이리 주렴."`,
+   l:`"늦어서 미안하구나. 가자꾸나. 말은 저쪽 마당에 있단다. 가방은 이리 다오."`},
+  {w:`anne`, f:`anne_happy`, o:`matthew`, bk:[22], eff:{item:`carpetbag`}, cam:`left`,
+   e:`"제가 들 수 있어요! 제 물건이 다 들어 있지만 하나도 안 무거워요. 그리고 손잡이를 딱 정해진 방법으로 잡아야 안 빠지거든요. 그 요령은 제가 제일 잘 알아요!"`,
+   l:`"제가 들게요. 제 세상 재산이 전부 들었지만 무겁지 않아요. 게다가 정해진 방법으로 들지 않으면 손잡이가 빠져 버리거든요. 그 요령은 제가 정확히 알아요."`},
+  {w:`anne`, f:`anne_sad`, o:`matthew`, bk:[22], cam:`in`,
+   e:`"저는 한 번도 누군가의 식구였던 적이 없어요. 고아원에는 넉 달 있었는데 정말 힘들었어요. 그래서 밤마다 옆자리 아이가 사실은 백작의 딸이라고 상상하면서 버텼어요."`,
+   l:`"저는 진정으로 누군가의 식구였던 적이 한 번도 없어요. 고아원에서 지낸 넉 달은 상상할 수 있는 무엇보다 나빴어요. 그래서 밤마다 옆자리 아이가 실은 납치당한 백작의 딸이라고 상상하며 잠 못 이뤘지요."`},
+  /* ---------- 언덕길 ---------- */
+  {bg:`ch1_road`, w:`anne`, in:1, cam:``, f:`anne_dreamy`, o:`matthew`, bk:[23,24], eff:{item:`plum`},
+   e:`마차는 마을을 벗어나 언덕길을 내려갔어. 길 양쪽 둑에는 하얀 벚꽃과 가느다란 자작나무가 줄지어 서 있었어. 나는 마차 옆을 스치는 자두나무 꽃가지 하나를 똑 꺾었어.`,
+   l:`마차는 마을을 벗어나 가파른 언덕길을 내려갔다. 깊게 깎인 길 양옆 둑에는 꽃 핀 산벚나무와 가냘픈 자작나무가 늘어서 머리 위로 솟아 있었다. 나는 마차를 스치는 야생 자두나무 가지 하나를 꺾어 들었다.`},
+  {t:`choice`, id:`C3`, kind:`talk`, label:`마차 위 첫 질문`, f:`anne_happy`, o:`matthew`,
+   q:{e:`꽃가지를 든 앤이 매슈 아저씨에게 말을 걸어요. 무엇을 물어볼까요?`, l:`꽃가지를 손에 든 앤이 말을 건넵니다. 무엇을 물어볼까요?`},
+   note:{e:`원작의 앤은 하얀 야생 자두나무를 보며 "무엇이 떠오르세요?"라고 묻고, 길이 왜 빨간지, 집 근처에 시냇물이 있는지 쉴 새 없이 질문해요. 매슈의 대답은 거의 언제나 "글쎄다, 모르겠구나"였지요.`,
+         l:`원작에서 앤은 하얀 야생 자두나무를 보며 무엇이 떠오르느냐고 묻습니다. 이어서 빨간 길, 시냇물, 천상의 아름다움까지 질문이 쏟아지고, 매슈는 "글쎄다, 모르겠구나"로 일관하면서도 그 수다를 즐기게 됩니다.`},
+   opts:[
+    {type:`canon`, go:`c3a`, eff:{heart:{matthew:1}}, e:`"아저씨, 저 하얗고 레이스 같은 나무를 보면 뭐가 떠오르세요?"`, l:`"둑에서 몸을 내민 저 하얗고 레이스 같은 나무를 보면 무엇이 떠오르세요?"`, s:{e:`하얀 나무를 보면 뭐가 떠오르는지 물었다`, l:`하얀 나무가 무엇을 떠올리게 하는지 물었다`}},
+    {type:`imag`, go:`c3b`, eff:{heart:{matthew:1}}, e:`"아저씨, 이 마차가 사실은 하늘을 나는 마차라고 상상해 보실래요?"`, l:`"이 마차가 실은 구름 위를 달리는 마차라고 함께 상상해 보시겠어요?"`, s:{e:`하늘을 나는 마차 상상 놀이를 했다`, l:`구름 위를 달리는 마차를 함께 상상했다`}},
+    {type:`bal`, go:`c3c`, eff:{heart:{matthew:2}}, e:`"아저씨는 뭘 좋아하세요? 아저씨 이야기도 듣고 싶어요."`, l:`"아저씨께서는 무엇을 좋아하세요? 저만 떠들었으니 이번엔 아저씨 이야기를 듣고 싶어요."`, s:{e:`아저씨가 좋아하는 것을 물었다`, l:`매슈 아저씨의 이야기를 청했다`}}
+   ]},
+  {id:`c3a`, w:`matthew`, f:`anne_happy`, o:`matthew`, bk:[25,26],
+   b:`"글쎄다, 모르겠구나."`},
+  {w:`anne`, f:`anne_dreamy`, o:`matthew`, bk:[27],
+   e:`"당연히 신부죠! 안개 같은 면사포를 쓴 하얀 신부요. 저는 예쁜 옷을 한 번도 가져 본 적이 없지만, 언젠가 하얀 드레스를 꼭 입어 보고 싶어요."`,
+   l:`"당연히 신부죠. 안개처럼 고운 면사포를 쓴 새하얀 신부요. 예쁜 옷이라곤 가져 본 적 없지만, 언젠가 하얀 드레스를 한 벌 갖는 게 제가 바라는 최고의 행복이에요."`},
+  {t:`goto`, to:`m9`},
+  {id:`c3b`, w:`anne`, f:`anne_happy`, o:`matthew`, fx:`dream`, cam:`up`, eff:{album:`flying`},
+   e:`"보세요, 밤색 말 등에 커다란 날개가 돋았어요! 우리는 지금 벚꽃 구름 위를 날고 있는 거예요!"`,
+   l:`"보세요, 밤색 말의 등에서 커다란 날개가 돋아났어요! 우리는 지금 벚꽃 구름 위를 달리고 있는 거예요!"`},
+  {w:`matthew`, f:`anne_happy`, o:`matthew`, fx:`dream`,
+   e:`"글쎄다… 그럼 날개 달린 말한테는 귀리를 두 배로 줘야겠구나."`,
+   l:`"글쎄다… 그렇다면 날개 달린 말한테는 귀리를 곱절로 줘야겠구나."`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`matthew`,
+   e:`아저씨가 수염 속으로 살짝 웃으셨어. 내 상상 놀이에 같이 올라타 준 어른은 아저씨가 처음이야!`,
+   l:`아저씨의 수염 속에서 웃음이 번졌다. 내 상상 놀이에 기꺼이 올라타 준 어른은 그분이 처음이었다.`},
+  {t:`goto`, to:`m9`},
+  {id:`c3c`, w:`matthew`, cam:`right`, f:`anne_happy`, o:`matthew`, eff:{album:`matthewTalk`},
+   e:`"나, 나 말이냐? 글쎄다… 나는 말 돌보는 거랑, 해 질 녘에 조용히 밭을 보는 게 좋구나. 누가 내 얘기를 물어봐 준 건 참 오랜만이구나."`,
+   l:`"나, 나 말이냐? 글쎄다… 말을 돌보는 일이랑, 해 질 녘 조용히 밭을 바라보는 게 좋지. 누가 내 이야기를 물어 준 게 참 오랜만이구나."`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`matthew`,
+   e:`아저씨의 귀가 살짝 빨개졌어. 수줍은 사람도 누가 궁금해해 주면 기쁜가 봐.`,
+   l:`아저씨의 귓불이 살짝 붉어졌다. 아무리 수줍은 사람이라도 누군가 자신을 궁금해해 주면 기쁜 법이다.`},
+  {id:`m9`, w:`anne`, cam:``, f:`anne_dreamy`, o:`matthew`, bk:[27],
+   e:`"그런데 아저씨, 이 섬의 길은 왜 빨간색이에요? 스펜서 부인께 여쭤 봤더니 제발 그만 물어보라고 하셨어요."`,
+   l:`"그런데 이 섬의 길들은 왜 빨간 거예요? 스펜서 부인께 여쭤 봤더니 제발 질문 좀 그만하라고 하셨어요. 하지만 질문을 안 하면 어떻게 알아내겠어요?"`},
+  {w:`matthew`, f:`anne_happy`, o:`matthew`, bk:[28], b:`"글쎄다, 모르겠구나."`},
+  {w:`anne`, f:`anne_happy`, o:`matthew`, bk:[29],
+   e:`"그럼 언젠가 알아내야 할 것 중 하나네요! 알아낼 게 이렇게 많다니 정말 신나요. 그런데… 제가 말을 너무 많이 하나요? 싫으시면 그만할게요."`,
+   l:`"그럼 그건 언젠가 알아낼 일 중 하나네요. 알아낼 것이 이토록 많다니, 살아 있다는 게 그저 기뻐요. 그런데… 제가 말을 너무 많이 하나요? 원하시면 그만할게요. 어렵긴 하지만요."`},
+  {w:`matthew`, f:`anne_happy`, o:`matthew`, bk:[30,31],
+   b:`"아, 하고 싶은 만큼 얼마든지 이야기하렴. 나는 괜찮단다."`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`matthew`, bk:[32],
+   e:`와! 말하고 싶을 때 마음껏 말해도 된다니! "아이들은 조용히 해야 한다"는 말을 백만 번은 들었는데. 아저씨랑 나는 분명 잘 지낼 거야.`,
+   l:`말하고 싶을 때 마음껏 말해도 된다니. "아이는 눈에 띄되 소리 내지 말라"는 말을 백만 번은 들어 온 내게 그것은 해방과도 같았다. 아저씨와 나는 틀림없이 잘 지낼 것이다.`},
+  {w:`anne`, f:`anne_sad`, o:`matthew`, bk:[36,37], cam:`left`,
+   e:`"지금 저는 거의 완벽하게 행복해요. 하지만 완전히 행복할 수는 없어요. 아저씨, 이건 무슨 색이에요?" 나는 땋은 머리 한 가닥을 들어 보였어.`,
+   l:`"지금 저는 거의 완벽하게 행복해요. 하지만 완전히 행복할 수는 없어요. 왜냐하면… 이건 무슨 색이라고 하시겠어요?" 나는 윤기 나는 땋은 머리 한 가닥을 어깨 너머로 넘겨 아저씨 눈앞에 들어 보였다.`},
+  {w:`matthew`, f:`anne_sad`, o:`matthew`, bk:[38], b:`"빨간색이지, 아니냐?"`},
+  {w:`anne`, f:`anne_sad`, o:`matthew`, bk:[39,40], cam:`in`,
+   e:`"네, 빨간색이에요. 주근깨랑 마른 몸은 상상으로 없앨 수 있어요. 하지만 빨간 머리만은 아무리 상상해도 안 없어져요. 이건 제 평생의 슬픔이 될 거예요."`,
+   l:`"네, 빨간색이에요. 주근깨도, 초록 눈도, 깡마른 몸도 상상으로 지울 수 있어요. 하지만 빨간 머리만은 도저히 지울 수가 없어요. '내 머리는 까마귀 날개처럼 새까맣다' 아무리 되뇌어도 소용없어요. 이건 제 평생의 슬픔이 될 거예요."`},
+  {w:`anne`, f:`anne_dreamy`, o:`matthew`, bk:[42,43,44,45],
+   e:`"아저씨라면 뭐가 되고 싶으세요? 눈부시게 아름다운 사람, 눈부시게 똑똑한 사람, 천사처럼 착한 사람 중에서요." 아저씨는 "글쎄다, 나는… 잘 모르겠구나." 하시며 머리가 어질어질하신 것 같았어.`,
+   l:`"고를 수 있다면 어떤 사람이 되고 싶으세요? 천상의 아름다움을 지닌 사람, 눈부시게 영리한 사람, 아니면 천사처럼 착한 사람?" "글쎄다, 나는… 잘 모르겠구나." 아저씨는 회전목마에서 막 내린 사람처럼 어지러워 보였다.`},
+  /* ---------- 가로수길 ---------- */
+  {bg:`ch1_avenue`, w:`anne`, f:`anne_surprised`, cam:`shake`, o:`matthew`, bk:[46,47],
+   e:`"저도 못 고르겠어요. 스펜서 부인 말씀으로는… 아, 커스버트 아저씨! 아, 아저씨!! 아저씨!!!"`,
+   l:`"저도 정하지 못하겠어요. 스펜서 부인 말씀으로는… 아, 커스버트 씨! 아, 커스버트 씨!! 아, 커스버트 씨!!!"`},
+  {w:`anne`, in:1, f:`anne_dreamy`, o:`matthew`, bk:[48], cam:`up`,
+   e:`모퉁이를 돌자, 커다란 사과나무들이 길 위를 지붕처럼 덮은 길이 나타났어. 머리 위는 온통 눈처럼 하얀 꽃이었고, 저 끝에서는 노을이 커다란 장미창처럼 빛나고 있었어.`,
+   l:`모퉁이를 돌자 '가로수길'이 나타났다. 가지를 활짝 편 거대한 사과나무들이 길 위를 아치처럼 온통 덮고 있었다. 머리 위로는 눈처럼 희고 향기로운 꽃의 차양이 끝없이 이어졌고, 저 멀리 노을 진 하늘이 대성당 통로 끝의 커다란 장미창처럼 빛났다.`},
+  {w:`anne`, in:1, f:`anne_dreamy`, o:`matthew`, bk:[49], cam:`in`,
+   e:`나는 두 손을 꼭 모으고 하늘만 올려다봤어. 너무 아름다워서 한마디도 할 수 없었어. 마을을 지나고 3마일을 더 가도록 말이야. 나 같은 수다쟁이가!`,
+   l:`나는 두 손을 모아 쥔 채 머리 위의 하얀 장관만 올려다보았다. 뉴브리지 마을을 지나고 다시 3마일을 달리는 동안 나는 한마디도 하지 않았다. 떠드는 만큼이나 열렬하게, 나는 침묵할 수도 있었다.`},
+  {w:`matthew`, f:`anne_dreamy`, o:`matthew`, bk:[50], cam:`right`,
+   e:`"꽤 피곤하고 배고픈 모양이구나. 이제 1마일만 더 가면 된단다."`,
+   l:`"꽤 피곤하고 배가 고픈 모양이구나. 하지만 이제 멀지 않았다. 1마일만 더 가면 돼."`},
+  {w:`anne`, f:`anne_dreamy`, o:`matthew`, bk:[51,52,54], cam:`left`,
+   e:`"아저씨, 아까 그 하얀 곳은 뭐였어요? 예쁘다는 말로는 모자라요. 상상으로도 더 멋지게 만들 수 없는 곳은 처음이었어요. 가슴이 이상하게 아팠는데, 기분 좋은 아픔이었어요."`,
+   l:`"아, 커스버트 씨. 아까 그 하얀 곳은 뭐였어요? '예쁘다'로도 '아름답다'로도 모자라요. 상상으로도 더 낫게 만들 수 없는 건 처음 봤어요. 가슴이 묘하게 아팠는데, 그건 기분 좋은 아픔이었어요."`},
+  {w:`matthew`, f:`anne_dreamy`, o:`matthew`, bk:[53],
+   e:`"글쎄다, 가로수길을 말하는 모양이구나. 꽤 예쁜 곳이지."`,
+   l:`"글쎄다, 가로수길을 말하는 모양이구나. 꽤 예쁜 곳이지."`},
+  {w:`anne`, in:1, f:`anne_dreamy`, o:`matthew`, bk:[56],
+   e:`가로수길? 그런 이름에는 아무 뜻도 없잖아! 나는 마음에 안 드는 이름이 있으면 언제나 새 이름을 지어 줘. 이 길에도 꼭 맞는 이름을 지어 줘야겠어.`,
+   l:`가로수길이라니, 그런 이름에는 아무 뜻도 담겨 있지 않다. 나는 마음에 들지 않는 이름을 만나면 언제나 새 이름을 상상해 붙여 주었다. 이 길에도 꼭 맞는 이름이 필요했다.`},
+  {t:`name`, id:`N1`, key:`avenue`, label:`가로수길에 붙인 이름`, canon:`기쁨의 하얀 길`, f:`anne_dreamy`, o:`matthew`,
+   q:{e:`✍️ 앤이 되어 이 길에 이름을 지어 주세요! 어떤 이름이 어울릴까요?`, l:`✍️ 앤이 되어, 이 꽃길에 꼭 맞는 이름을 지어 주세요.`},
+   ph:`예: 꽃구름 터널`,
+   note:{e:`원작의 앤은 이 길을 '기쁨의 하얀 길'이라고 불렀어요. 고아원에 있던 친구 '헵지바 젠킨스'도 마음속으로는 '로잘리아 드비어'라고 불렀대요.`,
+         l:`원작에서 앤은 이 길을 '기쁨의 하얀 길'이라 명명합니다. 마음에 들지 않는 이름은 늘 새로 상상해 붙이는 것이 앤의 버릇이었지요. 고아원 친구 헵지바 젠킨스는 앤의 마음속에서 로잘리아 드비어였습니다.`}},
+  {w:`anne`, f:`anne_happy`, o:`matthew`, bk:[56], eff:{item:`namecard`},
+   e:`"다른 사람들은 가로수길이라고 부르겠지만, 저는 언제까지나 '{avenue}'{avenue|이라고} 부를 거예요!"`,
+   l:`"다른 사람들은 그곳을 가로수길이라 부르겠지만, 저는 언제까지나 '{avenue}'{avenue|이라고} 부를 거예요."`},
+  {w:`anne`, f:`anne_happy`, o:`matthew`, bk:[56],
+   e:`"정말 1마일만 가면 집이에요? 기쁘기도 하고 아쉽기도 해요. 저는 진짜 집을 가져 본 적이 한 번도 없거든요. 집에 간다고 생각하니까 또 그 기분 좋은 아픔이 느껴져요."`,
+   l:`"정말 1마일만 더 가면 집이에요? 기쁘기도 하고 아쉽기도 해요. 즐거운 일이 끝날 때면 늘 아쉽거든요. 하지만 저는 진짜 집을 가져 본 적이 한 번도 없어요. 진짜 집에 간다는 생각만으로도 그 기분 좋은 아픔이 또 느껴져요."`},
+  /* ---------- 연못 ---------- */
+  {bg:`ch1_pond`, w:`anne`, in:1, cam:`out`, f:`anne_dreamy`, o:`matthew`, bk:[57],
+   e:`언덕을 넘자 길고 구불구불한 연못이 나타났어. 물빛이 장미색, 연둣빛, 보랏빛으로 계속 바뀌었어. 늪에서는 개구리들이 맑게 노래하고, 건너편 작은 회색 집 창문에는 불빛이 반짝였어.`,
+   l:`언덕 마루를 넘자 강처럼 길고 구불구불한 연못이 내려다보였다. 물은 크로커스빛, 장밋빛, 투명한 초록빛으로 시시각각 바뀌었고, 아직 아무도 이름 붙이지 못한 빛깔도 어른거렸다. 늪에서는 개구리들의 구슬프고도 달콤한 합창이 들려왔고, 건너편 비탈 회색 집 창문에는 불빛 하나가 켜져 있었다.`},
+  {w:`matthew`, f:`anne_dreamy`, o:`matthew`, bk:[58], b:`"저건 배리 씨네 연못이란다."`},
+  {t:`choice`, id:`C4`, kind:`predict`, label:`연못의 이름`, f:`anne_dreamy`, o:`matthew`,
+   q:{e:`그 이름도 마음에 안 드는 앤! 원작의 앤은 이 연못을 뭐라고 불렀을까요?`, l:`앤은 이 이름도 마음에 들지 않습니다. 원작의 앤은 이 연못을 무엇이라 불렀을까요?`},
+   note:{e:`원작의 앤은 이 연못을 '반짝이는 호수'라고 불러요. 딱 맞는 이름이 떠오르면 온몸이 찌릿한 '전율'이 느껴진대요.`,
+         l:`원작에서 앤은 이 연못을 '반짝이는 호수'라 부릅니다. 꼭 맞는 이름을 찾으면 전율이 일기에 그것이 옳은 이름임을 안다고 말하지요.`},
+   opts:[
+    {type:`canon`, go:`c4a`, eff:{name:{pond:`반짝이는 호수`}}, e:`'반짝이는 호수'라고 부른다.`, l:`'반짝이는 호수'라 부른다.`, s:{e:`'반짝이는 호수'`, l:`'반짝이는 호수'`}},
+    {type:`imag`, go:`c4b`, eff:{name:{pond:`노을 거울 연못`}, album:`mirror`}, e:`'노을 거울 연못'이라고 부른다.`, l:`'노을을 비추는 거울 연못'이라 부른다.`, s:{e:`'노을 거울 연못'`, l:`'노을 거울 연못'`}},
+    {type:`bal`, go:`c4c`, eff:{name:{pond:`배리 씨네 연못`}}, e:`주인의 이름을 존중해서 '배리 씨네 연못'이라고 그대로 부른다.`, l:`주인의 이름을 존중하여 '배리 씨네 연못'이라 그대로 부른다.`, s:{e:`'배리 씨네 연못' 그대로`, l:`'배리 씨네 연못' 그대로`}}
+   ]},
+  {id:`c4a`, w:`anne`, f:`anne_happy`, o:`matthew`, bk:[59],
+   e:`"저는 '반짝이는 호수'라고 부를래요. 딱 맞는 이름이 떠오르면 온몸이 찌릿하거든요. 아저씨도 그런 전율을 느껴 보신 적 있어요?"`,
+   l:`"저는 이렇게 부를래요. 음, 어디 보자… '반짝이는 호수'. 그래요, 그게 딱 맞는 이름이에요. 전율이 느껴지니까 알아요. 아저씨도 무언가에 전율을 느끼신 적 있어요?"`},
+  {t:`goto`, to:`m28`},
+  {id:`c4b`, w:`anne`, f:`anne_happy`, o:`matthew`, fx:`dream`,
+   e:`"'노을 거울 연못'이요! 저 물에 노을이 거울처럼 비치잖아요. 딱 맞는 이름이 떠오르면 온몸이 찌릿해요. 아저씨도 그런 적 있으세요?"`,
+   l:`"'노을을 비추는 거울 연못'이요. 보세요, 하늘이 통째로 물속에 내려앉았잖아요. 꼭 맞는 이름이 떠오르면 전율이 일어요. 아저씨도 무언가에 전율을 느끼신 적 있어요?"`},
+  {t:`goto`, to:`m28`},
+  {id:`c4c`, w:`anne`, f:`anne_happy`, o:`matthew`, eff:{heart:{matthew:1}},
+   e:`"배리 씨네 연못이라… 주인 이름을 딴 거라면 그것도 소중한 이름이네요. 그래도 저 물빛은 정말 찌릿할 만큼 예뻐요. 아저씨도 그런 전율을 느껴 보신 적 있어요?"`,
+   l:`"배리 씨네 연못이라… 누군가의 이름을 딴 것이라면 그것도 나름대로 소중한 이름이겠지요. 그래도 저 물빛엔 전율이 일어요. 아저씨도 무언가에 전율을 느끼신 적 있어요?"`},
+  {id:`m28`, w:`matthew`, f:`anne_happy`, o:`matthew`, bk:[60,61],
+   e:`"글쎄다, 그래. 오이밭을 갈 때 나오는 징그러운 하얀 굼벵이를 보면 늘 좀 찌릿하지."`,
+   l:`"글쎄다, 있지. 오이밭을 삽으로 뒤집을 때 나오는 그 징그러운 하얀 굼벵이들을 보면 늘 좀 전율이 일더구나. 생김새가 영 싫어서 말이다."`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`matthew`, bk:[62],
+   e:`굼벵이랑 호수는 아무래도 같은 찌릿함이 아닌 것 같은데… 그래도 아저씨가 진지하게 대답해 주셔서 웃음이 났어.`,
+   l:`굼벵이와 물빛 사이에는 아무래도 별 관련이 없어 보였다. 그래도 진지하게 대답해 주는 아저씨가 좋아서 나는 웃고 말았다.`},
+  {w:`matthew`, f:`anne_surprised`, o:`matthew`, bk:[63,64,65], cam:`right`,
+   e:`"저 위 집이 배리 씨네란다. 열한 살쯤 된 딸이 하나 있지. 이름은 다이애나란다."`,
+   l:`"저 위 집이 배리 씨네다. '과수원 비탈'이라고 부르지. 열한 살쯤 된 딸이 하나 있는데, 이름이 다이애나란다."`},
+  {w:`anne`, f:`anne_happy`, o:`matthew`, bk:[66,68], cam:`left`,
+   e:`"다이애나! 정말 완벽하게 아름다운 이름이에요!" 다리를 건널 때 나는 눈을 꼭 감았다가, 한가운데쯤에서 번쩍 떴어. 혹시 다리가 접히면 그걸 꼭 보고 싶었거든!`,
+   l:`"다이애나! 정말이지 완벽하게 아름다운 이름이에요!" 다리 위에서 나는 눈을 꼭 감았다가 한가운데쯤에서 번쩍 떴다. 만약 다리가 주머니칼처럼 접힌다면, 그 장면만큼은 꼭 보고 싶었으니까.`},
+  {w:`anne`, f:`anne_happy`, o:`matthew`, bk:[68],
+   e:`"잘 자, 사랑하는 {pond}{pond|아}." 나는 사랑하는 것들에게는 꼭 잘 자라고 인사해. 물이 나를 보고 웃는 것 같았어.`,
+   l:`"잘 자, 사랑하는 {pond}{pond|아}." 나는 사랑하는 것들에게 늘 잘 자라는 인사를 건넨다. 그것들도 분명 좋아할 테니까. 물결이 나를 향해 미소 짓는 것 같았다.`},
+  /* ---------- 초록 지붕 집 ---------- */
+  {bg:`ch1_home`, w:`matthew`, cam:`right`, f:`anne_surprised`, o:`matthew`, bk:[69,70],
+   e:`"이제 거의 다 왔다. 저기 보이는 게 초록 지붕—"`,
+   l:`"이제 집에 거의 다 왔다. 저기 보이는 게 초록 지붕—"`},
+  {t:`choice`, id:`C5`, kind:`act`, label:`초록 지붕 집과의 첫 만남`, f:`anne_surprised`, o:`matthew`,
+   q:{e:`매슈 아저씨가 초록 지붕 집을 가리키려고 해요. 앤은 어떻게 할까요?`, l:`매슈가 초록 지붕 집을 가리키려 팔을 듭니다. 앤은 어떻게 할까요?`},
+   note:{e:`원작의 앤은 "말하지 마세요! 제가 맞혀 볼게요!" 하고 아저씨의 팔을 붙잡아요. 그리고 하얀 꽃나무에 둘러싸인 집을 단번에 알아맞히지요. "보자마자 우리 집이라는 느낌이 들었어요."`,
+         l:`원작에서 앤은 매슈의 말을 가로막고 직접 맞혀 보겠다며 그의 팔을 붙듭니다. 그리고 숲 어스름 속 꽃나무에 둘러싸인 집을 단번에 가리키지요. 보자마자 집이라는 느낌이 들었다고 말하면서요.`},
+   opts:[
+    {type:`canon`, go:`c5a`, e:`"말하지 마세요! 제가 맞혀 볼게요!" 하고 아저씨 팔을 붙잡는다.`, l:`"말씀하지 마세요, 제가 맞혀 볼게요!" 하며 아저씨의 팔을 붙든다.`, s:{e:`직접 맞혀 보겠다고 했다`, l:`직접 맞혀 보겠다며 팔을 붙들었다`}},
+    {type:`imag`, go:`c5b`, e:`눈을 꼭 감고, 초록 지붕 집이 어떤 곳일지 마음속에 먼저 그려 본다.`, l:`눈을 감고, 아직 보지 못한 초록 지붕 집을 마음속 화폭에 먼저 그려 본다.`, s:{e:`눈을 감고 마음속 성을 그렸다`, l:`눈을 감고 상상 속 성을 그렸다`}},
+    {type:`bal`, go:`c5c`, eff:{heart:{matthew:1}}, e:`아저씨의 손끝을 따라가며 아저씨와 함께 천천히 바라본다.`, l:`아저씨의 손끝을 따라 시선을 옮기며, 그분과 함께 천천히 바라본다.`, s:{e:`아저씨 손끝을 따라 함께 바라봤다`, l:`아저씨와 함께 손끝을 따라 바라보았다`}}
+   ]},
+  {id:`c5a`, w:`anne`, cam:`in`, in:1, f:`anne_dreamy`, o:`matthew`, bk:[71,72],
+   e:`나는 눈을 뜨고 언덕 아래 집들을 하나하나 살폈어. 그리고 숲 가장자리, 하얀 꽃나무에 둘러싸인 집에서 눈이 멈췄어. 그 위에는 커다란 별 하나가 등불처럼 빛나고 있었어.`,
+   l:`나는 눈을 뜨고 언덕 아래 흩어진 농가들을 하나하나 살폈다. 마침내 내 눈길은 숲 어스름 속에서 꽃나무로 희미하게 하얀 한 집에 머물렀다. 그 위로 수정처럼 하얀 커다란 별 하나가 길잡이의 등불처럼 빛나고 있었다.`},
+  {w:`anne`, f:`anne_happy`, o:`matthew`, bk:[73], b:`"저기죠, 맞죠?"`},
+  {w:`matthew`, f:`anne_happy`, o:`matthew`, bk:[74,75],
+   e:`"글쎄다, 맞혔구나! 스펜서 부인이 설명해 줬겠지."`,
+   l:`"글쎄다, 맞혔구나! 하지만 스펜서 부인이 알아볼 수 있게 설명해 줬겠지."`},
+  {w:`anne`, f:`anne_happy`, o:`matthew`, bk:[76],
+   e:`"아니에요, 정말 안 해 주셨어요. 그냥 보자마자 우리 집이라는 느낌이 들었어요."`,
+   l:`"아니에요, 정말 안 해 주셨어요. 저는 그 집이 어떻게 생겼는지 전혀 몰랐어요. 그런데 보자마자 바로 우리 집이라는 느낌이 들었어요."`},
+  {t:`goto`, to:`m34`},
+  {id:`c5b`, w:`anne`, cam:`up`, in:1, f:`anne_dreamy`, o:`matthew`, fx:`dream`, eff:{album:`castle`, flag:`castle`},
+   e:`눈을 감으니 초록 지붕 집이 보였어. 탑이 일곱 개 있고, 창문마다 촛불이 켜져 있고, 정원에는 은빛 분수가 솟는 성! 나는 그 성의 '코델리아 공주'야.`,
+   l:`눈을 감자 초록 지붕의 성이 떠올랐다. 일곱 개의 탑, 창마다 밝힌 촛불, 정원에서 솟구치는 은빛 분수. 그리고 나는 그 성의 주인, 레이디 코델리아였다.`},
+  {w:`anne`, f:`anne_happy`, o:`matthew`, fx:`dream`,
+   e:`"아저씨, 초록 지붕 집에 탑이 있어요? 은빛 분수는요?"`,
+   l:`"아저씨, 초록 지붕 집에는 탑이 있나요? 은빛 분수는요?"`},
+  {w:`matthew`, f:`anne_happy`, o:`matthew`,
+   e:`"글쎄다, 탑은 없고… 우물은 있단다."`,
+   l:`"글쎄다, 탑은 없고… 우물이라면 있지."`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`matthew`, bk:[72],
+   e:`눈을 떠 보니 숲 가장자리, 하얀 꽃나무에 둘러싸인 아담한 집 위로 커다란 별이 빛나고 있었어. 탑은 없어도 성보다 훨씬 좋아 보였어!`,
+   l:`눈을 뜨자 숲 가장자리, 꽃나무에 둘러싸인 아담한 집 위로 수정 같은 별이 빛나고 있었다. 탑은 없었지만, 그 집은 내가 그린 어떤 성보다도 다정해 보였다.`},
+  {t:`goto`, to:`m34`},
+  {id:`c5c`, w:`anne`, cam:`in`, in:1, f:`anne_dreamy`, o:`matthew`, bk:[72],
+   e:`아저씨의 커다란 손가락을 따라 언덕 너머를 봤어. 숲 가장자리, 하얀 꽃나무에 둘러싸인 집 위로 커다란 별이 등불처럼 빛나고 있었어.`,
+   l:`아저씨의 거칠고 커다란 손끝을 따라 언덕 너머로 시선을 옮겼다. 숲 가장자리, 꽃나무로 희미하게 하얀 집 위에 수정 같은 별 하나가 등불처럼 걸려 있었다.`},
+  {w:`matthew`, f:`anne_happy`, o:`matthew`, b:`"저기란다. 저 별 바로 아래."`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`matthew`, bk:[76],
+   e:`아저씨 목소리가 처음 들어 보는 것처럼 부드러웠어. 보자마자 우리 집이라는 느낌이 들었어.`,
+   l:`아저씨의 목소리는 처음 듣는 것처럼 부드러웠다. 그 집을 보는 순간 나는 알았다. 저기가 우리 집이라는 것을.`},
+  {id:`m34`, w:`anne`, cam:`left`, f:`anne_dreamy`, o:`matthew`, bk:[76],
+   e:`"꼭 꿈을 꾸는 것 같아요. 오늘 꿈일까 봐 제 팔을 하도 꼬집어서 멍이 들었을 거예요. 그러다 생각했어요. 꿈이라면 최대한 오래 꾸는 게 낫겠다고요. 그런데 이건 진짜예요!"`,
+   l:`"아, 꼭 꿈을 꾸고 있는 것 같아요. 오늘 하도 여러 번 꼬집어서 제 팔은 시퍼렇게 멍이 들었을 거예요. 그러다 문득 깨달았어요. 설령 꿈이라 해도 할 수 있는 한 오래 꾸는 게 낫겠다고요. 그런데 이건 진짜예요. 우리는 이제 집에 거의 다 왔어요."`},
+  {w:`anne`, in:1, f:`anne_surprised`, o:`matthew`, bk:[77], cam:`right`,
+   e:`그런데 아저씨는 왠지 불편한 듯 자꾸 몸을 뒤척이셨어. 무언가 말하려다 마시는 것 같았어. 그 이유를 나는 아직 몰랐어.`,
+   l:`그런데 아저씨는 불안한 듯 자꾸 몸을 뒤척였다. 무언가 말하려다 삼키는 얼굴이었다. 그 침묵 속에 어떤 비밀이 숨어 있는지, 나는 아직 알지 못했다.`},
+  {t:`ending`},
+
+  /* ---------- 결말: 원작 ---------- */
+  {id:`E_canon`, cam:`in`, bg:`ch1_home`, w:`anne`, f:`anne_dreamy`, o:`matthew`, bk:[78,79], eff:{album:`e_canon`},
+   e:`마당은 아주 깜깜했고, 포플러 잎이 사각사각 소리를 냈어. "나무들이 잠꼬대하는 소리 좀 들어 보세요. 얼마나 좋은 꿈을 꾸고 있을까요!"`,
+   l:`마당은 깊은 어둠에 잠겨 있었고, 사방에서 포플러 잎이 비단결처럼 사각거렸다. "나무들이 잠꼬대하는 소리 좀 들어 보세요." 아저씨가 나를 땅에 내려 줄 때 나는 속삭였다. "얼마나 좋은 꿈을 꾸고 있을까요!"`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`matthew`, bk:[80],
+   e:`나는 내 물건 전부가 든 융단 가방을 꼭 쥐고 아저씨를 따라 집 안으로 들어갔어. 여기가 내 진짜 집이 될 거야. 그렇지?`,
+   l:`나는 '세상 재산 전부'가 든 융단 가방을 꼭 쥐고 아저씨를 따라 집 안으로 들어섰다. 이곳이 나의 진짜 집이 되리라. 그 꿈이 깨지지 않기만을 바랐다.`},
+  {t:`goto`, to:`E_last`},
+  /* ---------- 결말: 상상 ---------- */
+  {id:`E_imag`, cam:`up`, bg:`ch1_home`, w:`anne`, f:`anne_happy`, o:`matthew`, fx:`dream`, eff:{album:`e_imag`},
+   e:`마차에서 내리며 나는 하늘의 커다란 별에게 인사했어. "안녕, 길잡이 별님. 나를 여기까지 데려다줘서 고마워." 오늘부터 나는 이 집의 공주 코델리아야!`,
+   l:`마차에서 내린 나는 하늘의 커다란 별을 향해 고개 숙여 인사했다. "안녕, 길잡이 별이여. 나를 이곳까지 이끌어 주어 고마워." 오늘 밤부터 나는 이 집의 공주, 레이디 코델리아였다.`},
+  {w:`anne`, in:1, f:`anne_dreamy`, o:`matthew`, fx:`dream`, when:s => s.flags.cherry,
+   e:`주머니 속 벚꽃잎을 만지작거렸어. 오늘 밤은 벚나무 궁전에서 자지 않아도 돼. 진짜 집이 생겼으니까!`,
+   l:`주머니 속 벚꽃잎을 손끝으로 쓸어 보았다. 오늘 밤은 벚나무 궁전에서 잠들 필요가 없었다. 내게는 진짜 집이 생겼으니까.`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`matthew`, fx:`dream`, bk:[78,80],
+   e:`포플러 나무들이 사각사각 박수를 쳐 주는 것 같았어. 나는 융단 가방을 꼭 쥐고, 꿈꾸듯 집 안으로 들어갔어.`,
+   l:`포플러 잎들이 사각사각 박수를 보내는 듯했다. 나는 융단 가방을 꼭 쥐고, 꿈결을 걷듯 집 안으로 들어섰다.`},
+  {t:`goto`, to:`E_last`},
+  /* ---------- 결말: 균형 ---------- */
+  {id:`E_bal`, cam:`left`, bg:`ch1_home`, w:`anne`, f:`anne_happy`, o:`matthew`, eff:{album:`e_bal`, heart:{matthew:1}},
+   e:`마당에 내려서 나는 아저씨를 똑바로 올려다봤어. "아저씨, 저를 데리러 와 주셔서 정말 고마워요. 오늘은 제 인생에서 제일 행복한 날이에요."`,
+   l:`마당에 내려선 나는 아저씨를 똑바로 올려다보았다. "아저씨, 저를 데리러 와 주셔서 정말 고마워요. 오늘은 제 생애에서 가장 행복한 날이에요."`},
+  {w:`matthew`, f:`anne_surprised`, o:`matthew`,
+   e:`"얘야, 저기… 사실은…" …"아니다. 어서 들어가자꾸나."`,
+   l:`"얘야, 저기… 사실은…" 아저씨는 한참 입술을 달싹이다 고개를 저었다. "…아니다. 어서 들어가자꾸나."`},
+  {w:`anne`, in:1, f:`anne_dreamy`, o:`matthew`, bk:[80],
+   e:`아저씨가 하려던 말은 뭐였을까? 나는 융단 가방을 꼭 쥐고 아저씨를 따라 집 안으로 들어갔어.`,
+   l:`아저씨가 삼킨 말은 무엇이었을까. 나는 융단 가방을 꼭 쥐고 그분을 따라 집 안으로 들어섰다.`},
+  /* ---------- 공통 마지막 장면 (원작 3장 첫 장면) ---------- */
+  {id:`E_last`, cam:`shake`, bg:`ch1_home`, w:`marilla`, f:`anne_surprised`, o:`marilla_strict`, bk:[`x1`],
+   e:`"매슈 커스버트, 그 애는 누구예요? 사내아이는 어디 있고요?"`,
+   l:`"매슈 커스버트, 그 애는 누구예요?" 문 앞에 선 아주머니가 소리쳤다. "사내아이는 어디 있고요?"`},
+  {t:`endcard`}
+  ]
+});
+
+/* =========================================================
+   2장 대본 · 린드 부인의 독설 (원작 9~10장)
+   ========================================================= */
+CHAPTERS.push({
+  key: `ch2`, num: 2, title: `린드 부인의 독설`, orig: `원작 9~10장`, origTitle: `레이첼 린드 부인, 기겁하다 · 앤의 사과`,
+  bgKeys: [`ch2`, `ch2_room`, `ch2_lane`, `ch2_lynde`, `ch2_night`],
+  endings: {
+    canon: {title: `집이라는 걸 아는 기쁨`, label: `원작 결말`},
+    imag:  {title: `바람이 된 앤`, label: `상상 결말`},
+    bal:   {title: `마릴라의 손`, label: `균형 결말`}
+  },
+  items: {
+    poem:{ic:`✒️`, name:`홍당무 공주의 노래`, desc:`방에 갇혀 있던 날 앤이 지은 시. "홍당무 공주는 탑에 갇혔네, 노을빛 머리칼을 창밖에 늘어뜨리고…" (상상 장면에서만 얻을 수 있어요)`},
+    note:{ic:`📝`, name:`마릴라께 쓴 쪽지`, desc:`"아주머니, 화내서 죄송해요. 그런데 마음을 정리할 시간이 조금 필요해요. — 앤"`},
+    auburn:{ic:`🍂`, name:`희망의 한마디`, desc:`"크면 머리가 멋진 적갈색이 될지도 모른다." 린드 부인이 해 준 말이에요.`},
+    narcissi:{ic:`💐`, name:`흰 수선화 꽃다발`, desc:`린드 부인네 정원에서 꺾어 온 꽃. 사과하고 용서받은 날의 향기예요.`}
+  },
+  album: [
+    {id:`sunsetHair`, ic:`🍁`, name:`노을빛 머리의 노래`},
+    {id:`quietHurt`, ic:`💧`, name:`떨리는 목소리`},
+    {id:`curse`, ic:`🧙`, name:`빨간 머리 마녀의 저주`},
+    {id:`honest`, ic:`🤝`, name:`솔직한 마음`},
+    {id:`poem`, ic:`✒️`, name:`홍당무 공주의 노래`},
+    {id:`note`, ic:`📝`, name:`마릴라께 쓴 쪽지`},
+    {id:`rehearsal`, ic:`🎭`, name:`매슈 아저씨의 린드 부인 연기`},
+    {id:`biggerPerson`, ic:`🐴`, name:`더 큰 사람`},
+    {id:`apologyPoem`, ic:`📜`, name:`참회의 시`}
+  ],
+  talk: {
+    e: [`린드 부인의 말에 앤이 그렇게 화가 난 까닭은 무엇일까요? "내가 나에게 하는 말"과 "남이 나에게 하는 말"은 어떻게 다를까요?`,
+        `매슈 아저씨는 왜 마릴라 아주머니 몰래 앤을 찾아갔을까요?`,
+        `앤의 사과는 진심이었을까요, 연극이었을까요? 내가 고른 사과 방법과 비교해 이야기해 봐요.`],
+    l: [`"자기가 그렇게 말하는 거랑 남한테서 그런 말을 듣는 건 완전히 달라요." 앤의 이 말에 담긴 마음을 설명해 봅시다.`,
+        `마릴라는 왜 린드 부인에게 "아이 생김새를 가지고 놀리시면 안 됐어요"라고 말했을까요? 마릴라의 어린 시절 기억과 연결해 봅시다.`,
+        `앤의 극적인 사과는 '벌'이었을까요, '즐거움'이었을까요? 원작의 묘사와 내가 고른 길을 비교해 평가해 봅시다.`]
+  },
+  nodes: [
+  /* ---------- 지난 이야기 ---------- */
+  {id:`b1`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_sad`, cam:`in`,
+   e:`초록 지붕 집에 도착한 그날 밤, 나는 알게 됐어. 아저씨와 아주머니가 기다린 건 농사일을 도울 남자아이였다는 걸. 나는 밤새 울었어.`,
+   l:`초록 지붕 집에 닿은 그날 밤, 나는 진실을 알았다. 커스버트 남매가 기다린 것은 농사일을 거들 사내아이였다는 것을. 나는 절망의 구렁텅이에 빠져 밤새 울었다.`},
+  {w:`anne`, in:1, f:`anne_surprised`, o:`marilla_strict`, eff:{met:`marilla`},
+   e:`다음 날, 마릴라 아주머니는 나를 돌려보내려고 스펜서 부인 댁에 데려가셨어. 그런데 거기서 블루엣 부인이라는 분이 나를 데려가 아이 보는 일을 시키겠다고 하셨어. 눈빛이 너무 차가워서 무서웠어.`,
+   l:`이튿날 마릴라 아주머니는 나를 돌려보내려 스펜서 부인 댁으로 데려갔다. 그런데 그곳에서 블루엣 부인이 나를 데려가 아이 보는 일을 시키겠다고 나섰다. 송곳처럼 날카로운 그 눈빛에 나는 몸이 움츠러들었다.`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`marilla_warm`, cam:``,
+   e:`그때 마릴라 아주머니가 나를 보시더니 마음을 바꾸셨어. 결국 나는 초록 지붕 집에서 살게 됐어! 아주머니는 착한 아이가 되도록 노력하라고 하셨고, 나는 꼭 그러겠다고 약속했어.`,
+   l:`그때 내 얼굴을 바라보던 마릴라 아주머니의 마음이 움직였다. 그리하여 나는 초록 지붕 집에 남게 되었다. 아주머니는 착한 아이가 되도록 노력하라고 당부했고, 나는 그러겠노라 굳게 약속했다.`},
+  {w:`anne`, in:1, f:`anne_dreamy`, when:s => s.flags.castle,
+   e:`탑도 은빛 분수도 없지만, 동쪽 다락방 창가에 앉아 있으면 여기가 내 성 같아.`,
+   l:`탑도 은빛 분수도 없었지만, 동쪽 다락방 창가에 앉아 있노라면 이곳이 나만의 성처럼 느껴졌다.`},
+  {w:`anne`, in:1, f:`anne_dreamy`, when:s => s.flags.cherry && !s.flags.castle,
+   e:`기차역 벚나무 궁전에서 가져온 꽃잎은 이제 바싹 말라서, 내 책갈피가 되었어.`,
+   l:`기차역 산벚나무 궁전에서 가져온 꽃잎은 어느새 바싹 말라 내 책갈피가 되어 있었다.`},
+  /* ---------- 두 주 동안의 탐험 ---------- */
+  {bg:`ch2_lane`, w:`anne`, in:1, f:`anne_happy`, bk:[`9-2`,`9-3`,`9-4`], cam:`out`,
+   e:`그 뒤 두 주 동안, 나는 틈만 나면 탐험을 다녔어. 과수원 아래 오솔길, 시냇물 위 통나무 다리, 얼음처럼 차가운 샘물, 린네풀이 가득 핀 어둑한 숲까지!`,
+   l:`그 뒤 두 주 동안 나는 깨어 있는 매 순간을 탐험에 바쳤다. 과수원 아래로 난 오솔길, 시냇물 위의 통나무 다리, 붉은 사암에 둘러싸인 얼음장 같은 샘, 그리고 수줍은 린네풀이 무수히 피어 있는 어스름한 전나무 숲까지.`},
+  {w:`anne`, in:1, f:`anne_dreamy`,
+   e:`저녁이 되면 언덕 너머 '{pond}' 쪽을 보며 잘 자라고 인사해. 언젠가 '{avenue}'도 다시 걸어 보고 싶어.`,
+   l:`해 질 녘이면 언덕 너머 '{pond}' 쪽을 향해 잘 자라는 인사를 건넸다. 언젠가 '{avenue}'{avenue|을} 다시 걸어 볼 날을 꿈꾸면서.`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`matthew`, bk:[`9-5`],
+   e:`내가 발견한 것들을 이야기하면 매슈 아저씨는 빙그레 웃으며 들어 주셨어. 마릴라 아주머니는 듣다가 재미있어질 것 같으면 꼭 "입 좀 다물어라!" 하셨지만 말이야.`,
+   l:`내가 발견한 것들을 이야기하면 매슈 아저씨는 말없이 미소 지으며 귀 기울였다. 마릴라 아주머니는 듣다가 스스로 이야기에 빠져든다 싶으면 어김없이 "입 좀 다물어라"라는 짧은 명령으로 나를 잠재웠지만.`},
+  /* ---------- 린드 부인의 방문 ---------- */
+  {bg:`ch2`, w:`anne`, in:1, f:`anne_happy`, bk:[`9-6`,`9-13`], cam:``,
+   e:`그날 저녁에도 나는 붉은 햇살이 비치는 과수원을 거닐고 있었어. 그런데 아주머니가 나를 부르셨어. 신나서 부엌으로 뛰어 들어갔더니, 처음 보는 아주머니가 앉아 계셨어.`,
+   l:`그날 저녁에도 나는 붉은 저녁 햇살이 흩뿌려진 과수원 풀밭을 거닐고 있었다. 마릴라 아주머니가 부르는 소리에 신이 나서 부엌으로 뛰어 들어가자, 낯선 부인 한 분이 앉아 있었다.`},
+  {w:`anne`, in:1, f:`anne_surprised`, o:`lynde`, bk:[`9-1`,`9-14`], eff:{met:`lynde`},
+   e:`이웃에 사는 레이첼 린드 부인이었어. 동네 일이라면 모르는 게 없다는 분. 바람에 헝클어진 내 빨간 머리가 그 어느 때보다 빨갛게 느껴졌어.`,
+   l:`에이번리의 일이라면 모르는 것이 없다는 이웃 레이첼 린드 부인이었다. 모자도 쓰지 않은 채 바람에 헝클어진 내 머리는, 그 순간만큼 빨갛게 타오른 적이 없었다.`},
+  {w:`lynde`, f:`anne_sad`, o:`lynde`, bk:[`9-15`], cam:`right`,
+   e:`"세상에, 생김새 보고 고른 건 아닌 게 확실하구먼. 지독하게 말랐고 못생겼네, 마릴라. 이런 주근깨는 처음 보네! 머리는 또 홍당무처럼 빨갛고!"`,
+   l:`"세상에, 생김새 보고 고른 건 아닌 게 확실하구먼. 지독하게 말랐고 못생겼네, 마릴라. 이리 와 봐라, 얘야. 맙소사, 세상에 이런 주근깨를 본 적이 있나? 머리는 또 홍당무처럼 빨갛고!"`},
+  {t:`choice`, id:`C1`, kind:`predict`, label:`린드 부인의 말에`, f:`anne_angry`, o:`lynde`,
+   q:{e:`린드 부인의 말에 앤의 얼굴이 새빨개졌어요. 원작의 앤은 어떻게 했을까요?`, l:`린드 부인의 말에 앤의 얼굴이 분노로 달아오릅니다. 원작의 앤은 어떻게 했을까요?`},
+   note:{e:`원작의 앤은 발을 쾅쾅 구르며 "아주머니가 미워요!"라고 외치고, 린드 부인에게 "뚱뚱하고 상상력도 없는 분"이라고 되받아쳐요. 그 일로 린드 부인은 몹시 화가 나서 돌아가요.`,
+         l:`원작에서 앤은 발을 구르며 "미워요"를 되풀이하고, 린드 부인에게 "뚱뚱하고 굼뜨고 상상력이라곤 한 톨도 없을 것"이라 되받아칩니다. 린드 부인은 기겁하여 돌아가지요.`},
+   opts:[
+    {type:`canon`, go:`k_c`, e:`발을 쾅쾅 구르며 "아주머니가 미워요!" 하고 소리친다.`, l:`발을 구르며 "아주머니가 미워요!" 하고 외친다.`, s:{e:`발을 구르며 "미워요!" 하고 외쳤다`, l:`발을 구르며 "미워요!"라고 외쳤다`}},
+    {type:`imag`, go:`k_i`, e:`"홍당무라뇨! 제 머리는 노을과 단풍과 루비의 색이에요!" 하고 시를 읊듯 맞받아친다.`, l:`"홍당무라니요! 제 머리는 노을과 단풍과 루비를 녹인 빛이에요!" 하고 시를 읊듯 맞선다.`, s:{e:`노을빛 머리라고 시처럼 맞받아쳤다`, l:`노을빛 머리를 시처럼 노래하며 맞섰다`}},
+    {type:`bal`, go:`k_b`, e:`주먹을 꼭 쥐고, 떨리는 목소리로 "그런 말씀은 너무 아파요." 하고 말한다.`, l:`주먹을 꼭 쥔 채 떨리는 목소리로 "그런 말씀은 너무 아파요." 하고 말한다.`, s:{e:`떨리는 목소리로 아프다고 말했다`, l:`아프다는 마음을 떨리는 목소리로 전했다`}}
+   ]},
+  {id:`k_c`, w:`anne`, f:`anne_angry`, o:`lynde`, bk:[`9-16`,`9-17`], cam:`shake`,
+   e:`"아주머니가 미워요! 미워요, 미워요!" 나는 발을 쾅쾅 굴렀어. "어떻게 저더러 말라깽이에 못생겼다고 하실 수 있어요? 아주머니는 무례하고 인정머리 없는 분이에요!"`,
+   l:`"아주머니가 미워요." 나는 목멘 소리로 외치며 발을 굴렀다. "미워요, 미워요, 미워요! 어떻게 저더러 말라깽이에 못생겼다고 하실 수 있어요? 아주머니는 무례하고 버릇없고 인정머리 없는 분이에요!"`},
+  {w:`anne`, f:`anne_angry`, o:`lynde`, bk:[`9-19`,`9-20`,`9-21`], cam:`in`,
+   e:`"누가 아주머니한테 뚱뚱하고 상상력도 하나 없다고 하면 좋으시겠어요? 저는 절대 용서 안 할 거예요. 절대, 절대로요!" 쿵! 쿵!`,
+   l:`"아주머니더러 뚱뚱하고 굼뜨고 상상력이라곤 한 톨도 없을 거라고 하면 좋으시겠어요? 상처받으셨으면 좋겠어요! 저는 절대로 아주머니를 용서하지 않을 거예요. 절대로, 절대로요!" 쿵! 쿵!`},
+  {t:`goto`, to:`k5`},
+  {id:`k_i`, w:`anne`, f:`anne_angry`, o:`lynde`, fx:`dream`, cam:`left`, eff:{album:`sunsetHair`},
+   e:`"홍당무라뇨! 제 머리는 저녁노을과 가을 단풍과 루비를 한데 모은 색이에요! 아주머니는 평생 상상도 못 하실 색이죠!"`,
+   l:`"홍당무라니요! 제 머리는 저녁노을과 가을 단풍과 루비를 한데 녹여 놓은 빛이에요. 상상력 없는 분은 평생 그려 보지도 못할 빛이지요!"`},
+  {w:`lynde`, f:`anne_angry`, o:`lynde`, cam:`right`,
+   e:`"뭐, 뭐라고? 상상도 못 할 색? 어른한테 이게 무슨 말버릇이야!"`,
+   l:`"뭐, 뭐라고? 상상력 없는 사람? 세상에, 어른한테 이게 무슨 말버릇이람!"`},
+  {w:`anne`, in:1, f:`anne_surprised`, o:`lynde`,
+   e:`린드 부인의 얼굴이 홍당무보다 더 빨개졌어. 아차, 시처럼 말했어도 무례한 건 무례한 거였나 봐.`,
+   l:`린드 부인의 얼굴이 홍당무보다 붉게 달아올랐다. 아무리 시처럼 꾸며도, 무례는 무례였던 것이다.`},
+  {t:`goto`, to:`k5`},
+  {id:`k_b`, w:`anne`, f:`anne_sad`, o:`lynde`, cam:`in`, eff:{album:`quietHurt`, flag:`quiet`},
+   e:`나는 주먹을 꼭 쥐었어. "제 생김새는 제가 고른 게 아니에요. 그런 말씀은… 너무 아파요." 목소리가 덜덜 떨렸어.`,
+   l:`나는 주먹을 꼭 쥐었다. "제 생김새는 제가 고른 것이 아니에요. 그런 말씀은… 너무 아파요." 목소리가 가늘게 떨렸다.`},
+  {w:`lynde`, f:`anne_sad`, o:`lynde`, cam:`right`,
+   e:`"어머나, 어른 말에 따박따박 말대꾸를 하네! 마릴라, 애 버릇을 단단히 잡아야겠어."`,
+   l:`"어머나, 어른 말에 꼬박꼬박 말대꾸라니! 마릴라, 이 애 버릇은 단단히 잡아야겠구먼."`},
+  {w:`anne`, in:1, f:`anne_sad`, cam:`shake`,
+   e:`눈물이 터져 나올 것 같아서, 나는 그대로 부엌을 뛰쳐나가 계단을 뛰어 올라갔어.`,
+   l:`눈물이 터져 나오려는 것을 참지 못하고, 나는 부엌을 뛰쳐나가 계단을 내달렸다.`},
+  {t:`goto`, to:`k6`},
+  {id:`k5`, w:`lynde`, f:`anne_angry`, o:`lynde`, bk:[`9-22`], b:`"세상에 이런 성질머리를 본 적이 있나!"`},
+  {w:`marilla`, f:`anne_angry`, o:`marilla_strict`, bk:[`9-18`,`9-23`],
+   e:`"앤! 네 방에 올라가서 내가 갈 때까지 거기 있어라."`,
+   l:`"앤!" 마릴라 아주머니가 간신히 말문을 되찾았다. "네 방에 올라가서 내가 갈 때까지 거기 있어라."`},
+  {w:`anne`, in:1, f:`anne_sad`, bk:[`9-24`], cam:`shake`,
+   e:`나는 울음을 터뜨리며 뛰쳐나가 문을 쾅 닫았어. 현관 벽에 걸린 양철 그릇들까지 덜그럭거렸어.`,
+   l:`나는 울음을 터뜨리며 복도 문으로 달려가 문을 쾅 닫았다. 현관 벽의 양철 그릇들이 덩달아 덜그럭거렸다. 그리고 회오리바람처럼 계단을 뛰어 올라갔다.`},
+  /* ---------- 동쪽 다락방 ---------- */
+  {id:`k6`, bg:`ch2_room`, w:`anne`, in:1, f:`anne_sad`, bk:[`9-32`,`9-34`],
+   e:`나는 침대에 엎드려 엉엉 울었어. 흙 묻은 신발이 깨끗한 침대보 위에 있는 것도 몰랐어. 아래층에서 린드 부인이 씩씩거리며 가 버리는 소리가 들렸어.`,
+   l:`나는 침대에 얼굴을 묻고 서럽게 울었다. 흙 묻은 신발이 깨끗한 침대보를 더럽히는 것도 알지 못했다. 아래층에서 린드 부인이 씩씩거리며 떠나는 소리가 들려왔다.`},
+  {w:`marilla`, f:`anne_sad`, o:`marilla_strict`, bk:[`9-37`,`9-39`], cam:`right`,
+   e:`"앤, 당장 침대에서 내려와서 내 말 들어라. 이게 무슨 버릇이니! 부끄럽지도 않니?"`,
+   l:`"앤, 당장 침대에서 내려와서 내 말 들어라. 이게 무슨 버릇이니, 앤! 부끄럽지도 않니?"`},
+  {w:`marilla`, f:`anne_sad`, o:`marilla_strict`, when:s => s.flags.quiet,
+   e:`"네 말이 다 틀렸다는 건 아니다. 하지만 어른께 말대꾸하고 손님 앞에서 뛰쳐나간 건 예의가 아니었어."`,
+   l:`"네 말이 다 틀렸다는 건 아니다. 하지만 어른께 말대꾸를 하고 손님 앞에서 뛰쳐나간 건 예의가 아니었다."`},
+  {t:`choice`, id:`C2`, kind:`talk`, label:`마릴라 아주머니에게`, f:`anne_sad`, o:`marilla_strict`,
+   q:{e:`마릴라 아주머니가 화가 나셨어요. 앤은 뭐라고 말할까요?`, l:`굳은 얼굴의 마릴라 앞에서, 앤은 무슨 말을 할까요?`},
+   note:{e:`원작의 앤은 "누가 면전에서 말라깽이에 못생겼다고 하면 어떠시겠어요?"라고 되물어요. 그 말에 마릴라는 어릴 적 이모들이 자기를 "까무잡잡하고 못생겼다"고 했던 기억을 떠올려요.`,
+         l:`원작에서 앤은 "누가 면전에서 말라깽이에 못생겼다고 하면 어떤 기분이실지 상상해 보세요"라고 애원합니다. 그 순간 마릴라는 어린 시절 이모들에게 들은 "까무잡잡하고 못생겼다"는 말을 떠올리지요.`},
+   opts:[
+    {type:`canon`, go:`c2a`, eff:{heart:{marilla:1}}, e:`"아주머니도 누가 면전에서 말라깽이에 못생겼다고 하면 어떠실지 상상해 보세요."`, l:`"누가 아주머니 면전에서 말라깽이에 못생겼다고 하면 어떤 기분이실지 상상해 보세요."`, s:{e:`아주머니라면 어떠실지 상상해 보라고 했다`, l:`마릴라에게 입장을 바꿔 상상해 보길 청했다`}},
+    {type:`imag`, go:`c2i`, eff:{heart:{marilla:1}}, e:`"아주머니, 사실 저는 마법에 걸렸던 거예요. 빨간 머리 마녀의 저주 때문에 화가 났다고요!"`, l:`"아주머니, 실은 제가 마법에 걸렸던 거예요. 빨간 머리 마녀의 저주가 저를 그렇게 만들었어요!"`, s:{e:`빨간 머리 마녀의 저주 탓이라고 했다`, l:`마녀의 저주 탓이라 둘러댔다`}},
+    {type:`bal`, go:`c2b`, eff:{heart:{marilla:2}}, e:`"화낸 건 잘못했어요. 그래도 그 말이 얼마나 아팠는지는 알아주셨으면 좋겠어요."`, l:`"화를 낸 건 제 잘못이에요. 그래도 그 말이 얼마나 아팠는지는 알아주셨으면 해요."`, s:{e:`잘못은 인정하고 아팠던 마음을 말했다`, l:`잘못을 인정하며 아픈 마음을 전했다`}}
+   ]},
+  {id:`c2a`, w:`anne`, f:`anne_sad`, o:`marilla_strict`, bk:[`9-42`,`9-44`],
+   e:`"내가 나한테 못생겼다고 하는 거랑, 남한테 그런 말을 듣는 건 완전히 달라요. 아주머니도 누가 면전에서 그러면 어떠실지 상상해 보세요."`,
+   l:`"자기가 그렇게 말하는 거랑 남한테서 그런 말을 듣는 건 완전히 달라요. 누가 아주머니 면전에서 말라깽이에 못생겼다고 하면 어떤 기분이실지 상상해 보세요."`},
+  {w:`anne`, in:1, f:`anne_surprised`, o:`marilla_warm`, bk:[`9-45`],
+   e:`그 순간 아주머니가 갑자기 먼 곳을 보는 눈빛이 되셨어. 무슨 생각을 하시는 걸까?`,
+   l:`그 순간 아주머니의 눈빛이 아득히 먼 곳으로 향했다. 무엇을 떠올린 것일까.`},
+  {t:`goto`, to:`c2m`},
+  {id:`c2i`, w:`anne`, f:`anne_dreamy`, o:`marilla_strict`, fx:`dream`, eff:{album:`curse`},
+   e:`"아주머니, 사실 저는 마법에 걸렸던 거예요. 빨간 머리 마녀의 저주 때문에 저도 모르게 화가 났다고요!"`,
+   l:`"아주머니, 실은 제가 마법에 걸렸던 거예요. 빨간 머리 마녀의 저주가 제 혀를 불꽃으로 바꿔 놓았다고요!"`},
+  {w:`marilla`, f:`anne_dreamy`, o:`marilla_strict`, fx:`dream`,
+   e:`"그래? 그 마녀가 내일은 린드 부인께 사과하는 마법도 걸어 주면 좋겠구나."`,
+   l:`"그래? 그렇다면 그 마녀가 내일은 린드 부인께 사과하는 마법도 걸어 주면 좋겠구나."`},
+  {w:`anne`, in:1, f:`anne_surprised`, o:`marilla_strict`,
+   e:`아주머니 입꼬리가 아주 살짝 올라갔던 것 같은데… 내가 잘못 봤나?`,
+   l:`아주머니의 입꼬리가 아주 잠깐 씰룩였던 것 같았다. 내가 잘못 본 것일까.`},
+  {t:`goto`, to:`c2m`},
+  {id:`c2b`, w:`anne`, f:`anne_sad`, o:`marilla_strict`, eff:{album:`honest`},
+   e:`"화낸 건 잘못했어요. 그래도 그 말이 얼마나 아팠는지는 알아주셨으면 좋겠어요."`,
+   l:`"화를 낸 건 제 잘못이에요. 그래도 그 말이 얼마나 아팠는지는 알아주셨으면 해요."`},
+  {w:`marilla`, f:`anne_surprised`, o:`marilla_warm`, bk:[`9-45`],
+   e:`"…그래. 그 마음은 안다. 남의 입에서 나온 그런 말은 오래오래 아프지."`,
+   l:`"…그래. 그 마음은 안다. 남의 입에서 나온 그런 말은 오래도록 아프지."`},
+  {id:`c2m`, w:`marilla`, f:`anne_sad`, o:`marilla_strict`, bk:[`9-46`], cam:``,
+   e:`"린드 부인 말씀이 다 옳았다는 건 아니다. 하지만 그분은 어른이고, 내 손님이었어. 그분께 가서 성질부린 걸 사과하고 용서를 빌어라."`,
+   l:`"린드 부인이 한 말이 꼭 옳았다고는 하지 않겠다. 하지만 그분은 낯선 사람이고, 어른이고, 내 손님이었어. 그분께 가서 성질부린 걸 죄송하다고 말씀드리고 용서를 빌어라."`},
+  {w:`anne`, f:`anne_angry`, o:`marilla_strict`, bk:[`9-47`,`9-49`], cam:`left`,
+   e:`"그건 절대 못 해요! 저를 뱀과 두꺼비가 우글거리는 지하 감옥에 가두셔도 좋아요. 하지만 죄송하지 않은데 죄송하다고 할 수는 없어요!"`,
+   l:`"그건 절대 못 해요. 뱀과 두꺼비가 우글거리는 어둡고 축축한 지하 감옥에 가두고 빵과 물만 주셔도 불평하지 않을게요. 하지만 죄송하지 않은데 죄송하다고 할 수는 없잖아요?"`},
+  {w:`marilla`, f:`anne_angry`, o:`marilla_strict`, bk:[`9-48`,`9-50`],
+   e:`"우리 에이번리엔 지하 감옥이 별로 없단다. 사과할 마음이 생겼다고 말할 수 있을 때까지 이 방에 있거라."`,
+   l:`"우리는 사람을 지하 감옥에 가두는 버릇이 없단다. 게다가 에이번리엔 그런 감옥이 좀처럼 없거든. 사과할 마음이 생겼다고 내게 말할 수 있을 때까지 이 방에 있거라."`},
+  {w:`anne`, in:1, f:`anne_sad`, when:s => s.flags.castle,
+   e:`동쪽 다락방이 내 성이라고 상상했었는데… 오늘은 진짜 감옥 같아.`,
+   l:`동쪽 다락방이 나의 성이라 상상했건만, 오늘 밤 이곳은 영락없는 감옥이었다.`},
+  {w:`anne`, in:1, f:`anne_sad`, when:s => s.flags.cherry && !s.flags.castle,
+   e:`책갈피가 된 벚꽃잎을 꺼내 봤어. 그날 벚나무 궁전에서는 이렇게 외롭지 않았는데.`,
+   l:`책갈피가 된 벚꽃잎을 꺼내 보았다. 그날 벚나무 궁전에서는 이토록 외롭지 않았는데.`},
+  {w:`anne`, in:1, f:`anne_sad`, when:s => !s.flags.cherry && !s.flags.castle,
+   e:`창밖으로 해가 지는 걸 보며 생각했어. 나는 정말 하나도 안 죄송해. …정말 그럴까?`,
+   l:`창밖으로 저무는 해를 바라보며 생각했다. 나는 조금도 죄송하지 않다. …정말 그런가?`},
+  /* ---------- 다음 날 ---------- */
+  {w:`anne`, in:1, f:`anne_sad`, bk:[`10-1`,`10-5`,`10-6`], cam:`in`,
+   e:`다음 날, 나는 아침도 점심도 저녁도 방에서 혼자 먹었어. 아니, 거의 못 먹었어. 아래층에서 매슈 아저씨와 마릴라 아주머니가 나 때문에 이야기하시는 소리가 웅얼웅얼 들렸어.`,
+   l:`이튿날 아침, 점심, 저녁이 모두 쟁반에 담겨 올라왔다가, 거의 그대로 내려갔다. 아래층에서 나를 두고 매슈 아저씨와 마릴라 아주머니가 주고받는 낮은 목소리가 웅얼웅얼 올라왔다.`},
+  {t:`choice`, id:`C3`, kind:`act`, label:`혼자 남은 방에서`, f:`anne_sad`,
+   q:{e:`하루 종일 방에 갇힌 앤. 무엇을 하며 시간을 보낼까요?`, l:`종일 방 안에 갇힌 앤. 이 길고 외로운 시간을 어떻게 보낼까요?`},
+   note:{e:`원작의 앤은 창가의 노란 의자에 앉아 정원을 내다보며 "상상을 많이 하니까 시간이 좀 가요"라고 말해요. 하지만 무척 외로웠지요.`,
+         l:`원작에서 앤은 창가의 노란 의자에 앉아 정원을 내다보며 시간을 보냅니다. "상상을 많이 하니 시간이 가지만, 꽤 외롭다"고 털어놓지요.`},
+   opts:[
+    {type:`canon`, go:`d_c`, e:`창가 노란 의자에 앉아 정원을 내다보며, 이것저것 상상하며 시간을 보낸다.`, l:`창가의 노란 의자에 앉아 정원을 내다보며, 상상 속을 거닐며 시간을 보낸다.`, s:{e:`창가에서 상상하며 시간을 보냈다`, l:`창가에 앉아 상상으로 시간을 보냈다`}},
+    {type:`imag`, go:`d_i`, eff:{item:`poem`, flag:`poem`}, e:`'홍당무 공주의 슬픈 노래'라는 시를 지어 공책에 적는다.`, l:`'홍당무 공주의 슬픈 노래'라는 시를 지어 공책에 적어 내려간다.`, s:{e:`'홍당무 공주의 노래'를 지었다`, l:`'홍당무 공주의 노래'를 지었다`}},
+    {type:`bal`, go:`d_b`, eff:{item:`note`, flag:`note`, heart:{marilla:1}}, e:`쟁반의 음식을 조금 먹고, 마릴라 아주머니께 드릴 쪽지를 쓴다.`, l:`쟁반의 음식을 조금 들고, 마릴라 아주머니께 드릴 쪽지를 쓴다.`, s:{e:`밥을 조금 먹고 쪽지를 썼다`, l:`끼니를 챙기고 마릴라께 쪽지를 썼다`}}
+   ]},
+  {id:`d_c`, w:`anne`, in:1, f:`anne_dreamy`, bk:[`10-9`,`10-12`],
+   e:`나는 창가 노란 의자에 앉아 정원을 내다봤어. 상상을 많이 하니까 시간이 좀 갔어. 물론… 많이 외로웠지만.`,
+   l:`나는 창가의 노란 의자에 앉아 정원을 내다보았다. 상상을 많이 하니 시간이 조금은 흘러갔다. 물론, 꽤 외로웠지만.`},
+  {t:`goto`, to:`d2`},
+  {id:`d_i`, w:`anne`, in:1, f:`anne_dreamy`, fx:`dream`, cam:`up`, eff:{album:`poem`},
+   e:`나는 공책에 시를 썼어. "홍당무 공주는 탑에 갇혔네 / 노을빛 머리칼을 창밖에 늘어뜨리고…" 쓰다 보니 기분이 조금 나아졌어.`,
+   l:`나는 공책에 시를 적어 내려갔다. "홍당무 공주는 탑에 갇혔네 / 노을빛 머리칼을 창밖에 늘어뜨리고 / 바람만이 그 슬픔을 아네…" 쓰다 보니 마음이 조금 가라앉았다.`},
+  {t:`goto`, to:`d2`},
+  {id:`d_b`, w:`anne`, in:1, f:`anne_sad`, eff:{album:`note`},
+   e:`나는 수프를 몇 숟가락 먹고, 쪽지에 또박또박 적었어. "아주머니, 화내서 죄송해요. 그런데 마음을 정리할 시간이 조금 필요해요. — 앤"`,
+   l:`나는 수프를 몇 숟가락 뜨고, 쪽지에 또박또박 적었다. "아주머니, 화를 내서 죄송해요. 다만 마음을 정리할 시간이 조금 필요해요. — 앤"`},
+  {id:`d2`, w:`anne`, in:1, f:`anne_surprised`, o:`matthew`, bk:[`10-7`,`10-8`], cam:`in`,
+   e:`해 질 무렵, 누군가 문을 똑똑 두드렸어. 살그머니 문이 열리더니… 매슈 아저씨였어! 아저씨는 위층에 거의 안 올라오신다던데!`,
+   l:`해 질 무렵, 누군가 손가락으로 문을 톡톡 두드렸다. 문이 살그머니 열리고, 들여다보는 얼굴은… 매슈 아저씨였다! 위층에는 좀처럼 올라오지 않는다는 분이.`},
+  {w:`matthew`, f:`anne_surprised`, o:`matthew`, bk:[`10-9`,`10-10`], b:`"앤, 좀 어떠냐?"`},
+  {w:`anne`, f:`anne_dreamy`, o:`matthew`, when:s => s.flags.poem,
+   e:`"저 시를 썼어요. '홍당무 공주의 슬픈 노래'요." 아저씨는 "글쎄다… 다 쓰면 꼭 들려주렴." 하셨어.`,
+   l:`"시를 한 편 썼어요. '홍당무 공주의 슬픈 노래'예요." 아저씨는 "글쎄다… 다 쓰거든 꼭 들려주렴." 하고 수줍게 웃었다.`},
+  {w:`anne`, f:`anne_sad`, o:`matthew`, when:s => s.flags.note,
+   e:`"아주머니께 쪽지를 썼어요. 아직 못 드렸지만요." 아저씨가 고개를 끄덕이셨어. "그거 좋은 생각이구나."`,
+   l:`"마릴라 아주머니께 쪽지를 썼어요. 아직 드리지는 못했지만요." 아저씨는 천천히 고개를 끄덕였다. "그거 참 좋은 생각이구나."`},
+  {w:`anne`, f:`anne_sad`, o:`matthew`, bk:[`10-11`,`10-12`,`10-13`],
+   e:`"그럭저럭 지내요. 상상을 많이 하니까 시간이 좀 가요. 물론 꽤 외롭긴 해요. 하지만 이제 익숙해지는 게 좋겠죠."`,
+   l:`"그럭저럭 지내요. 이것저것 상상을 많이 하니 시간이 좀 가요. 물론 꽤 외롭긴 해요. 하지만 이제 익숙해지는 게 좋겠지요."`},
+  {w:`matthew`, f:`anne_sad`, o:`matthew`, bk:[`10-14`,`10-15`,`10-17`], cam:`right`,
+   e:`"앤, 그냥 사과하고 끝내는 게 어떻겠니? 어차피 언젠가는 해야 할 거다. 마릴라는 지독히 고집이 세거든. 그냥 좋게 마무리하렴."`,
+   l:`"글쎄다, 앤, 그냥 해 버리고 끝내는 게 어떻겠니? 어차피 언젠가는 해야 할 거다. 마릴라는 지독히 고집이 센 사람이거든. 지독하게 말이다. 말하자면, 그냥 좋게 마무리하라는 거지."`},
+  {t:`choice`, id:`C4`, kind:`predict`, label:`매슈 아저씨의 부탁`, f:`anne_sad`, o:`matthew`,
+   q:{e:`매슈 아저씨가 사과하라고 부탁하셨어요. 원작의 앤은 뭐라고 대답했을까요?`, l:`매슈의 서툰 부탁 앞에서, 원작의 앤은 어떻게 대답했을까요?`},
+   note:{e:`원작의 앤은 "아저씨를 위해서라면 할게요"라고 대답해요. 밤새 화가 났지만 아침에는 다 풀리고 부끄러웠대요. 매슈는 "내가 이런 말 했다는 건 마릴라한테 비밀이다"라고 부탁하지요.`,
+         l:`원작에서 앤은 "아저씨를 위해서라면 할 수 있을 것 같아요"라고 답합니다. 밤새 세 번이나 깨어 화를 냈지만 아침엔 화가 걷히고 부끄러움만 남았다고 고백하지요.`},
+   opts:[
+    {type:`canon`, go:`e_c`, eff:{heart:{matthew:1}}, e:`"아저씨를 위해서라면 할게요. 사실 오늘 아침엔 화가 다 풀리고 부끄러웠거든요."`, l:`"아저씨를 위해서라면 할 수 있을 것 같아요. 실은 오늘 아침엔 화가 걷히고 부끄러움만 남았거든요."`, s:{e:`아저씨를 위해 사과하겠다고 했다`, l:`매슈를 위해 사과하겠노라 했다`}},
+    {type:`imag`, go:`e_i`, eff:{heart:{matthew:1}}, e:`"그럼 아저씨가 린드 부인 역할을 해 주세요! 사과 연극 연습을 해 볼래요."`, l:`"그렇다면 아저씨가 린드 부인 역을 맡아 주세요. 사과 연극을 연습해 보고 싶어요."`, s:{e:`아저씨와 사과 연극 연습을 했다`, l:`매슈와 사과 연극을 연습했다`}},
+    {type:`bal`, go:`e_b`, eff:{heart:{matthew:2}}, e:`"아저씨는 제가 정말 잘못했다고 생각하세요? 솔직하게 말씀해 주세요."`, l:`"아저씨는 제가 정말 잘못했다고 생각하세요? 솔직하게 말씀해 주세요."`, s:{e:`아저씨의 솔직한 생각을 물었다`, l:`매슈의 솔직한 생각을 청했다`}}
+   ]},
+  {id:`e_c`, w:`anne`, f:`anne_sad`, o:`matthew`, bk:[`10-18`],
+   e:`"아저씨를 위해서라면 할게요. 어젯밤엔 밤새 화가 났는데, 오늘 아침엔 다 풀리고 제가 너무 부끄러웠어요. 그래도 린드 부인께 말씀드리는 건 너무 창피해서…"`,
+   l:`"아저씨를 위해서라면 할 수 있을 것 같아요. 어젯밤엔 세 번이나 깼는데 깰 때마다 화가 펄펄 났어요. 그런데 오늘 아침엔 다 사라지고, 텅 빈 듯한 끔찍한 기분과 부끄러움만 남았어요. 그래도… 아저씨가 정말 원하신다면…"`},
+  {w:`matthew`, f:`anne_happy`, o:`matthew`, bk:[`10-19`],
+   e:`"글쎄다, 물론 원하지. 네가 없으니 아래층이 지독히 쓸쓸하구나."`,
+   l:`"글쎄다, 물론 원하지. 네가 없으니 아래층이 지독히 쓸쓸하구나. 가서 좋게 마무리하렴. 착하지."`},
+  {t:`goto`, to:`e_m`},
+  {id:`e_i`, w:`matthew`, f:`anne_happy`, o:`matthew`, fx:`dream`, eff:{album:`rehearsal`},
+   e:`"내, 내가 린드 부인을? 글쎄다…" 에헴! "세상에, 이런 주근깨는 처음 보네!"`,
+   l:`"내, 내가 린드 부인을 말이냐? 글쎄다…" 에헴! "세상에, 이런 주근깨는 처음 보는구먼!"`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`matthew`, fx:`dream`, cam:`in`,
+   e:`아저씨가 목소리를 높이며 린드 부인 흉내를 내시는데, 나는 웃음이 터져서 사과 연습을 할 수가 없었어. 그래도 마음이 한결 가벼워졌어. "알았어요, 진짜로 사과할게요!"`,
+   l:`목소리를 한껏 높여 린드 부인 흉내를 내는 아저씨를 보다가, 나는 그만 웃음을 터뜨리고 말았다. 연습은 엉망이 되었지만 마음은 한결 가벼워졌다. "알았어요, 진짜로 사과할게요!"`},
+  {t:`goto`, to:`e_m`},
+  {id:`e_b`, w:`matthew`, f:`anne_surprised`, o:`matthew`, eff:{album:`biggerPerson`},
+   e:`"글쎄다… 레이첼도 너무했지. 그래도 너도 너무했단다. 둘 다 조금씩 잘못한 거지. 네가 먼저 손을 내밀면, 그게 더 큰 사람이 되는 거란다."`,
+   l:`"글쎄다… 레이첼도 지나쳤지. 하지만 너도 지나쳤단다. 둘 다 조금씩 잘못한 거야. 그럴 때 먼저 손을 내미는 쪽이 더 큰 사람이 되는 거란다."`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`matthew`,
+   e:`더 큰 사람… 그 말이 마음에 쏙 들어왔어. "알았어요, 아저씨. 제가 먼저 손을 내밀게요."`,
+   l:`더 큰 사람. 그 말이 가슴 깊이 내려앉았다. "알았어요, 아저씨. 제가 먼저 손을 내밀게요."`},
+  {id:`e_m`, w:`matthew`, f:`anne_happy`, o:`matthew`, bk:[`10-21`],
+   e:`"그런데 내가 이런 말 했다는 건 마릴라한테 비밀이다. 참견 안 하기로 약속했거든."`,
+   l:`"그런데 내가 이런 말 했다고 마릴라한테는 말하지 마라. 내가 참견했다고 생각할 거다. 참견 안 하겠다고 약속했거든."`},
+  {w:`anne`, f:`anne_happy`, o:`matthew`, bk:[`10-22`,`10-23`],
+   e:`"야생마가 끌어도 이 비밀은 안 말할게요! …그런데 야생마가 어떻게 비밀을 끌어내요?" 대답 대신, 아저씨는 벌써 후다닥 사라지고 없었어.`,
+   l:`"야생마가 끌어도 이 비밀은 안 말할게요. 그런데 야생마가 어떻게 사람한테서 비밀을 끌어낼까요?" 그러나 아저씨는 자기가 해낸 일에 놀라 벌써 달아나고 없었다.`},
+  {w:`anne`, f:`anne_sad`, o:`marilla_strict`, bk:[`10-23`,`10-24`,`10-25`],
+   e:`나는 난간 너머로 아주머니를 불렀어. "마릴라 아주머니, 성질부리고 무례한 말을 해서 죄송해요. 린드 부인께 가서 말씀드릴게요."`,
+   l:`나는 난간 너머로 아주머니를 불렀다. "마릴라 아주머니, 성질부리고 무례한 말을 해서 죄송해요. 린드 부인께 가서 그렇게 말씀드릴게요."`},
+  {w:`marilla`, f:`anne_sad`, o:`marilla_strict`, bk:[`10-26`], b:`"좋다. 젖 짜고 나서 데려가마."`},
+  /* ---------- 린드 부인 댁으로 ---------- */
+  {bg:`ch2_lane`, w:`anne`, in:1, f:`anne_sad`, o:`marilla_strict`, bk:[`10-27`], cam:``,
+   e:`린드 부인 댁으로 가는 오솔길. 처음엔 고개를 푹 숙이고 걸었어. 그런데 반쯤 갔을 때, 노을 진 하늘을 보니 갑자기 멋진 생각이 떠올랐어.`,
+   l:`린드 부인 댁으로 향하는 오솔길. 처음엔 고개를 떨군 채 걸었다. 그러나 반쯤 내려갔을 때, 노을 진 하늘을 올려다보는 순간 무언가가 마법처럼 떠올랐다.`},
+  {w:`marilla`, f:`anne_dreamy`, o:`marilla_strict`, bk:[`10-28`], b:`"무슨 생각을 하니, 앤?"`},
+  {w:`anne`, f:`anne_dreamy`, o:`marilla_strict`, bk:[`10-29`,`10-30`], cam:`up`,
+   e:`"린드 부인께 뭐라고 말씀드릴지 상상하고 있어요."`,
+   l:`"린드 부인께 뭐라고 말씀드릴지 상상하고 있어요." 내 대답에 아주머니는 어쩐지 개운치 않은 얼굴이었다.`},
+  {bg:`ch2_lynde`, w:`anne`, in:1, f:`anne_surprised`, o:`lynde`, bk:[`10-31`], cam:``,
+   e:`린드 부인은 부엌 창가에 앉아 뜨개질을 하고 계셨어. 부인 앞에 서자 가슴이 쿵쾅쿵쾅 뛰었어.`,
+   l:`린드 부인은 부엌 창가에 앉아 뜨개질을 하고 있었다. 부인 앞에 서자 심장이 쿵쾅거렸다.`},
+  {t:`choice`, id:`C5`, kind:`act`, label:`린드 부인께 사과하기`, f:`anne_sad`, o:`lynde`,
+   q:{e:`드디어 린드 부인 앞이에요. 앤은 어떻게 사과할까요?`, l:`마침내 린드 부인 앞. 앤은 어떤 방식으로 사과할까요?`},
+   note:{e:`원작의 앤은 린드 부인 앞에 무릎을 꿇고 "사전 한 권을 다 써도 제 슬픔을 표현할 수 없어요"라며 아주 극적으로 사과해요. 마릴라는 앤이 그 굴욕을 오히려 즐기고 있다는 걸 눈치채고 당황하지요.`,
+         l:`원작에서 앤은 무릎을 꿇고 "사전 한 권을 다 써도 제 슬픔을 다 표현할 수 없다"며 극적으로 사죄합니다. 마릴라는 앤이 그 '굴욕의 골짜기'를 오히려 즐기고 있음을 알아차리고 어이없어하지요.`},
+   opts:[
+    {type:`canon`, go:`g_c`, e:`무릎을 꿇고 두 손을 모아, 온 마음을 다해 아주 극적으로 사과한다.`, l:`무릎을 꿇고 두 손을 내밀며, 한 편의 비극처럼 절절하게 사죄한다.`, s:{e:`무릎 꿇고 극적으로 사과했다`, l:`무릎을 꿇고 극적으로 사죄했다`}},
+    {type:`imag`, go:`g_i`, eff:{album:`apologyPoem`}, e:`직접 지은 '참회의 시'를 한 줄 한 줄 낭송하며 사과한다.`, l:`손수 지은 '참회의 시'를 한 줄 한 줄 낭송하며 사죄한다.`, s:{e:`'참회의 시'를 낭송했다`, l:`'참회의 시'를 낭송했다`}},
+    {type:`bal`, go:`g_b`, e:`고개 숙여 진심으로 사과하고, 놀림받아 아팠던 마음도 솔직하게 말씀드린다.`, l:`고개 숙여 진심으로 사과하되, 놀림받아 아팠던 마음도 솔직히 전한다.`, s:{e:`사과하고 아팠던 마음도 말했다`, l:`사과하며 아팠던 마음도 전했다`}}
+   ]},
+  {id:`g_c`, w:`anne`, f:`anne_sad`, o:`lynde`, bk:[`10-31`,`10-32`], cam:`in`,
+   e:`나는 부인 앞에 털썩 무릎을 꿇었어. "아, 린드 부인, 정말 너무너무 죄송해요! 사전 한 권을 다 써도 제 슬픔을 다 표현할 수 없어요. 제발 용서해 주세요. 안 그러면 그건 제 평생의 슬픔이 될 거예요!"`,
+   l:`나는 깜짝 놀란 부인 앞에 무릎을 꿇고 애원하듯 두 손을 내밀었다. "아, 린드 부인, 정말 너무너무 죄송해요. 사전 한 권을 다 쓴다 해도 제 슬픔을 다 표현할 수 없어요. 제 머리는 빨갛고, 저는 주근깨투성이에 깡마르고 못생겼어요. 부인 말씀은 다 사실이었어요. 제발, 제발 용서해 주세요. 안 그러시면 그건 제 평생의 슬픔이 될 거예요!"`},
+  {w:`anne`, in:1, f:`anne_dreamy`, o:`lynde`, bk:[`10-33`,`10-34`],
+   e:`말하다 보니 이상하게 가슴이 벅찼어. 슬픈 연극의 주인공이 된 것 같았거든. 마릴라 아주머니는 왠지 당황한 얼굴이셨어.`,
+   l:`말을 쏟아 내는 동안 이상하게도 가슴이 벅차올랐다. 비극의 주인공이 된 것만 같았다. 등 뒤의 마릴라 아주머니가 어쩐지 당황한 기색이었다.`},
+  {w:`lynde`, f:`anne_sad`, o:`lynde`, bk:[`10-35`,`10-36`], cam:`right`,
+   e:`"자, 자, 일어나라, 얘야. 물론 용서하고말고. 나도 너한테 좀 심했던 것 같구나."`,
+   l:`"자, 자, 일어나라, 얘야. 물론 용서하고말고. 아무튼 나도 너한테 좀 심했던 것 같구나. 내가 워낙 말을 거침없이 하는 사람이라서 말이다."`},
+  {t:`goto`, to:`g_m`},
+  {id:`g_i`, w:`anne`, f:`anne_dreamy`, o:`lynde`, fx:`dream`, cam:`up`,
+   e:`"오, 린드 부인이시여! 저의 혀는 불꽃이었고 저의 마음은 폭풍이었나이다. 이제 폭풍은 잠들고, 홍당무 소녀는 무릎 꿇어 용서를 비나이다…"`,
+   l:`"오, 린드 부인이시여! 저의 혀는 불꽃이었고 저의 가슴은 폭풍이었나이다. 이제 폭풍은 잠들고, 노을빛 머리의 소녀가 무릎 꿇어 용서를 구하나이다…"`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`lynde`, fx:`dream`, when:s => s.flags.poem,
+   e:`어제 방에서 시를 써 본 덕분에 말이 술술 나왔어.`,
+   l:`어제 방에서 시를 지어 본 덕분인지, 시구가 막힘없이 흘러나왔다.`},
+  {w:`lynde`, f:`anne_surprised`, o:`lynde`, cam:`right`,
+   e:`"이, 이게 시야, 사과야?" 부인은 뜨개바늘을 든 채 눈만 끔뻑끔뻑하셨어. "허허, 참 별난 애로구나. 그래, 그래. 용서하마."`,
+   l:`"이, 이게 시야, 사과야?" 부인은 뜨개바늘을 든 채 눈만 끔뻑였다. "허허, 참 별난 애로구먼. 그래, 그래, 용서하마."`},
+  {t:`goto`, to:`g_m`},
+  {id:`g_b`, w:`anne`, f:`anne_sad`, o:`lynde`, cam:`in`,
+   e:`나는 고개를 깊이 숙였어. "린드 부인, 성질부리고 무례한 말을 해서 정말 죄송해요. 그런데… 생김새로 놀림받는 건 저한테 정말 아픈 일이에요. 그것도 알아주셨으면 해요."`,
+   l:`나는 고개를 깊이 숙였다. "린드 부인, 성질을 부리고 무례한 말을 해서 정말 죄송해요. 다만… 생김새로 놀림받는 건 제게 정말 아픈 일이에요. 그것도 헤아려 주셨으면 해요."`},
+  {w:`lynde`, f:`anne_surprised`, o:`lynde`, cam:`right`, eff:{heart:{lynde:1}},
+   e:`부인은 한참 나를 보시다가 뜨개질감을 내려놓으셨어. "그래. 나도 말이 너무 거침없었구나. 미안하다, 얘야."`,
+   l:`부인은 한참 나를 바라보다 뜨개질감을 내려놓았다. "그래. 나도 말이 너무 거침없었구나. 미안하다, 얘야."`},
+  {id:`g_m`, w:`lynde`, f:`anne_happy`, o:`lynde`, bk:[`10-36`], eff:{item:`auburn`, heart:{lynde:2}},
+   e:`"네 머리가 지독하게 빨간 건 사실이다만, 내 학교 동창도 어릴 땐 너만큼 빨갰는데 크면서 멋진 적갈색이 되더구나. 네 머리도 그렇게 된대도 조금도 안 놀랄 거다."`,
+   l:`"네 머리가 지독하게 빨간 건 부정할 수 없다만, 내 학교 동창 하나가 어릴 땐 너만큼이나 빨갰는데 크면서 정말 멋진 적갈색으로 짙어지더구나. 네 머리도 그렇게 된대도 나는 조금도 놀라지 않을 거다."`},
+  {w:`anne`, f:`anne_happy`, o:`lynde`, bk:[`10-37`], cam:`left`,
+   e:`"아, 린드 부인! 부인께서 제게 희망을 주셨어요! 머리가 멋진 적갈색이 될 수 있다면 무엇이든 견딜 수 있어요. 저… 정원에 나가 사과나무 아래 벤치에 앉아 있어도 될까요? 바깥이 상상할 여지가 훨씬 많거든요."`,
+   l:`"아, 린드 부인! 부인께서 제게 희망을 주셨어요. 부인은 언제까지나 제 은인이세요. 머리가 멋진 적갈색이 되리라 생각할 수 있다면 무엇이든 견딜 수 있어요. 그런데 정원에 나가 사과나무 아래 벤치에 앉아 있어도 될까요? 바깥이 상상할 여지가 훨씬 많거든요."`},
+  {w:`lynde`, f:`anne_happy`, o:`lynde`, bk:[`10-38`,`10-40`], eff:{item:`narcissi`},
+   e:`"아무렴, 그래라. 저쪽 구석에 핀 하얀 꽃도 마음에 들면 한 다발 꺾어 가려무나."`,
+   l:`"아무렴, 그래라, 얘야. 저쪽 구석에 핀 하얀 꽃도 마음에 들면 한 다발 꺾어 가려무나."`},
+  /* ---------- 돌아오는 밤길 ---------- */
+  {bg:`ch2_night`, w:`anne`, f:`anne_happy`, o:`marilla_warm`, bk:[`10-41`,`10-42`], cam:``,
+   e:`집으로 돌아가는 길, 나는 흰 수선화 한 아름을 안고 있었어. "아주머니, 저 사과 꽤 잘했죠? 어차피 해야 한다면 제대로 하는 게 낫겠다고 생각했어요."`,
+   l:`돌아오는 길, 나는 흰 수선화 한 아름을 품에 안고 있었다. "저 사과 꽤 잘했죠? 어차피 해야 한다면 철저하게 하는 게 낫겠다고 생각했어요."`},
+  {w:`marilla`, f:`anne_happy`, o:`marilla_warm`, bk:[`10-43`,`10-44`,`10-48`],
+   e:`"그래, 잘하긴 했지. 앞으로는 이런 사과를 할 일이 없도록 성질을 다스려라, 앤."`,
+   l:`"철저하게 하긴 했지, 그래." 아주머니는 어쩐지 웃음을 참는 얼굴이었다. "앞으로는 이런 사과를 할 일이 많지 않았으면 좋겠구나. 성질을 다스리도록 노력해라, 앤."`},
+  {t:`name`, id:`N2`, key:`advice`, free:true, max:40, label:`오늘의 앤에게 건넨 한마디`, f:`anne_happy`, o:`marilla_warm`,
+   q:{e:`✍️ 내가 마릴라 아주머니라면, 오늘 하루를 보낸 앤에게 어떤 말을 해 주고 싶나요?`, l:`✍️ 오늘 하루를 보낸 앤에게, 당신이라면 어떤 말을 건네겠습니까?`},
+   ph:`예: 용기 내서 사과한 네가 자랑스러워`,
+   note:{e:`원작의 마릴라는 "생김새보다 행실이 고와야 아름다운 거다"라는 옛말로 앤을 타일러요. 하지만 속으로는 앤의 사과를 떠올리며 웃음을 참고 있었대요.`,
+         l:`원작에서 마릴라는 "생김새보다 행실이 고와야 아름다운 것"이라는 옛말로 앤을 타이릅니다. 그러면서도 앤의 사과 장면을 떠올리며 웃음을 참느라 애를 먹지요.`}},
+  {w:`anne`, f:`anne_happy`, o:`marilla_warm`,
+   e:`"'{advice}'… 고마워요, 아주머니. 그 말 오래오래 기억할게요."`,
+   l:`"'{advice}'… 고마워요, 아주머니. 그 말, 오래도록 간직할게요."`},
+  {t:`ending`},
+
+  /* ---------- 결말: 원작 ---------- */
+  {id:`E_canon`, bg:`ch2_night`, w:`anne`, f:`anne_dreamy`, o:`marilla_warm`, bk:[`10-49`], cam:`up`, eff:{album:`e_canon`},
+   e:`"오늘 밤 별이 참 밝지 않아요? 별에 가서 살 수 있다면 저는 저 어두운 언덕 위의 크고 맑은 별을 고를래요."`,
+   l:`"오늘 밤 별이 참 밝지 않아요? 별에 가서 살 수 있다면 어느 별을 고르시겠어요? 저는 저 어두운 언덕 위에 있는 크고 맑은 예쁜 별이 좋아요."`},
+  {w:`marilla`, f:`anne_dreamy`, o:`marilla_warm`, bk:[`10-50`], b:`"앤, 제발 입 좀 다물어라."`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`marilla_warm`, bk:[`10-51`,`10-52`], cam:`in`,
+   e:`나무 사이로 초록 지붕 집 부엌 불빛이 반짝였어. 나는 아주머니의 거친 손에 내 손을 쏙 밀어 넣었어. "집에 가는데, 그곳이 집이라는 걸 아는 건 참 좋네요."`,
+   l:`나무 사이로 초록 지붕 집 부엌 불빛이 반갑게 반짝였다. 나는 아주머니 곁에 바싹 다가가 그 거친 손바닥에 내 손을 쏙 밀어 넣었다. "집에 가는데, 그곳이 집이라는 걸 아는 건 참 좋네요."`},
+  {t:`goto`, to:`E_last`},
+  /* ---------- 결말: 상상 ---------- */
+  {id:`E_imag`, bg:`ch2_night`, w:`anne`, f:`anne_happy`, o:`marilla_warm`, fx:`dream`, cam:`up`, bk:[`10-55`], eff:{album:`e_imag`},
+   e:`"아주머니, 저는 지금부터 바람이에요! 나무 꼭대기를 지나, 린드 부인네 꽃밭을 춤추게 하고, '{avenue}' 위를 휙 날아서, '{pond}'에 반짝이는 잔물결을 일으킬 거예요!"`,
+   l:`"아주머니, 저는 지금부터 바람이에요. 나무 꼭대기를 스치고, 린드 부인네 꽃밭을 춤추게 하고, '{avenue}' 위를 단숨에 날아서, '{pond}' 위에 반짝이는 잔물결을 일으킬 거예요!"`},
+  {w:`anne`, in:1, f:`anne_dreamy`, o:`marilla_warm`, fx:`dream`, when:s => s.flags.poem,
+   e:`나는 '홍당무 공주의 노래'에 마지막 줄을 붙였어. "공주는 탑을 나와 바람이 되었네."`,
+   l:`나는 '홍당무 공주의 노래'에 마지막 한 줄을 덧붙였다. "공주는 탑을 나와, 바람이 되었네."`},
+  {w:`marilla`, f:`anne_happy`, o:`marilla_warm`, fx:`dream`,
+   e:`"아이고, 바람이 되면 말은 좀 줄어들겠구나."`,
+   l:`"아이고, 바람이 되면 말수는 좀 줄어들겠구나."`},
+  {w:`anne`, in:1, f:`anne_happy`, o:`marilla_warm`, fx:`dream`, cam:`in`,
+   e:`나는 바람처럼 아주머니 곁으로 날아가, 거친 손에 내 손을 쏙 밀어 넣었어. "집으로 가는 바람이 제일 신나요."`,
+   l:`나는 바람처럼 아주머니 곁으로 날아가 그 거친 손에 내 손을 쏙 밀어 넣었다. "집으로 부는 바람이 제일 신나요."`},
+  {t:`goto`, to:`E_last`},
+  /* ---------- 결말: 균형 ---------- */
+  {id:`E_bal`, bg:`ch2_night`, w:`marilla`, f:`anne_surprised`, o:`marilla_warm`, bk:[`9-45`], cam:`right`, eff:{album:`e_bal`, heart:{marilla:1}},
+   e:`"앤… 나도 어릴 때, 까무잡잡하고 못생겼다는 말을 들은 적이 있단다. 쉰이 다 되도록 그 말이 잊히지 않더구나."`,
+   l:`"앤… 나도 어릴 적에 이모들이 나를 두고 '어쩜 저렇게 까무잡잡하고 못생겼을까' 하는 말을 들은 적이 있단다. 쉰이 다 되도록 그 말이 잊히지 않더구나."`},
+  {w:`anne`, in:1, f:`anne_sad`, o:`marilla_warm`, cam:`in`,
+   e:`아주머니도 그런 아픔이 있으셨구나. 나는 아무 말 없이 아주머니의 거친 손에 내 손을 살며시 밀어 넣었어.`,
+   l:`아주머니에게도 그런 아픔이 있었구나. 나는 아무 말 없이 그 거친 손바닥에 내 손을 살며시 밀어 넣었다.`},
+  {w:`anne`, f:`anne_happy`, o:`marilla_warm`, bk:[`10-52`],
+   e:`"아주머니, 집에 가는데 그곳이 집이라는 걸 아는 건 참 좋네요."`,
+   l:`"아주머니, 집에 가는데 그곳이 집이라는 걸 아는 건 참 좋네요."`},
+  /* ---------- 공통 마지막 장면 ---------- */
+  {id:`E_last`, bg:`ch2_night`, w:`anne`, in:1, f:`anne_happy`, o:`marilla_warm`, bk:[`10-53`], cam:`in`,
+   e:`아주머니 손이 아주 조금 따뜻해진 것 같았어. 저 멀리, 나무 사이로 초록 지붕 집 불빛이 우리를 기다리고 있었어.`,
+   l:`아주머니의 손이 아주 조금, 따뜻해지는 것 같았다. 저 멀리 나무 사이로 초록 지붕 집의 불빛이 우리를 기다리고 있었다.`},
+  {t:`endcard`}
+  ]
+});
+
+
+</script>
+<script>
+/* 배포용 저장을 위해, 화면이 바뀌기 전의 원본 문서를 가장 먼저 기억해 둡니다. (이 스크립트가 문서의 마지막 요소) */
+const PRISTINE_HTML = document.documentElement.outerHTML;
+
+(function(){
+"use strict";
+
+/* =========================================================
+   0. 공통 데이터
+   ========================================================= */
+const ITEMS = {
+  carpetbag:{ic:`👜`, name:`낡은 융단 가방`, desc:`앤의 '세상 재산 전부'가 든 가방. 손잡이를 요령 있게 들지 않으면 쏙 빠져 버려요.`},
+  plum:{ic:`🌼`, name:`야생 자두 꽃가지`, desc:`언덕길에서 마차 옆을 스치던 하얀 꽃가지. 앤은 신부의 면사포를 떠올렸어요.`},
+  petal:{ic:`🌸`, name:`벚꽃잎 한 장`, desc:`철길 모퉁이 산벚나무 '대리석 궁전'에서 가져온 꽃잎. (상상 장면에서만 얻을 수 있어요)`},
+  namecard:{ic:`✍️`, name:`이름 카드`, desc:`내가 가로수길에 붙인 이름: '{avenue}'`}
+};
+const ALBUMS = {};
+ALBUMS.ch1 = [
+  {id:`waiting`, ic:`🚪`, name:`답답한 대합실`},
+  {id:`cherry`, ic:`🌸`, name:`벚나무 위 대리석 궁전`},
+  {id:`princess`, ic:`👑`, name:`기차역의 공주님`},
+  {id:`flying`, ic:`🪽`, name:`하늘을 나는 마차`},
+  {id:`matthewTalk`, ic:`🐴`, name:`매슈 아저씨의 이야기`},
+  {id:`mirror`, ic:`🪞`, name:`노을 거울 연못`},
+  {id:`castle`, ic:`🏰`, name:`일곱 탑의 초록 지붕 성`}
+];
+const GLOSS = {
+  "지붕널":`지붕을 덮는 데 쓰는 얇은 나무판자예요.`,
+  "윈시":`면과 양털을 섞어 짠 거칠고 질긴 천이에요. 값이 싸서 고아원 옷으로 쓰였어요.`,
+  "융단 가방":`두꺼운 카펫 천으로 만든 옛날식 여행 가방이에요.`,
+  "대합실":`기차역에서 기차를 기다리며 쉬는 방이에요.`,
+  "고아원":`부모가 없는 아이들이 함께 사는 곳이에요.`,
+  "노바스코샤":`캐나다 동쪽의 지역 이름. 앤이 지내던 고아원이 있던 곳이에요.`,
+  "프린스 에드워드 섬":`캐나다 동쪽 바다에 있는 섬. 이 이야기의 무대예요.`,
+  "마일":`길이를 재는 단위. 1마일은 약 1.6킬로미터예요.`,
+  "야드":`길이를 재는 단위. 1야드는 약 0.9미터예요.`,
+  "설화석고":`희고 매끄러운 돌. 하얗고 고운 피부를 빗댈 때 써요.`,
+  "장미창":`성당 벽에 있는 둥근 꽃무늬 색유리 창이에요.`,
+  "크로커스":`이른 봄에 피는 보라색·노란색 작은 꽃이에요.`,
+  "굼벵이":`풍뎅이 같은 곤충의 애벌레예요.`,
+  "포플러":`줄기가 곧고 높게 자라는 나무예요. 잎이 바람에 사각사각 소리를 내요.`,
+  "이교도":`기독교를 믿지 않는 사람. '다이애나'는 로마 신화 속 여신 이름이라 매슈에게는 낯설게 들렸어요.`,
+  "린네풀":`숲속 그늘에 자라는 작은 분홍 꽃이에요.`,
+  "백작":`옛날 유럽의 높은 귀족 계급이에요.`,
+  "선교사":`먼 나라에 가서 종교를 전하는 사람이에요.`,
+  "산벚나무":`산이나 들에 저절로 자라는 벚나무예요.`,
+  "역장":`기차역 일을 책임지는 사람이에요.`,
+  "밤색 암말":`밤 껍질 같은 붉은 갈색 털을 가진 암컷 말이에요.`,
+  "금잔화":`주황빛이 도는 노란 꽃이에요.`,
+  "첨탑":`교회 지붕 위에 뾰족하게 솟은 탑이에요.`
+};
+const GLOSS_RE = new RegExp(Object.keys(GLOSS).sort((a,b) => b.length - a.length).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "g");
+const KIND = {act:`🚶 행동하기`, predict:`🔮 예측하기 · 원작의 앤은?`, talk:`💬 말 걸기`, name:`✍️ 이름 짓기`};
+const WHO = {anne:`앤 셜리`, matthew:`매슈 커스버트`, station:`역장`, marilla:`마릴라 커스버트`, lynde:`레이첼 린드 부인`};
+const CHARS = {matthew:{ic:`🐴`, name:`매슈`, full:`매슈 아저씨`, start:1}, marilla:{ic:`🧺`, name:`마릴라`, full:`마릴라 아주머니`, start:1}, lynde:{ic:`🧶`, name:`린드 부인`, full:`린드 부인`, start:0}};
+const DEFAULT_NAMES = {avenue:`기쁨의 하얀 길`, pond:`반짝이는 호수`, advice:`…`};
+CHAPTERS.forEach(c => { if(c.items) Object.assign(ITEMS, c.items); if(c.album) ALBUMS[c.key] = c.album; });
+const BADGE = {
+  canon:{e:`📖 원작과 같은 길!`, l:`📖 원작의 길을 걸었습니다`},
+  imag:{e:`✨ 상상의 날개를 펼쳤어요!`, l:`✨ 상상의 날개를 펼쳤습니다`},
+  bal:{e:`⚖️ 지혜로운 균형을 찾았어요!`, l:`⚖️ 지혜로운 균형을 찾았습니다`}
+};
+const LABEL = {canon:`원작`, imag:`상상`, bal:`균형`, name:`나만의 이름`, free:`나의 생각`};
+CHAPTERS[0].bgKeys = CHAPTERS[0].bgKeys || [`ch1`, `ch1_road`, `ch1_avenue`, `ch1_pond`, `ch1_home`];
+let CH, NODES, IDX, CHOICE_IDS, ALBUM;
+function setChapter(ci){
+  CH = CHAPTERS[Math.max(0, Math.min(CHAPTERS.length - 1, ci || 0))];
+  NODES = CH.nodes; IDX = {};
+  NODES.forEach((n, i) => { if(n.id) IDX[n.id] = i; });
+  CHOICE_IDS = NODES.filter(n => n.t === "choice" || n.t === "name").map(n => n.id);
+  ALBUM = ALBUMS[CH.key] || [];
+  bookBuiltFor = null;
+}
+let bookBuiltFor = null;
+setChapter(0);
+const BG_KEYS = [].concat(...CHAPTERS.map(c => c.bgKeys || []));
+const SPRITE_KEYS = [`anne_happy`,`anne_sad`,`anne_surprised`,`anne_angry`,`anne_dreamy`,`matthew`,`lynde`,`marilla_strict`,`marilla_warm`,`diana`];
+
+/* =========================================================
+   1. 상태 & 저장
+   ========================================================= */
+const SAVE_KEY = "anneVN_v2";
+const fresh = () => ({ch:0, pos:0, phase:"cover", started:false, canon:50, imag:50, hearts:{matthew:1}, met:{}, items:[], flags:{}, names:{},
+  picks:[], tally:{canon:0, imag:0, bal:0}, ending:null, order:null, note:null, bg:`ch1`, cam:``, hist:{}, snap:null});
+const freshP = () => ({album:{}, endings:{}, reached:{}, snaps:{}});
+let S = fresh();
+let P = freshP();
+let level = "easy", soundOn = true;
+let fxOn = !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+function save(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify({S, P, level, soundOn, fxOn})); }catch(e){} }
+function load(){
+  try{
+    const d = JSON.parse(localStorage.getItem(SAVE_KEY) || "null"); if(!d) return;
+    if(d.S) S = Object.assign(fresh(), d.S);
+    if(d.P) P = Object.assign(freshP(), d.P);
+    if(d.level === "easy" || d.level === "lit") level = d.level;
+    if(typeof d.soundOn === "boolean") soundOn = d.soundOn;
+    if(typeof d.fxOn === "boolean") fxOn = d.fxOn;
+    if(S.flags && S.flags.metMatthew) S.met.matthew = true;
+    setChapter(S.ch);
+    if(!NODES[S.pos]) S.pos = 0;
+  }catch(e){}
+}
+
+/* =========================================================
+   2. 사운드 (Web Audio API)
+   ========================================================= */
+let actx = null;
+function unlockAudio(){
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if(!AC) return null;
+  if(!actx){ try{ actx = new AC(); }catch(e){ return null; } }
+  if(actx.state === "suspended") actx.resume().catch(() => {});
+  return actx;
+}
+["pointerdown","touchstart","keydown","click"].forEach(ev => window.addEventListener(ev, unlockAudio, {passive:true, capture:true}));
+function tone(f, t, d, v, type){
+  const o = actx.createOscillator(), g = actx.createGain();
+  o.type = type || "sine"; o.frequency.setValueAtTime(f, t);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+  o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + d + 0.02);
+}
+let lastTick = 0;
+function sfx(kind){
+  if(!soundOn) return;
+  const ctx = unlockAudio(); if(!ctx || ctx.state !== "running") return;
+  const t = ctx.currentTime;
+  try{
+    if(kind === "type"){ if(t - lastTick < 0.05) return; lastTick = t; tone(1100 + Math.random()*500, t, 0.035, 0.035, "square"); tone(220, t, 0.03, 0.03, "triangle"); }
+    else if(kind === "select"){ tone(659, t, 0.12, 0.12, "triangle"); tone(988, t + 0.07, 0.18, 0.1, "triangle"); }
+    else if(kind === "chime"){ [784, 988, 1175, 1568].forEach((f,i) => tone(f, t + i*0.08, 0.35, 0.07, "sine")); }
+    else if(kind === "page"){ tone(523, t, 0.15, 0.06, "sine"); tone(784, t + 0.1, 0.25, 0.06, "sine"); }
+    else if(kind === "item"){ tone(1047, t, 0.1, 0.08, "sine"); tone(1319, t + 0.08, 0.1, 0.08, "sine"); tone(1568, t + 0.16, 0.2, 0.08, "sine"); }
+    else if(kind === "dream"){ [523, 659, 784, 1047, 784].forEach((f,i) => tone(f, t + i*0.11, 0.5, 0.04, "sine")); }
+    else if(kind === "end"){ [392, 523, 659, 784, 1047].forEach((f,i) => tone(f, t + i*0.14, 0.7, 0.07, "triangle")); }
+  }catch(e){}
+}
+
+/* =========================================================
+   3. 이미지 (업로드 > 내장 > 같은 폴더 > SVG)
+   ========================================================= */
+const EMB = (window.EMBEDDED_IMAGES && typeof window.EMBEDDED_IMAGES === "object") ? window.EMBEDDED_IMAGES : {};
+const uploaded = {}, folderFound = {};
+function imgFor(k){ return uploaded[k] || EMB[k] || folderFound[k] || null; }
+function probe(key, list){
+  if(imgFor(key)) return;
+  let i = 0;
+  const next = () => { if(i >= list.length) return; const src = list[i++]; const im = new Image();
+    im.onload = () => { if(!uploaded[key] && !EMB[key]){ folderFound[key] = src; renderScene(true); } }; im.onerror = next; im.src = src; };
+  next();
+}
+function probeFolder(){
+  BG_KEYS.forEach(k => probe(k, [k + ".png", "bg_" + k + ".png", k + ".jpg"]));
+  SPRITE_KEYS.forEach(k => probe(k, [k + ".png"]));
+}
+function normalizeKey(name){
+  let n = name.toLowerCase().replace(/\.[a-z0-9]+$/, "").trim().replace(/\s+/g, "_");
+  const m = n.match(/^(?:bg_)?ch0?(\d{1,2})(_[a-z]+)?$/);
+  if(m) return "ch" + parseInt(m[1], 10) + (m[2] || "");
+  return n;
+}
+const isBgKey = k => /^ch\d+(_[a-z]+)?$/.test(k);
+const loadImg = src => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = src; });
+function removeEdgeWhite(ctx, w, h){
+  const id = ctx.getImageData(0, 0, w, h), d = id.data;
+  const isBg = p => { const i = p*4; if(d[i+3] < 16) return true; const r = d[i], g = d[i+1], b = d[i+2], mn = Math.min(r,g,b), mx = Math.max(r,g,b); return mn > 226 && mx - mn < 26; };
+  const corners = [0, w-1, (h-1)*w, h*w-1];
+  if(corners.filter(p => d[p*4+3] > 200 && isBg(p)).length < 3) return;
+  const seen = new Uint8Array(w*h), st = [];
+  const push = p => { if(!seen[p] && isBg(p)){ seen[p] = 1; st.push(p); } };
+  for(let x=0; x<w; x++){ push(x); push((h-1)*w + x); }
+  for(let y=0; y<h; y++){ push(y*w); push(y*w + w - 1); }
+  let bgR = 0, bgG = 0, bgB = 0, bgN = 0;
+  while(st.length){ const p = st.pop(), q = p*4; if(d[q+3] > 200 && bgN < 200000){ bgR += d[q]; bgG += d[q+1]; bgB += d[q+2]; bgN++; } d[q+3] = 0; const x = p % w, y = (p - x) / w;
+    if(x>0) push(p-1); if(x<w-1) push(p+1); if(y>0) push(p-w); if(y<h-1) push(p+w); }
+  /* 팔과 몸 사이처럼 테두리와 이어지지 않은 '갇힌 배경'도 찾아서 지움.
+     배경색과 거의 같은 순백색이고 일정 크기 이상인 덩어리만 지우므로, 눈 흰자처럼 작은 부분은 남음 */
+  if(bgN){
+    const br = bgR/bgN, bgg = bgG/bgN, bb = bgB/bgN, smallMin = Math.max(40, Math.round(w*h*0.00006));
+    const strict = p => { const i = p*4; if(d[i+3] < 16) return false; const r = d[i], g = d[i+1], b = d[i+2];
+      return Math.min(r,g,b) > 212 && Math.max(r,g,b) - Math.min(r,g,b) < 20 && Math.abs(r-br) < 16 && Math.abs(g-bgg) < 16 && Math.abs(b-bb) < 16; };
+    const lab = new Uint8Array(w*h);
+    for(let s0 = 0; s0 < w*h; s0++){
+      if(seen[s0] || lab[s0] || !strict(s0)) continue;
+      const comp = [s0], stack = [s0]; lab[s0] = 1;
+      while(stack.length){ const p = stack.pop(), x = p % w, y = (p - x) / w;
+        const nb = [x>0 ? p-1 : -1, x<w-1 ? p+1 : -1, y>0 ? p-w : -1, y<h-1 ? p+w : -1];
+        for(const q of nb){ if(q >= 0 && !seen[q] && !lab[q] && strict(q)){ lab[q] = 1; stack.push(q); comp.push(q); } } }
+      /* 덩어리의 평균 색이 배경 종이색과 같으면(따뜻한 기가 없으면) 배경 틈으로 보고 지움.
+         이(치아)·눈 흰자처럼 살짝 노르스름하거나 회색빛인 부분은 평균 색이 달라서 남음 */
+      if(comp.length < smallMin) continue;
+      let sr = 0, sg = 0, sb = 0; for(const p of comp){ sr += d[p*4]; sg += d[p*4+1]; sb += d[p*4+2]; }
+      const mr = sr/comp.length, mg = sg/comp.length, mb = sb/comp.length;
+      const warm = (mr - mb) - (br - bb), dim = Math.min(br, bgg, bb) - Math.min(mr, mg, mb);
+      if(warm > 4.6 || dim > 8) continue;
+      /* 눈 흰자 보호: 배경 틈은 펜 선(진한 테두리)에 둘러싸여 있고, 눈 흰자는 대부분 피부색에 둘러싸여 있음 */
+      const inC = new Set(comp), ringSeen = new Set(); let dark = 0, tot = 0;
+      for(const p of comp){ const x = p % w, y = (p - x) / w;
+        for(let dy=-3; dy<=3; dy++) for(let dx=-3; dx<=3; dx++){ const xx = x+dx, yy = y+dy; if(xx<0||yy<0||xx>=w||yy>=h) continue;
+          const q = yy*w + xx; if(inC.has(q) || ringSeen.has(q)) continue; ringSeen.add(q); tot++;
+          if((d[q*4] + d[q*4+1] + d[q*4+2]) / 3 < 90) dark++; } }
+      if(tot && dark / tot >= 0.18){ for(const p of comp){ seen[p] = 1; d[p*4+3] = 0; } }
+    }
+  }
+  for(let pass = 0; pass < 2; pass++){
+    const edge = [];
+    for(let y=1; y<h-1; y++) for(let x=1; x<w-1; x++){ const p = y*w + x; if(seen[p]) continue;
+      if(seen[p-1] || seen[p+1] || seen[p-w] || seen[p+w]) edge.push(p); }
+    for(const p of edge){ const i = p*4, mn = Math.min(d[i], d[i+1], d[i+2]);
+      if(mn > 200){ d[i+3] = Math.round(d[i+3] * Math.max(0.1, (255 - mn) / 55)); if(mn > 238) seen[p] = 1; }
+      else if(mn > 170 && pass === 0) d[i+3] = Math.round(d[i+3] * Math.max(0.35, (255 - mn) / 85)); }
+  }
+  ctx.putImageData(id, 0, 0);
+}
+async function processImage(src, key){
+  const im = await loadImg(src), bg = isBgKey(key);
+  const sc = Math.min(1, (bg ? 1600 : 1200) / im.naturalWidth, (bg ? 900 : 1000) / im.naturalHeight);
+  const w = Math.max(1, Math.round(im.naturalWidth * sc)), h = Math.max(1, Math.round(im.naturalHeight * sc));
+  const cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+  const ctx = cv.getContext("2d", {willReadFrequently: !bg});
+  if(bg){ ctx.fillStyle = "#fbf6ec"; ctx.fillRect(0, 0, w, h); }
+  ctx.drawImage(im, 0, 0, w, h);
+  if(bg) return cv.toDataURL("image/jpeg", 0.86);
+  removeEdgeWhite(ctx, w, h);
+  return cv.toDataURL("image/png");
+}
+async function handleFiles(files){
+  const list = Array.from(files || []).filter(f => /^image\//.test(f.type) || /\.(png|jpe?g|webp|gif)$/i.test(f.name));
+  if(!list.length) return;
+  toast("이미지를 정리하는 중이에요… (" + list.length + "개)");
+  const ok = [], fail = [];
+  for(const f of list){
+    const key = normalizeKey(f.name), url = URL.createObjectURL(f);
+    try{ uploaded[key] = await processImage(url, key); ok.push(key); }catch(e){ fail.push(f.name); }finally{ URL.revokeObjectURL(url); }
+  }
+  renderScene(true);
+  const known = ok.filter(k => BG_KEYS.includes(k) || SPRITE_KEYS.includes(k)), other = ok.filter(k => !known.includes(k));
+  let msg = `<p><b>${ok.length}개</b>의 이미지를 불러와 화면에 바로 반영했어요.</p>`;
+  if(known.length) msg += `<div class="img-list">${known.map(k => `<span>${k}</span>`).join("")}</div>`;
+  if(other.length) msg += `<p style="margin-top:8px">아래 이미지는 아직 쓰이는 장면이 없지만, 배포용 파일에는 함께 저장돼요. (앞으로 만들 장에서 쓸 수 있어요)</p><div class="img-list">${other.map(k => `<span class="miss">${k}</span>`).join("")}</div>`;
+  if(fail.length) msg += `<p style="margin-top:8px;color:#b9473f">읽지 못한 파일: ${esc(fail.join(", "))}</p>`;
+  modal("🖼️ 이미지 불러오기 완료", msg, [{label:"확인", cls:"big alt"}]);
+}
+
+/* ---------- SVG 수채화 폴백 ---------- */
+function mulberry(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const DEFS = id => `<defs>
+  <filter id="wc${id}" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="3" seed="${id*7+3}" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="16" xChannelSelector="R" yChannelSelector="G" result="d"/><feGaussianBlur in="d" stdDeviation="1.4"/></filter>
+  <filter id="soft${id}"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="paper${id}"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="11" result="t"/><feColorMatrix in="t" type="matrix" values="0 0 0 0 0.55  0 0 0 0 0.42  0 0 0 0 0.28  0 0 0 0.10 0"/></filter></defs>`;
+const SVG_OPEN = `<svg viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">`;
+function blossomCloud(rnd, cx, cy, rx, ry, n, cols){ let s = ""; for(let i=0;i<n;i++){ const a = rnd()*Math.PI*2, r = Math.sqrt(rnd()); s += `<circle cx="${(cx+Math.cos(a)*r*rx).toFixed(0)}" cy="${(cy+Math.sin(a)*r*ry).toFixed(0)}" r="${(18+rnd()*28).toFixed(0)}" fill="${cols[i%cols.length]}" opacity="${(.55+rnd()*.4).toFixed(2)}"/>`; } return s; }
+function girlFig(x, y, s, noHat){
+  const hair = "#c8552f";
+  return `<g transform="translate(${x},${y}) scale(${s})"><ellipse cx="0" cy="118" rx="46" ry="9" fill="#5a4030" opacity=".18"/>
+    <path d="M-30 20 Q0 6 30 20 L44 110 Q0 122 -44 110 Z" fill="#9a8f78"/><rect x="-4" y="6" width="8" height="12" fill="#f1cfb0"/>
+    <circle cx="0" cy="-8" r="21" fill="#f6d9bd"/><path d="M-22 -10 Q-20 -34 0 -33 Q20 -34 22 -10 Q16 -24 0 -22 Q-16 -24 -22 -10Z" fill="${hair}"/>
+    <path d="M-19 -4 Q-30 18 -24 42" stroke="${hair}" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M19 -4 Q30 18 24 42" stroke="${hair}" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <circle cx="-7" cy="-7" r="2" fill="#4b3626"/><circle cx="7" cy="-7" r="2" fill="#4b3626"/><path d="M-5 3 Q0 6 5 3" stroke="#a5523f" stroke-width="1.8" fill="none"/>
+    ${noHat ? "" : `<ellipse cx="0" cy="-28" rx="32" ry="7" fill="#8a6a4c"/><path d="M-17 -30 Q0 -48 17 -30Z" fill="#8a6a4c"/>`}</g>`;
+}
+function svgStation(){
+  const rnd = mulberry(7); let ties = "", petals = "";
+  for(let i=0;i<14;i++){ const t = Math.pow(i/13, 1.6), y = 604 + t*290, xl = 1026 + 120*t, xr = 1124 + 470*t; ties += `<rect x="${xl.toFixed(0)}" y="${y.toFixed(0)}" width="${(xr-xl).toFixed(0)}" height="${(5+t*14).toFixed(0)}" fill="#8a6a50" opacity=".6"/>`; }
+  for(let i=0;i<26;i++){ const px = 700+rnd()*900, py = 150+rnd()*650; petals += `<ellipse cx="${px.toFixed(0)}" cy="${py.toFixed(0)}" rx="6" ry="3.5" fill="#fff" opacity=".85" transform="rotate(${Math.round(rnd()*180)} ${px.toFixed(0)} ${py.toFixed(0)})"/>`; }
+  return SVG_OPEN + DEFS(1) + `<linearGradient id="sk1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9b9dc"/><stop offset=".45" stop-color="#f6c9b4"/><stop offset=".8" stop-color="#fde3c2"/></linearGradient>
+    <rect width="1600" height="900" fill="url(#sk1)"/><g filter="url(#wc1)">
+    <circle cx="420" cy="250" r="60" fill="#fff4dc" opacity=".8"/>
+    <path d="M0 470 Q260 380 520 440 T1060 420 T1600 400 L1600 640 L0 640Z" fill="#a9c3b0" opacity=".75"/>
+    <path d="M0 540 Q300 470 640 520 T1300 500 T1600 520 L1600 700 L0 700Z" fill="#8fb293" opacity=".85"/>
+    <path d="M0 620 L1600 600 L1600 900 L0 900Z" fill="#c9a88a"/>
+    <rect x="120" y="360" width="330" height="200" fill="#e9d6b6"/><path d="M95 370 L285 280 L475 370Z" fill="#b5735a"/>
+    <rect x="170" y="420" width="70" height="80" fill="#8fa9b8" opacity=".85"/><rect x="320" y="440" width="70" height="120" fill="#7c5a43"/>
+    <rect x="0" y="560" width="900" height="70" fill="#a98d6c"/><rect x="0" y="625" width="900" height="16" fill="#7c6450" opacity=".6"/>
+    ${ties}<path d="M1150 900 L1026 604" stroke="#6f5b4c" stroke-width="10"/><path d="M1594 900 L1124 604" stroke="#6f5b4c" stroke-width="10"/>
+    <path d="M1230 640 Q1220 480 1250 380 M1250 470 Q1180 420 1120 380 M1245 430 Q1310 380 1360 340" stroke="#6b4d3a" stroke-width="22" fill="none" stroke-linecap="round"/>
+    ${blossomCloud(rnd, 1240, 300, 210, 150, 70, ["#fffaf6","#fbe6ea"])}
+    <rect x="560" y="520" width="160" height="40" fill="#b99a74"/><rect x="570" y="500" width="140" height="24" fill="#c9ab84"/></g>
+    <g filter="url(#soft1)" opacity=".45"><circle cx="1240" cy="300" r="220" fill="#fff"/></g>${petals}
+    <g class="svg-figure">${girlFig(640, 410, 1.15)}<g transform="translate(720,500)"><rect width="54" height="40" rx="6" fill="#9a5b3e"/><path d="M14 0 Q27 -18 40 0" stroke="#5a3a28" stroke-width="5" fill="none"/><path d="M0 14 H54" stroke="#e1b37c" stroke-width="4"/></g></g>
+    <rect width="1600" height="900" filter="url(#paper1)"/></svg>`;
+}
+function buggy(x, y, s){
+  return `<g class="svg-figure" transform="translate(${x},${y}) scale(${s})">
+    <ellipse cx="60" cy="150" rx="170" ry="14" fill="#3d2a1c" opacity=".18"/>
+    <path d="M-120 60 Q-110 20 -60 30 L-20 40 Q0 0 30 10 L20 60 Q-10 80 -50 80 L-70 140 M-50 80 L-30 140 M-100 70 L-110 140 M-80 72 L-88 140" stroke="#8a4b2a" stroke-width="18" fill="none" stroke-linecap="round"/>
+    <ellipse cx="-70" cy="58" rx="58" ry="28" fill="#9a5530"/><path d="M-20 30 Q5 -5 30 8 L22 30Z" fill="#9a5530"/>
+    <path d="M30 60 L190 60 L180 110 L40 110Z" fill="#4e3a2c"/><circle cx="150" cy="120" r="42" fill="none" stroke="#3b2a20" stroke-width="7"/>
+    <path d="M150 78 V162 M108 120 H192" stroke="#3b2a20" stroke-width="3"/>
+    <rect x="70" y="10" width="34" height="52" rx="10" fill="#4a5a48"/><circle cx="87" cy="0" r="14" fill="#f0d0b0"/><path d="M73 -2 Q87 -22 101 -2" fill="#9a9a96"/>
+    <rect x="118" y="22" width="26" height="40" rx="8" fill="#9a8f78"/><circle cx="131" cy="12" r="11" fill="#f6d9bd"/><path d="M121 10 Q131 -6 141 10" fill="#c8552f"/></g>`;
+}
+function svgRoad(){
+  const rnd = mulberry(15); let birches = "";
+  for(let i=0;i<9;i++){ const x = (i<5 ? 40 + i*95 : 1080 + (i-5)*120) + rnd()*30; birches += `<rect x="${x.toFixed(0)}" y="${(90+rnd()*80).toFixed(0)}" width="12" height="${(360+rnd()*80).toFixed(0)}" fill="#f4f1ea"/><path d="M${x.toFixed(0)} 300 h12 M${x.toFixed(0)} 380 h12" stroke="#5a5048" stroke-width="3"/>`; }
+  return SVG_OPEN + DEFS(2) + `<linearGradient id="sk2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9cde6"/><stop offset=".6" stop-color="#f7dcc4"/></linearGradient>
+    <rect width="1600" height="900" fill="url(#sk2)"/><g filter="url(#wc2)">
+    <path d="M0 260 Q300 300 520 520 L640 900 L0 900Z" fill="#8fae86"/><path d="M1600 240 Q1300 300 1080 520 L960 900 L1600 900Z" fill="#8fae86"/>
+    <path d="M520 520 Q800 470 1080 520 L1160 900 L440 900Z" fill="#c45d43"/><path d="M640 600 Q800 580 960 600" stroke="#a84a35" stroke-width="6" fill="none" opacity=".6"/>
+    ${birches}
+    ${blossomCloud(rnd, 230, 230, 260, 140, 55, ["#fffaf6","#fbe6ea","#ffffff"])}${blossomCloud(rnd, 1370, 220, 260, 140, 55, ["#fffaf6","#fbe6ea","#ffffff"])}
+    </g>${buggy(700, 600, 1.2)}<rect width="1600" height="900" filter="url(#paper2)"/></svg>`;
+}
+function svgAvenue(){
+  const rnd = mulberry(23); let arches = "", trunks = "";
+  for(let i=0;i<7;i++){ const t = i/6, w = 1500 - t*1150, cx = 800, top = 40 + t*250, base = 900 - t*360;
+    trunks += `<path d="M${(cx-w/2).toFixed(0)} ${base.toFixed(0)} Q${(cx-w/2+30).toFixed(0)} ${(top+150).toFixed(0)} ${(cx-w/4).toFixed(0)} ${(top+40).toFixed(0)} M${(cx+w/2).toFixed(0)} ${base.toFixed(0)} Q${(cx+w/2-30).toFixed(0)} ${(top+150).toFixed(0)} ${(cx+w/4).toFixed(0)} ${(top+40).toFixed(0)}" stroke="#5c4433" stroke-width="${(26-t*18).toFixed(0)}" fill="none" stroke-linecap="round" opacity="${(1-t*.4).toFixed(2)}"/>`;
+    arches += blossomCloud(rnd, cx, top + 30, w/2, 90 - t*40, 40, ["#ffffff","#fdf0f2","#f9e1e8","#fff8f0"]); }
+  return SVG_OPEN + DEFS(3) + `<radialGradient id="rose3" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff2c4"/><stop offset=".5" stop-color="#f7a98d"/><stop offset="1" stop-color="#b9799f" stop-opacity="0"/></radialGradient>
+    <rect width="1600" height="900" fill="#6d5880"/><circle cx="800" cy="470" r="230" fill="url(#rose3)"/>
+    <g filter="url(#wc3)"><path d="M0 900 L700 520 L900 520 L1600 900Z" fill="#b5553f"/><path d="M0 900 L700 520 L0 560Z" fill="#6e7d5c"/><path d="M1600 900 L900 520 L1600 560Z" fill="#6e7d5c"/>
+    ${trunks}${arches}</g><g filter="url(#soft3)" opacity=".35"><rect x="0" y="0" width="1600" height="260" fill="#fff"/></g>
+    ${buggy(640, 640, 1)}<rect width="1600" height="900" filter="url(#paper3)"/></svg>`;
+}
+function svgPond(){
+  const rnd = mulberry(31); let firs = "";
+  for(let i=0;i<16;i++){ const x = 60 + i*42 + rnd()*20, h = 120 + rnd()*90; firs += `<path d="M${x.toFixed(0)} ${(470-h).toFixed(0)} L${(x-28).toFixed(0)} 470 L${(x+28).toFixed(0)} 470Z" fill="${i%3 ? '#3f5e4b' : '#4c6e57'}"/>`; }
+  return SVG_OPEN + DEFS(4) + `<linearGradient id="sk4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7d86b8"/><stop offset=".5" stop-color="#f2a98f"/><stop offset=".8" stop-color="#fdd9a6"/></linearGradient>
+    <linearGradient id="wt4" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2f4a5a"/><stop offset=".3" stop-color="#c79ac9"/><stop offset=".55" stop-color="#f5b8a8"/><stop offset=".8" stop-color="#bfe0c4"/><stop offset="1" stop-color="#e8c890"/></linearGradient>
+    <rect width="1600" height="900" fill="url(#sk4)"/><g filter="url(#wc4)">
+    <rect x="1100" y="430" width="500" height="40" fill="#2f4f7a"/><path d="M1000 470 Q1250 420 1600 450 L1600 500 L1000 500Z" fill="#e3b778"/>
+    ${firs}<path d="M0 470 L1600 470 L1600 900 L0 900Z" fill="#6f8f5f"/>
+    <path d="M0 560 Q300 500 650 560 T1300 540 T1600 520 L1600 700 Q1200 740 800 690 T0 720Z" fill="url(#wt4)"/>
+    <path d="M760 540 L760 700 M1000 530 L1000 690" stroke="#5a4a3a" stroke-width="10"/><path d="M700 600 Q880 560 1060 595" stroke="#6b5442" stroke-width="18" fill="none"/>
+    <path d="M1150 380 L1150 330 L1210 300 L1270 330 L1270 380Z" fill="#a8a8a8"/><rect x="1196" y="345" width="22" height="20" fill="#ffe28a"/>
+    ${blossomCloud(rnd, 1300, 380, 140, 40, 22, ["#ffffff","#fbeef0"])}
+    <path d="M0 900 L0 760 Q400 720 800 790 T1600 760 L1600 900Z" fill="#5c7b4e"/></g>
+    ${buggy(260, 690, .8)}<rect width="1600" height="900" filter="url(#paper4)"/></svg>`;
+}
+function svgHome(){
+  const rnd = mulberry(41); let stars = "", poplars = "";
+  for(let i=0;i<40;i++) stars += `<circle cx="${(rnd()*1600).toFixed(0)}" cy="${(rnd()*360).toFixed(0)}" r="${(1+rnd()*1.8).toFixed(1)}" fill="#fff" opacity="${(.4+rnd()*.5).toFixed(2)}"/>`;
+  for(let i=0;i<5;i++){ const x = 470 + i*55 + (i>2 ? 520 : 0); poplars += `<ellipse cx="${x}" cy="${(400 - (i%2)*30)}" rx="24" ry="${130 + (i%2)*20}" fill="#2f4636"/>`; }
+  return SVG_OPEN + DEFS(5) + `<linearGradient id="sk5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f2b4f"/><stop offset=".55" stop-color="#5a5a86"/><stop offset=".85" stop-color="#e6a873"/></linearGradient>
+    <radialGradient id="st5"><stop offset="0" stop-color="#ffffff"/><stop offset=".25" stop-color="#e8f4ff"/><stop offset="1" stop-color="#e8f4ff" stop-opacity="0"/></radialGradient>
+    <rect width="1600" height="900" fill="url(#sk5)"/>${stars}<circle cx="1000" cy="150" r="70" fill="url(#st5)"/><circle cx="1000" cy="150" r="9" fill="#fff"/>
+    <g filter="url(#wc5)"><path d="M0 560 Q400 470 800 520 T1600 500 L1600 900 L0 900Z" fill="#33463a"/>
+    <path d="M0 640 Q500 600 1000 650 T1600 640 L1600 900 L0 900Z" fill="#46604b"/>
+    ${poplars}
+    <rect x="720" y="400" width="300" height="170" fill="#ece6d6"/><path d="M700 410 L780 330 L860 410Z M860 410 L940 320 L1040 410Z" fill="#3f7a4e"/><path d="M700 412 H1040" stroke="#2f5a3a" stroke-width="10"/>
+    <rect x="760" y="450" width="40" height="44" fill="#ffd27a"/><rect x="900" y="450" width="40" height="44" fill="#ffd27a"/><rect x="830" y="490" width="44" height="80" fill="#5a4636"/>
+    ${blossomCloud(rnd, 600, 470, 120, 70, 20, ["#f4efe6","#e8dfe8"])}${blossomCloud(rnd, 1130, 470, 120, 70, 20, ["#f4efe6","#e8dfe8"])}
+    <path d="M820 900 Q860 700 870 570" stroke="#a88a6a" stroke-width="40" fill="none" opacity=".6"/></g>
+    <g class="svg-figure">${buggy(1180, 690, .7)}</g><rect width="1600" height="900" filter="url(#paper5)"/></svg>`;
+}
+function ladyFig(x, y, s, dress, hair, opt){
+  opt = opt || {};
+  return `<g transform="translate(${x},${y}) scale(${s})"><ellipse cx="0" cy="150" rx="${opt.wide ? 78 : 58}" ry="11" fill="#3d2a1c" opacity=".18"/>
+    <path d="M-${opt.wide ? 52 : 38} 28 Q0 10 ${opt.wide ? 52 : 38} 28 L${opt.wide ? 80 : 58} 150 Q0 164 -${opt.wide ? 80 : 58} 150 Z" fill="${dress}"/>
+    <rect x="-5" y="6" width="10" height="14" fill="#efcdb0"/><circle cx="0" cy="-6" r="24" fill="#f1d3b8"/>
+    <path d="M-26 -8 Q-24 -38 0 -38 Q24 -38 26 -8 Q18 -26 0 -24 Q-18 -26 -26 -8Z" fill="${hair}"/>
+    ${opt.bun ? `<circle cx="0" cy="-36" r="11" fill="${hair}"/>` : ""}${opt.bonnet ? `<path d="M-32 -14 Q0 -60 32 -14 Q0 -28 -32 -14Z" fill="#5b4a6e"/>` : ""}
+    <circle cx="-8" cy="-5" r="2.3" fill="#4b3626"/><circle cx="8" cy="-5" r="2.3" fill="#4b3626"/><path d="M-6 8 Q0 ${opt.smile ? 13 : 6} 6 8" stroke="#9a4c3c" stroke-width="2" fill="none"/></g>`;
+}
+function svgKitchen(){
+  const rnd = mulberry(52); let blos = blossomCloud(rnd, 1250, 250, 170, 70, 18, ["#fdf2f2","#ffffff","#e9f2dc"]);
+  return SVG_OPEN + DEFS(6) + `<rect width="1600" height="900" fill="#f1e1c4"/><g filter="url(#wc6)">
+    <rect width="1600" height="640" fill="#efdcbc"/><path d="M0 110 H1600" stroke="#d2b78e" stroke-width="12"/>
+    <rect x="1040" y="140" width="420" height="300" fill="#f6c99c"/><rect x="1040" y="320" width="420" height="120" fill="#a6c48f"/>${blos}
+    <rect x="1030" y="130" width="440" height="320" fill="none" stroke="#8c6a4b" stroke-width="20"/><path d="M1250 130 V450 M1030 290 H1470" stroke="#8c6a4b" stroke-width="10"/>
+    <path d="M1460 450 L1600 900 L1150 900 L1040 450Z" fill="#ffdcaa" opacity=".22"/>
+    <rect x="0" y="640" width="1600" height="260" fill="#b88c62"/><g stroke="#9c7350" stroke-width="4" opacity=".55"><path d="M0 700 H1600 M0 770 H1600 M0 840 H1600"/></g>
+    <rect x="90" y="300" width="200" height="340" fill="#4a3c34"/><rect x="110" y="250" width="160" height="60" fill="#3b302a"/><rect x="150" y="120" width="40" height="130" fill="#3b302a"/>
+    <g fill="#b9b2a6"><circle cx="420" cy="200" r="28"/><circle cx="500" cy="200" r="22"/><circle cx="570" cy="200" r="26"/></g><path d="M380 230 H620" stroke="#8c6a4b" stroke-width="8"/>
+    <rect x="560" y="480" width="440" height="22" fill="#8b6345"/><rect x="580" y="502" width="16" height="140" fill="#755238"/><rect x="964" y="502" width="16" height="140" fill="#755238"/>
+    <path d="M550 476 H1010 L990 540 H570Z" fill="#f4ede0"/><path d="M590 476 V540 M650 476 V540 M710 476 V540 M770 476 V540 M830 476 V540 M890 476 V540 M950 476 V540" stroke="#d98a7e" stroke-width="5" opacity=".5"/>
+    <circle cx="700" cy="460" r="18" fill="#e9eef2"/><rect x="820" y="430" width="36" height="46" rx="8" fill="#c99a6a"/></g>
+    <g class="svg-figure">${ladyFig(1140, 520, 1.25, "#7f5f99", "#6b5a52", {wide:true, bonnet:true})}${girlFig(420, 560, 1.15, true)}</g>
+    <rect width="1600" height="900" filter="url(#paper6)"/></svg>`;
+}
+function svgRoom(){
+  const rnd = mulberry(61);
+  return SVG_OPEN + DEFS(7) + `<rect width="1600" height="900" fill="#e8dcc8"/><g filter="url(#wc7)">
+    <path d="M0 0 L520 0 L0 420Z" fill="#cbb999"/><path d="M1600 0 L1080 0 L1600 420Z" fill="#cbb999"/>
+    <rect x="600" y="150" width="400" height="330" fill="#f2bf96"/><rect x="600" y="360" width="400" height="120" fill="#9fbf8c"/>
+    ${blossomCloud(rnd, 820, 330, 150, 60, 16, ["#ffffff","#fbeef0","#e6efd8"])}
+    <rect x="590" y="140" width="420" height="350" fill="none" stroke="#8c6a4b" stroke-width="18"/><path d="M800 140 V490" stroke="#8c6a4b" stroke-width="10"/>
+    <path d="M560 130 Q620 300 570 500" fill="#f3f1ec" opacity=".85"/><path d="M1040 130 Q980 300 1030 500" fill="#f3f1ec" opacity=".85"/>
+    <path d="M1000 490 L1300 900 L760 900 L600 490Z" fill="#ffd9a6" opacity=".18"/>
+    <rect x="0" y="640" width="1600" height="260" fill="#a9845f"/>
+    <rect x="80" y="470" width="420" height="200" fill="#f6f3ec"/><rect x="70" y="420" width="40" height="260" fill="#7a5a40"/><rect x="480" y="470" width="30" height="210" fill="#7a5a40"/>
+    <rect x="100" y="440" width="120" height="50" rx="14" fill="#fffdf8"/>
+    <rect x="1080" y="470" width="110" height="20" fill="#e2b33f"/><rect x="1090" y="380" width="14" height="100" fill="#e2b33f"/><rect x="1170" y="380" width="14" height="100" fill="#e2b33f"/><rect x="1090" y="380" width="94" height="14" fill="#e2b33f"/><rect x="1090" y="490" width="12" height="150" fill="#c99a2e"/><rect x="1176" y="490" width="12" height="150" fill="#c99a2e"/>
+    <rect x="1320" y="430" width="160" height="210" fill="#8c6a4b"/><ellipse cx="1400" cy="420" rx="60" ry="18" fill="#e9eef2"/></g>
+    <g class="svg-figure">${girlFig(1135, 380, 1, true)}</g>
+    <rect width="1600" height="900" filter="url(#paper7)"/></svg>`;
+}
+function svgLane(){
+  const rnd = mulberry(73); let ferns = "";
+  for(let i=0;i<26;i++){ const x = rnd()*1600, y = 720 + rnd()*170; ferns += `<path d="M${x.toFixed(0)} ${y.toFixed(0)} q-30 -40 -60 -50 M${x.toFixed(0)} ${y.toFixed(0)} q20 -50 50 -60" stroke="#4f7a45" stroke-width="7" fill="none" stroke-linecap="round"/>`; }
+  return SVG_OPEN + DEFS(8) + `<linearGradient id="sk8" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8a8fc0"/><stop offset=".45" stop-color="#f5ad85"/><stop offset=".75" stop-color="#fcd9a2"/></linearGradient>
+    <rect width="1600" height="900" fill="url(#sk8)"/><g filter="url(#wc8)">
+    <path d="M0 520 Q400 440 800 500 T1600 470 L1600 700 L0 700Z" fill="#7e9d6f"/>
+    ${blossomCloud(rnd, 260, 430, 230, 90, 30, ["#ffffff","#fbeef0","#dfe9cf"])}${blossomCloud(rnd, 1360, 410, 230, 90, 30, ["#ffffff","#fbeef0","#dfe9cf"])}
+    <path d="M200 430 V560 M330 440 V560 M1300 420 V560 M1440 430 V560" stroke="#6b4d3a" stroke-width="16"/>
+    <path d="M0 640 L1600 620 L1600 900 L0 900Z" fill="#6e8f58"/><path d="M700 900 Q760 700 800 560 Q840 700 900 900Z" fill="#c4704f"/>
+    <path d="M0 610 H1600" stroke="#9a7a5a" stroke-width="6"/><g stroke="#9a7a5a" stroke-width="6">${Array.from({length:16},(_,i)=>`<path d="M${i*100+20} 580 V640"/>`).join("")}</g>
+    ${ferns}<path d="M1180 360 L1180 300 L1250 260 L1320 300 L1320 360Z" fill="#d9cdb8" opacity=".8"/></g>
+    <g class="svg-figure">${ladyFig(760, 560, .8, "#4d4a5a", "#5a4a40", {bun:true})}${girlFig(850, 600, .78, true)}</g>
+    <rect width="1600" height="900" filter="url(#paper8)"/></svg>`;
+}
+function svgLyndeRoom(){
+  return SVG_OPEN + DEFS(9) + `<radialGradient id="lamp9" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff2c0"/><stop offset="1" stop-color="#fff2c0" stop-opacity="0"/></radialGradient>
+    <rect width="1600" height="900" fill="#e6d3b4"/><g filter="url(#wc9)">
+    <rect width="1600" height="620" fill="#dcc6a2"/><g stroke="#c9ad83" stroke-width="3" opacity=".6">${Array.from({length:20},(_,i)=>`<path d="M${i*80} 0 V620"/>`).join("")}</g>
+    <rect x="980" y="130" width="420" height="300" fill="#a37fae"/><rect x="980" y="310" width="420" height="120" fill="#6f8a63"/><circle cx="1290" cy="200" r="22" fill="#fff3c8"/>
+    <rect x="970" y="120" width="440" height="320" fill="none" stroke="#7a5a40" stroke-width="18"/><path d="M1190 120 V440" stroke="#7a5a40" stroke-width="10"/>
+    <rect x="0" y="620" width="1600" height="280" fill="#a7805c"/><ellipse cx="800" cy="760" rx="380" ry="70" fill="#8c4f45" opacity=".55"/>
+    <rect x="340" y="380" width="70" height="120" rx="20" fill="#e4c27c"/><path d="M350 380 Q375 300 400 380" fill="#fbe9b8"/><circle cx="375" cy="360" r="160" fill="url(#lamp9)"/>
+    <rect x="250" y="500" width="250" height="20" fill="#7a5a40"/><rect x="270" y="520" width="14" height="120" fill="#6a4a32"/><rect x="466" y="520" width="14" height="120" fill="#6a4a32"/>
+    <path d="M880 400 Q930 380 980 400 L990 640 L870 640Z" fill="#7b5a3f"/></g>
+    <g class="svg-figure">${ladyFig(930, 470, 1.15, "#7f5f99", "#6b5a52", {wide:true, bonnet:true, smile:true})}
+      <path d="M890 560 l60 -40 M905 570 l60 -46" stroke="#c9c2b6" stroke-width="5"/><circle cx="930" cy="560" r="18" fill="#c95a5a"/>${girlFig(560, 600, 1.05, true)}</g>
+    <rect width="1600" height="900" filter="url(#paper9)"/></svg>`;
+}
+function svgNightLane(){
+  const rnd = mulberry(83); let st = "", ferns = "";
+  for(let i=0;i<50;i++) st += `<circle cx="${(rnd()*1600).toFixed(0)}" cy="${(rnd()*380).toFixed(0)}" r="${(1+rnd()*1.6).toFixed(1)}" fill="#fff" opacity="${(.35+rnd()*.5).toFixed(2)}"/>`;
+  for(let i=0;i<30;i++){ const x = rnd()*1600, y = 740 + rnd()*160; ferns += `<path d="M${x.toFixed(0)} ${y.toFixed(0)} q-30 -40 -60 -48 M${x.toFixed(0)} ${y.toFixed(0)} q22 -48 52 -58" stroke="#2f4a35" stroke-width="7" fill="none" stroke-linecap="round"/>`; }
+  return SVG_OPEN + DEFS(10) + `<linearGradient id="sk10" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16203f"/><stop offset=".6" stop-color="#3d4677"/><stop offset=".9" stop-color="#6b5c7d"/></linearGradient>
+    <radialGradient id="st10"><stop offset="0" stop-color="#fff"/><stop offset=".3" stop-color="#eaf3ff"/><stop offset="1" stop-color="#eaf3ff" stop-opacity="0"/></radialGradient>
+    <rect width="1600" height="900" fill="url(#sk10)"/>${st}<circle cx="1180" cy="190" r="60" fill="url(#st10)"/><circle cx="1180" cy="190" r="8" fill="#fff"/>
+    <g filter="url(#wc10)"><path d="M700 470 Q1180 330 1600 430 L1600 620 L700 620Z" fill="#1f2b2a"/>
+    <path d="M0 520 Q400 460 800 520 T1600 520 L1600 900 L0 900Z" fill="#26372d"/>
+    ${Array.from({length:9},(_,i)=>`<ellipse cx="${200+i*150}" cy="${470-(i%3)*20}" rx="40" ry="${110+(i%2)*30}" fill="#1c2a24"/>`).join("")}
+    <rect x="1010" y="455" width="26" height="20" fill="#ffd27a"/><circle cx="1023" cy="465" r="40" fill="#ffd27a" opacity=".25"/>
+    <path d="M700 900 Q760 720 820 600 Q880 720 940 900Z" fill="#5b4a3e"/>${ferns}</g>
+    <g class="svg-figure">${ladyFig(780, 620, .75, "#3f3c4c", "#4a3e36", {bun:true})}${girlFig(850, 655, .7, true)}</g>
+    <rect width="1600" height="900" filter="url(#paper10)"/></svg>`;
+}
+const SVG_SCENES = {ch1:svgStation, ch1_road:svgRoad, ch1_avenue:svgAvenue, ch1_pond:svgPond, ch1_home:svgHome,
+  ch2:svgKitchen, ch2_room:svgRoom, ch2_lane:svgLane, ch2_lynde:svgLyndeRoom, ch2_night:svgNightLane};
+const svgCache = {};
+
+/* =========================================================
+   4. DOM
+   ========================================================= */
+const $ = id => document.getElementById(id);
+const el = {};
+["vn","shk","rig","cue","light","fxc","btnFx","coverHelp","scene","sprL","sprR","viewer","cover","coverSub","coverText","btnStart","btnContinue","chapterCard","ccTitle","ccSub","badge","endcard","endIn","hud",
+ "dialog","nameTag","progress","dlgText","note","choices","kind","question","choiceList","nameBox","nameInput","nameOk","barFill","nextHint","miniBook",
+ "report","stage","chapterPill","gL","gR","gFillL","gFillR","gauge","popL","popR",
+ "btnBook","btnBox","btnLevel","btnSound","btnReset","fileInput","btnExport","btnHelp",
+ "book","bookTitle","bookSub","bookBody","bookBanner","bookClose","bookNow","bookSize",
+ "modal","mTitle","mBody","mBtns","toast","tip"].forEach(k => el[k] = $(k));
+
+/* =========================================================
+   5. 텍스트 도우미
+   ========================================================= */
+function esc(s){ return String(s).replace(/[&<>"]/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[m])); }
+function T(o){ if(!o) return ""; if(o.b) return o.b; return (level === "lit" ? (o.l || o.e) : (o.e || o.l)) || ""; }
+const JOSA = {"이라고":"라고", "아":"야", "은":"는", "이":"가", "을":"를", "으로":"로", "과":"와", "이에요":"예요"};
+function josa(word, form){
+  const c = String(word || "").trim().slice(-1).charCodeAt(0);
+  if(!(c >= 0xAC00 && c <= 0xD7A3)) return JOSA[form] || form;
+  const jong = (c - 0xAC00) % 28;
+  if(form === "으로" && jong === 8) return "로";
+  return jong ? form : (JOSA[form] || form);
+}
+function fill(t){
+  return t.replace(/\{(\w+)\|([^}]+)\}/g, (m, k, f) => josa(S.names[k] || DEFAULT_NAMES[k] || "", f))
+          .replace(/\{(\w+)\}/g, (m, k) => S.names[k] || DEFAULT_NAMES[k] || "…");
+}
+function gloss(html){ return html.replace(GLOSS_RE, m => `<span class="gl" tabindex="0" data-g="${esc(GLOSS[m])}">${m}</span>`); }
+
+/* =========================================================
+   6. 진행 엔진
+   ========================================================= */
+function applyEff(eff){
+  if(!eff) return;
+  if(eff.flag){ S.flags[eff.flag] = true; if(eff.flag === "metMatthew") S.met.matthew = true; }
+  if(eff.met){ S.met[eff.met] = true; if(S.hearts[eff.met] === undefined) S.hearts[eff.met] = CHARS[eff.met] ? CHARS[eff.met].start : 0; setTimeout(() => bumpHud(eff.met), 50); }
+  if(eff.name) Object.assign(S.names, eff.name);
+  if(eff.heart) for(const k in eff.heart){ S.met[k] = true; S.hearts[k] = Math.min(5, (S.hearts[k] || 0) + eff.heart[k]); setTimeout(() => bumpHud(k), 50); }
+  if(eff.item && !S.items.includes(eff.item)){ S.items.push(eff.item); const it = ITEMS[eff.item]; setTimeout(() => { sfx("item"); toast(`🎁 추억 상자에 '${it.name}'${josa(it.name, "을")} 넣었어요`); }, 400); }
+  if(eff.album && !P.album[eff.album]){ P.album[eff.album] = true; if(!/^e_/.test(eff.album)) setTimeout(() => { sfx("dream"); toast("✨ 숨은 장면을 발견했어요! (" + albumCount() + "/" + ALBUM.length + ")"); }, 300); }
+}
+function albumCount(){ return ALBUM.filter(a => P.album[a.id]).length; }
+function decideEnding(){
+  const t = S.tally, arr = ["canon","imag","bal"].sort((a,b) => t[b] - t[a]);
+  return t[arr[0]] > t[arr[1]] ? arr[0] : "bal";
+}
+function enter(i, note){
+  S.note = note || null;
+  for(let guard = 0; guard < 400; guard++){
+    const n = NODES[i];
+    if(!n){ S.phase = "report"; break; }
+    if(n.t === "goto"){ i = IDX[n.to]; continue; }
+    if(n.t === "ending"){ if(!S.ending) S.ending = decideEnding(); i = IDX["E_" + S.ending]; continue; }
+    if(!n.t && n.when && !n.when(S)){ i++; continue; }
+    S.pos = i;
+    if(n.bg && n.bg !== S.bg){ S.bg = n.bg; S.cam = ""; }
+    if(n.cam !== undefined){ if(n.cam === "shake") shakeCam(); else S.cam = n.cam; }
+    if(n.t === "choice"){ S.phase = "choice"; S.order = null; }
+    else if(n.t === "name"){ S.phase = "name"; }
+    else if(n.t === "endcard"){ S.phase = "endcard"; P.endings[CH.key + "_" + S.ending] = true; S.hist[CH.key] = {ending:S.ending, tally:Object.assign({}, S.tally)}; }
+    else { S.phase = "play"; applyEff(n.eff); if(n.fx === "dream" && !(NODES[i-1] && NODES[i-1].fx === "dream")) sfx("dream"); }
+    break;
+  }
+  save(); render(false);
+}
+function advance(){
+  if(!el.modal.hidden || picking) return;
+  if(!el.cover.classList.contains("hide")) return;
+  if(typing){ finishTyping(); return; }
+  if(S.phase === "play") enter(S.pos + 1);
+  else if(S.phase === "endcard"){ S.phase = "report"; save(); render(false); }
+}
+
+/* =========================================================
+   7. 렌더링
+   ========================================================= */
+let curBg = null;
+function curNode(){ return NODES[S.pos] || {}; }
+function renderScene(force){
+  const n = curNode();
+  const bg = S.phase === "cover" ? "ch1" : (S.bg || "ch1");
+  if(force || curBg !== bg){
+    const first = curBg === null || force;
+    curBg = bg;
+    const src = imgFor(bg), layer = document.createElement("div");
+    layer.className = "layer" + (first ? "" : " enter");
+    if(src){ const im = document.createElement("img"); im.src = src; im.alt = ""; layer.appendChild(im); }
+    else { if(!svgCache[bg]) svgCache[bg] = (SVG_SCENES[bg] || svgStation)(); layer.innerHTML = svgCache[bg]; }
+    if(first) el.scene.innerHTML = "";
+    el.scene.appendChild(layer);
+    if(!first){ requestAnimationFrame(() => requestAnimationFrame(() => layer.classList.remove("enter")));
+      const olds = Array.from(el.scene.children).filter(c => c !== layer); setTimeout(() => olds.forEach(o => o.remove()), 1000); }
+    setSceneFx(bg);
+  }
+  el.cue.className = "cue " + (S.phase === "cover" ? "" : (S.cam || ""));
+  const showSpr = S.phase !== "cover";
+  const face = showSpr ? n.f : null;
+  const other = showSpr ? (n.o || null) : null;
+  const otherTalk = n.w && n.w !== "anne";
+  const fSrc = face ? imgFor(face) : null, oSrc = other ? imgFor(other) : null;
+  const wasTalkR = el.sprR.classList.contains("talk"), wasTalkL = el.sprL.classList.contains("talk");
+  setSprite(el.sprL, fSrc, otherTalk && !!oSrc);
+  setSprite(el.sprR, oSrc, !otherTalk);
+  if(S.phase === "play"){ if(oSrc && otherTalk && !wasTalkR) hop(el.sprR); if(fSrc && !otherTalk && !wasTalkL && oSrc) hop(el.sprL); }
+  el.scene.querySelectorAll(".svg-figure").forEach(g => g.style.display = (fSrc || oSrc) ? "none" : "");
+  el.viewer.classList.toggle("dream", S.phase === "play" && n.fx === "dream");
+}
+function hop(img){ if(!fxOn) return; img.classList.remove("hop"); void img.offsetWidth; img.classList.add("hop"); }
+function shakeCam(){ if(!fxOn) return; el.shk.classList.remove("shake"); void el.shk.offsetWidth; el.shk.classList.add("shake"); }
+/* ---------- 장면 효과 (꽃잎·별·물빛) ---------- */
+const SCENE_FX = {
+  ch1:        {light:"sunset", petals:{n:12, col:["#ffffff","#ffe6ee","#fff4f6"], size:[4,8], vy:[16,30], wind:-10}},
+  ch1_road:   {light:"road",   petals:{n:16, col:["#ffffff","#fff1f4","#fbfbf6"], size:[4,8], vy:[18,34], wind:-14}},
+  ch1_avenue: {light:"rose",   petals:{n:30, col:["#ffffff","#fff6f8","#ffeef2"], size:[5,10], vy:[10,22], wind:-6}},
+  ch1_pond:   {light:"pond",   glints:{n:28, band:[.6,.8]}, petals:{n:4, col:["#ffffff"], size:[4,6], vy:[14,22], wind:-8}},
+  ch1_home:   {light:"night",  stars:{n:34, band:[0,.4]}},
+  ch2:        {light:"warm",   motes:{n:22}},
+  ch2_room:   {light:"dim",    motes:{n:14}},
+  ch2_lane:   {light:"sunset", petals:{n:9, col:["#ffffff","#fff4f6"], size:[4,7], vy:[14,26], wind:-12}},
+  ch2_lynde:  {light:"lamp",   motes:{n:16}},
+  ch2_night:  {light:"night",  stars:{n:40, band:[0,.42]}}
+};
+let curFx = null;
+function setSceneFx(bg){
+  curFx = SCENE_FX[bg] || {};
+  el.light.className = "light " + (curFx.light || "") + (curFx.light ? " on" : "");
+  buildParticles();
+}
+const PT = {list:[], w:0, h:0, last:0, raf:0};
+function rnd(a, b){ return a + Math.random() * (b - a); }
+function buildParticles(){
+  resizeFx();
+  const L = [], W = PT.w, H = PT.h, c = curFx || {};
+  if(c.petals) for(let i=0;i<c.petals.n;i++) L.push(newPetal(c.petals, true));
+  if(c.glints) for(let i=0;i<c.glints.n;i++) L.push({k:"glint", x:rnd(0,1), y:rnd(c.glints.band[0], c.glints.band[1]), len:rnd(8,26), ph:rnd(0,6.28), sp:rnd(.6,1.6)});
+  if(c.motes) for(let i=0;i<c.motes.n;i++) L.push({k:"mote", x:rnd(0,1), y:rnd(.1,.9), r:rnd(.8,2.2), vx:rnd(-.006,.006), vy:rnd(-.012,-.004), ph:rnd(0,6.28), sp:rnd(.6,1.4)});
+  if(c.stars) for(let i=0;i<c.stars.n;i++) L.push({k:"star", x:rnd(0,1), y:rnd(c.stars.band[0], c.stars.band[1]), r:rnd(.6,1.8), ph:rnd(0,6.28), sp:rnd(.5,1.5)});
+  PT.list = L;
+}
+function newPetal(cfg, anywhere){
+  return {k:"petal", x:rnd(-.05, 1.1), y:anywhere ? rnd(-.1, 1) : rnd(-.15, -.03), s:rnd(cfg.size[0], cfg.size[1]), vy:rnd(cfg.vy[0], cfg.vy[1]), wind:cfg.wind,
+    rot:rnd(0, 6.28), vr:rnd(-1.2, 1.2), sw:rnd(0, 6.28), col:cfg.col[Math.floor(Math.random()*cfg.col.length)], a:rnd(.55, .9)};
+}
+function resizeFx(){
+  const r = el.viewer.getBoundingClientRect(), dpr = Math.min(1.5, window.devicePixelRatio || 1);
+  PT.w = Math.max(1, r.width); PT.h = Math.max(1, r.height);
+  el.fxc.width = Math.round(PT.w * dpr); el.fxc.height = Math.round(PT.h * dpr);
+  el.fxc.getContext("2d").setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function fxLoop(t){
+  PT.raf = requestAnimationFrame(fxLoop);
+  const dt = Math.min(.05, (t - (PT.last || t)) / 1000); PT.last = t;
+  if(!fxOn || document.hidden || el.stage.hidden) return;
+  const ctx = el.fxc.getContext("2d"), W = PT.w, H = PT.h, sc = W / 1000;
+  ctx.clearRect(0, 0, W, H);
+  const dream = el.viewer.classList.contains("dream");
+  for(const p of PT.list){
+    if(p.k === "petal"){
+      p.sw += dt * 1.3; p.rot += p.vr * dt;
+      p.y += (p.vy * dt * sc) / H * 3.2; p.x += ((p.wind + Math.sin(p.sw) * 14) * dt * sc) / W * 3.2;
+      if(p.y > 1.05 || p.x < -.1){ Object.assign(p, newPetal((curFx && curFx.petals) || {size:[4,8], vy:[16,30], wind:-10, col:["#fff"]}, false)); }
+      ctx.save(); ctx.translate(p.x * W, p.y * H); ctx.rotate(p.rot); ctx.scale(1, .55 + .45 * Math.abs(Math.sin(p.sw)));
+      ctx.globalAlpha = p.a; ctx.fillStyle = dream ? "#ffd9ef" : p.col;
+      ctx.beginPath(); ctx.ellipse(0, 0, p.s * sc, p.s * .62 * sc, 0, 0, 6.283); ctx.fill(); ctx.restore();
+    }else if(p.k === "glint"){
+      p.ph += dt * p.sp; const a = Math.max(0, Math.sin(p.ph)) * .55;
+      if(a > .02){ ctx.globalAlpha = a; ctx.strokeStyle = "#fffaf0"; ctx.lineWidth = 1.6 * sc;
+        ctx.beginPath(); ctx.moveTo(p.x * W - p.len * sc / 2, p.y * H); ctx.lineTo(p.x * W + p.len * sc / 2, p.y * H); ctx.stroke(); }
+    }else if(p.k === "mote"){
+      p.ph += dt * p.sp; p.x += p.vx * dt + Math.sin(p.ph) * .0004; p.y += p.vy * dt;
+      if(p.y < .02){ p.y = .95; p.x = rnd(0, 1); }
+      const a = .2 + Math.max(0, Math.sin(p.ph)) * .5;
+      ctx.globalAlpha = a; ctx.fillStyle = "#fff1c9"; ctx.beginPath(); ctx.arc(p.x * W, p.y * H, p.r * sc * 1.3, 0, 6.283); ctx.fill();
+    }else if(p.k === "star"){
+      p.ph += dt * p.sp; const a = .25 + Math.max(0, Math.sin(p.ph)) * .6;
+      ctx.globalAlpha = a; ctx.fillStyle = "#ffffff"; ctx.beginPath(); ctx.arc(p.x * W, p.y * H, p.r * sc * 1.4, 0, 6.283); ctx.fill();
+    }
+  }
+  ctx.globalAlpha = 1;
+}
+if(window.ResizeObserver) new ResizeObserver(() => resizeFx()).observe(el.viewer); else window.addEventListener("resize", resizeFx);
+requestAnimationFrame(fxLoop);
+function applyFxUI(){ document.body.classList.toggle("nofx", !fxOn); el.btnFx.classList.toggle("off", !fxOn); el.btnFx.title = fxOn ? "꽃잎·카메라 효과 켜짐 (누르면 끄기)" : "꽃잎·카메라 효과 꺼짐 (누르면 켜기)"; if(!fxOn){ const c = el.fxc.getContext("2d"); c.clearRect(0, 0, PT.w, PT.h); } }
+el.btnFx.addEventListener("click", e => { e.stopPropagation(); fxOn = !fxOn; applyFxUI(); save(); toast(fxOn ? "✨ 꽃잎·카메라 효과를 켰어요" : "효과를 껐어요 (느린 컴퓨터에서 추천)"); });
+function setSprite(img, src, dim){
+  if(src){ if(img.getAttribute("src") !== src) img.src = src; img.classList.add("on"); img.classList.toggle("dim", !!dim); img.classList.toggle("talk", !dim); }
+  else img.classList.remove("on", "dim", "talk");
+}
+function heartStr(k){ const h = Math.max(0, Math.min(5, S.hearts[k] || 0)); return "♥".repeat(h) + "♡".repeat(5 - h); }
+function metList(){ return Object.keys(CHARS).filter(k => S.met[k]); }
+function renderHud(){
+  if(S.phase === "cover"){ el.hud.innerHTML = ""; return; }
+  el.hud.innerHTML = metList().map(k => `<span id="hud_${k}">${CHARS[k].ic} ${CHARS[k].name} <b class="hearts">${heartStr(k)}</b></span>`).join("");
+}
+function bumpHud(k){ renderHud(); const s = $("hud_" + k); if(s){ s.classList.remove("bump"); void s.offsetWidth; s.classList.add("bump"); } }
+function heartsHtml(){ return metList().map(k => `<p style="margin-top:8px;font-size:.86rem;font-weight:800">${CHARS[k].ic} ${CHARS[k].full}와의 마음 <span style="color:#d9645c;letter-spacing:1px">${heartStr(k)}</span></p>`).join(""); }
+function updateGauge(delta){
+  const total = S.canon + S.imag, c = Math.round(S.canon / total * 100), i = 100 - c;
+  el.gFillL.style.width = c + "%"; el.gFillR.style.width = i + "%"; el.gL.textContent = c; el.gR.textContent = i;
+  if(delta){ el.gauge.classList.remove("flash"); void el.gauge.offsetWidth; el.gauge.classList.add("flash"); showPop(el.popL, delta.canon); showPop(el.popR, delta.imag); }
+}
+function showPop(node, v){ node.classList.remove("show"); void node.offsetWidth; if(!v) return; node.textContent = "+" + v; node.classList.add("show"); }
+function setPill(){
+  el.chapterPill.textContent = S.phase === "cover" ? "초록 지붕 집으로 가는 길" : S.phase === "report" ? CH.num + "장 리포트" : CH.num + "장 · " + CH.title;
+}
+function progressBar(){
+  let maxMain = IDX["E_canon"]; const pct = Math.min(100, Math.round(S.pos / maxMain * 100));
+  el.barFill.style.width = (S.phase === "endcard" ? 100 : pct) + "%";
+}
+
+/* ---------- 타자기 ---------- */
+let typer = null, typing = false, fullText = "", typerDone = null;
+function typeText(text, done){
+  clearInterval(typer); fullText = text; typing = true; typerDone = done || null;
+  el.dlgText.textContent = ""; el.nextHint.classList.remove("on");
+  let i = 0; const speed = level === "lit" ? 28 : 38;
+  typer = setInterval(() => {
+    i++; el.dlgText.textContent = text.slice(0, i);
+    if(text.charAt(i-1).trim() && i % 2 === 0) sfx("type");
+    if(i >= text.length) finishTyping();
+  }, speed);
+}
+function finishTyping(){
+  clearInterval(typer); typer = null; typing = false;
+  el.dlgText.innerHTML = gloss(esc(fullText)); el.nextHint.classList.add("on");
+  if(typerDone){ const f = typerDone; typerDone = null; f(); }
+}
+function setTextNow(text, after){ clearInterval(typer); typer = null; typing = false; typerDone = null; fullText = text; el.dlgText.innerHTML = gloss(esc(text)); el.nextHint.classList.add("on"); if(after) after(); }
+
+function showNote(){
+  if(!S.note){ el.note.hidden = true; return; }
+  el.note.innerHTML = "📖 <b>원작에서는?</b> " + gloss(esc(fill(T(S.note))));
+  el.note.hidden = false;
+}
+
+function render(instant){
+  updateGauge(); applyLevelUI(); applySoundUI(); setPill(); renderHud();
+  el.vn.classList.toggle("choosing", S.phase === "choice" || S.phase === "name");
+  document.body.classList.toggle("covering", false);
+  el.endcard.classList.toggle("show", S.phase === "endcard");
+  if(S.phase === "report"){ el.stage.hidden = true; el.report.hidden = false; renderReport(); return; }
+  el.stage.hidden = false; el.report.hidden = true;
+  if(S.phase === "cover"){ renderCover(); return; }
+  el.cover.classList.add("hide");
+  renderScene(); progressBar(); syncBook();
+  if(S.phase === "play") renderPlay(instant);
+  else if(S.phase === "choice") renderChoice();
+  else if(S.phase === "name") renderName();
+  else if(S.phase === "endcard") renderEndcard();
+}
+function renderPlay(instant){
+  const n = curNode();
+  el.choices.hidden = true; el.dlgText.hidden = false; el.note.hidden = true;
+  const inner = n.w === "anne" && n.in;
+  el.nameTag.textContent = n.w === "anne" ? (inner ? "앤 셜리 (속마음)" : "앤 셜리") : WHO[n.w] || "";
+  el.nameTag.className = "nametag " + (inner ? "inner" : (n.w !== "anne" ? n.w : ""));
+  el.progress.textContent = CH.num + "장 · " + CH.title;
+  el.miniBook.hidden = false;
+  const text = fill(T(n));
+  if(instant) setTextNow(text, showNote); else typeText(text, showNote);
+}
+function shuffle(n){ const a = Array.from({length:n}, (_,i) => i); for(let i=n-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; }
+function renderChoice(){
+  const n = curNode();
+  if(!Array.isArray(S.order) || S.order.length !== n.opts.length){ S.order = shuffle(n.opts.length); save(); }
+  clearInterval(typer); typing = false; typerDone = null;
+  el.dlgText.hidden = true; el.note.hidden = true; el.choices.hidden = false; el.nameBox.hidden = true; el.choiceList.hidden = false; el.nextHint.classList.remove("on");
+  el.nameTag.textContent = "💭 선택의 순간"; el.nameTag.className = "nametag sys";
+  el.progress.textContent = CH.num + "장 · " + n.label;
+  el.kind.textContent = KIND[n.kind]; el.kind.className = "kind " + n.kind;
+  el.question.textContent = T(n.q);
+  el.choiceList.innerHTML = "";
+  S.order.forEach((oi, pos) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "choice"; b.dataset.oi = oi;
+    b.innerHTML = `<span class="num">${pos + 1}</span><span class="ct"></span>`;
+    b.querySelector(".ct").textContent = T(n.opts[oi]);
+    b.addEventListener("click", e => { e.stopPropagation(); pick(oi, b); });
+    el.choiceList.appendChild(b);
+  });
+}
+function refreshChoiceTexts(){
+  const n = curNode();
+  el.question.textContent = T(n.q);
+  el.choiceList.querySelectorAll(".choice").forEach(b => b.querySelector(".ct").textContent = T(n.opts[+b.dataset.oi]));
+}
+let picking = false;
+function pick(oi, btn){
+  if(picking || S.phase !== "choice") return;
+  picking = true; unlockAudio(); sfx("select");
+  const n = curNode(), o = n.opts[oi];
+  el.choiceList.querySelectorAll(".choice").forEach(b => b.disabled = true);
+  btn.classList.add("picked");
+  const delta = {canon:0, imag:0};
+  if(o.type === "canon") delta.canon = 15; else if(o.type === "imag") delta.imag = 15; else { delta.canon = 5; delta.imag = 5; }
+  S.canon += delta.canon; S.imag += delta.imag; S.tally[o.type]++;
+  S.picks = S.picks.filter(p => p.id !== n.id); S.picks.push({id:n.id, type:o.type, oi});
+  applyEff(o.eff);
+  updateGauge(delta); showBadge(o.type, T(BADGE[o.type]));
+  setTimeout(() => { picking = false; enter(o.go ? IDX[o.go] : S.pos + 1, n.note); }, 700);
+}
+function renderName(){
+  const n = curNode();
+  clearInterval(typer); typing = false; typerDone = null;
+  el.dlgText.hidden = true; el.note.hidden = true; el.choices.hidden = false; el.choiceList.hidden = true; el.nameBox.hidden = false; el.nextHint.classList.remove("on");
+  el.nameTag.textContent = "💭 선택의 순간"; el.nameTag.className = "nametag sys";
+  el.progress.textContent = CH.num + "장 · " + n.label;
+  el.kind.textContent = KIND.name; el.kind.className = "kind name";
+  el.question.textContent = T(n.q);
+  el.nameInput.placeholder = n.ph || "";
+  el.nameInput.maxLength = n.max || 16;
+  el.nameBox.querySelector(".name-help").textContent = (n.max || 16) + "글자까지 쓸 수 있어요. 다 쓰고 Enter를 눌러도 돼요.";
+  $("nameOk").textContent = n.free ? "말해 주기" : "이름 짓기";
+  el.kind.textContent = n.free ? "💌 마음 전하기" : KIND.name;
+  el.nameInput.value = S.names[n.key] || "";
+  setTimeout(() => { try{ el.nameInput.focus({preventScroll:true}); }catch(e){} }, 50);
+}
+function submitName(){
+  if(S.phase !== "name" || picking) return;
+  const n = curNode();
+  let v = el.nameInput.value.replace(/[<>{}`]/g, "").replace(/\s+/g, " ").trim().slice(0, n.max || 16);
+  if(!v){ toast(n.free ? "한 글자 이상 써 주세요 💌" : "이름을 한 글자 이상 써 주세요 ✍️"); el.nameInput.focus(); return; }
+  if(n.free){
+    picking = true; unlockAudio(); sfx("select");
+    S.names[n.key] = v; S.picks = S.picks.filter(p => p.id !== n.id); S.picks.push({id:n.id, type:"free", val:v});
+    showBadge("bal", "💌 마음이 전해졌어요!"); el.nameInput.blur();
+    setTimeout(() => { picking = false; enter(S.pos + 1, n.note); }, 700);
+    return;
+  }
+  picking = true; unlockAudio(); sfx("select");
+  const norm = s => s.replace(/[\s'"‘’“”.!]/g, "");
+  const match = norm(v) === norm(n.canon);
+  S.names[n.key] = v;
+  const delta = match ? {canon:15, imag:0} : {canon:0, imag:5};
+  S.canon += delta.canon; S.imag += delta.imag;
+  S.picks = S.picks.filter(p => p.id !== n.id); S.picks.push({id:n.id, type: match ? "canon" : "name", val:v});
+  updateGauge(delta);
+  showBadge(match ? "canon" : "name", match ? "📖 원작과 똑같은 이름!" : "✍️ 나만의 이름이 생겼어요!");
+  el.nameInput.blur();
+  setTimeout(() => { picking = false; enter(S.pos + 1, n.note); }, 700);
+}
+function showBadge(type, text){
+  el.badge.className = "badge " + type; void el.badge.offsetWidth;
+  el.badge.textContent = text; el.badge.classList.add("show");
+  setTimeout(() => sfx("chime"), 120);
+}
+function renderEndcard(){
+  const E = CH.endings[S.ending], col = {canon:"#c9504a", imag:"#3f78b0", bal:"#5b8a5e"}[S.ending];
+  el.endIn.innerHTML = `<small>${CH.num}장 결말</small><h2>🎬 ${esc(E.title)}</h2><span class="lbl" style="background:${col}">${E.label}</span>
+    <div class="slots">${["canon","imag","bal"].map(k => `<span class="${P.endings[CH.key + "_" + k] ? "got" : ""}">${P.endings[CH.key + "_" + k] ? CH.endings[k].label : "??? 결말"}</span>`).join("")}</div>`;
+  el.choices.hidden = true; el.dlgText.hidden = false; el.note.hidden = true;
+  el.nameTag.textContent = "🎬 결말"; el.nameTag.className = "nametag sys";
+  el.progress.textContent = CH.num + "장 끝";
+  const found = ["canon","imag","bal"].filter(k => P.endings[CH.key + "_" + k]).length;
+  setTextNow(level === "lit" ? `${CH.num}장의 결말에 닿았습니다. 지금까지 발견한 결말은 3개 중 ${found}개입니다. 클릭하면 리포트로 넘어갑니다.` : `${CH.num}장 결말을 만났어요! 결말 3개 중 ${found}개를 찾았어요. 클릭하면 리포트를 볼 수 있어요.`);
+  sfx("end");
+}
+function showChapterCard(){
+  el.ccTitle.textContent = CH.num + "장 · " + CH.title;
+  el.ccSub.textContent = CH.orig + " 「" + CH.origTitle + "」";
+  el.chapterCard.classList.add("show"); sfx("page");
+  setTimeout(() => el.chapterCard.classList.remove("show"), 1600);
+}
+function renderCover(){
+  el.cover.classList.remove("hide"); document.body.classList.add("covering"); el.vn.classList.remove("choosing");
+  el.coverSub.textContent = CHAPTERS.map(c => c.num + "장 " + c.title).join(" · ");
+  el.coverText.textContent = level === "lit"
+    ? "고아 소녀 앤 셜리가 초록 지붕 집의 가족이 되기까지. 선택에 따라 장마다 결말이 달라지고, 앞 장의 선택이 다음 장에 흔적을 남깁니다. 📖 원문 책장에서는 1908년 원작을 새로 옮긴 문장 전체를 함께 읽을 수 있습니다."
+    : "앤이 초록 지붕 집의 가족이 되어 가는 이야기예요. 무엇을 고르느냐에 따라 결말이 바뀌고, 앞에서 고른 것이 다음 장에 다시 나와요! 📖 원문 책장을 열면 원작 소설 문장도 함께 읽을 수 있어요.";
+  el.btnContinue.hidden = !S.started || S.phase === "cover";
+  const chips = $("chapChips");
+  const avail = CHAPTERS.filter((c, i) => i === 0 || P.reached[c.key]);
+  chips.innerHTML = avail.length > 1 ? `<span style="font-size:.78rem;font-weight:800;color:#8a6a4a">장 골라서 시작:</span>` + avail.map(c => `<button type="button" class="btn" data-ci="${CHAPTERS.indexOf(c)}">${c.num}장 · ${c.title}</button>`).join("") : "";
+  chips.querySelectorAll("button").forEach(b => b.onclick = e => { e.stopPropagation(); unlockAudio(); const ci = +b.dataset.ci; startChapter(ci, ci === 0 ? null : (P.snaps[CHAPTERS[ci].key] || null)); });
+  el.btnStart.textContent = el.btnContinue.hidden ? "📖 이야기 시작하기" : "📖 처음부터 시작";
+  el.dlgText.hidden = false; el.choices.hidden = true; el.note.hidden = true;
+  el.nameTag.textContent = "안내"; el.nameTag.className = "nametag sys";
+  el.progress.textContent = CH.num + "장"; el.miniBook.hidden = true;
+  el.coverHelp.textContent = level === "lit" ? "화면을 클릭하면 문장이 완성되고, 한 번 더 클릭하면 다음 장면으로 넘어갑니다. 점선 밑줄 낱말을 누르면 뜻풀이가 나옵니다." : "화면을 누르면 문장이 바로 다 나오고, 한 번 더 누르면 다음으로 넘어가요. 점선 밑줄 낱말을 누르면 뜻을 알려 줘요!";
+  el.nextHint.classList.remove("on"); el.barFill.style.width = "0";
+  curBg = null; renderScene(true); setPill();
+}
+
+/* ---------- 리포트 ---------- */
+function renderReport(){
+  const total = S.canon + S.imag, c = Math.round(S.canon / total * 100), i = 100 - c;
+  const lit = level === "lit", E = S.ending ? CH.endings[S.ending] : null;
+  const emoji = {canon:"📖", imag:"✨", bal:"⚖️"}[S.ending] || "🎬";
+  const desc = {
+    canon: lit ? "원작 속 앤이 걸었던 길을 충실히 따라 결말에 닿았습니다. 인물의 성격을 읽어 내는 눈이 밝은 독자입니다." : "원작 속 앤이 했던 선택을 거의 그대로 따라갔어요. 앤의 마음을 정말 잘 읽었어요!",
+    imag: lit ? "원작 바깥으로 상상의 오솔길을 여러 번 내었습니다. 앤처럼 세상을 새로 이름 짓는 독자입니다." : "원작과 다른 상상의 길을 많이 골랐어요. 앤처럼 상상력이 반짝이는 친구예요!",
+    bal: lit ? "앤의 뜨거운 마음과 주변 사람들의 마음 사이에서 균형을 찾았습니다. 타인을 헤아리는 성숙한 읽기입니다." : "앤의 마음도, 주변 사람들의 마음도 함께 생각했어요. 지혜롭고 따뜻한 선택이었어요!"
+  }[S.ending] || "";
+  const rows = CHOICE_IDS.map(id => {
+    const n = NODES[IDX[id]], p = S.picks.find(x => x.id === id); if(!p) return "";
+    if(n.t === "name" && n.free){
+      return `<div class="c">${esc(n.label)}</div><div class="mine"><span class="tag bal">나의 생각</span><br>"${esc(p.val)}"</div><div class="orig"><span class="tag canon">원작</span><br>${esc(T(n.note))}</div>`;
+    }
+    if(n.t === "name"){
+      return `<div class="c">${esc(n.label)}</div><div class="mine"><span class="tag ${p.type}">${LABEL[p.type]}</span><br>'${esc(p.val)}'</div><div class="orig"><span class="tag canon">원작</span><br>'${esc(n.canon)}'</div>`;
+    }
+    const mine = n.opts[p.oi], orig = n.opts.find(o => o.type === "canon");
+    return `<div class="c">${esc(n.label)}</div><div class="mine"><span class="tag ${p.type}">${LABEL[p.type]}</span><br>${esc(T(mine.s))}</div><div class="orig"><span class="tag canon">원작</span><br>${esc(T(orig.s))}</div>`;
+  }).join("");
+  const items = S.items.map(k => `<div class="item"><span class="ic">${ITEMS[k].ic}</span><span><b>${ITEMS[k].name}</b><br>${esc(fill(ITEMS[k].desc))}</span></div>`).join("") || `<p style="font-size:.85rem;color:#8a7461">아직 모은 물건이 없어요.</p>`;
+  const album = ALBUM.map(a => P.album[a.id] ? `<div><span class="ic">${a.ic}</span>${a.name}</div>` : `<div class="lock"><span class="ic">❔</span>???</div>`).join("");
+  const ends = ["canon","imag","bal"].map(k => P.endings[CH.key + "_" + k] ? `<div><span class="ic">🎬</span>${CH.endings[k].title}<br><small>${CH.endings[k].label}</small></div>` : `<div class="lock"><span class="ic">❔</span>??? 결말</div>`).join("");
+  el.report.innerHTML = `<div class="rp-wrap">
+    <div class="rp-head"><small>CHAPTER ${CH.num} REPORT</small><h2>🎒 ${CH.num}장 리포트 · ${CH.title}</h2>
+      <p style="font-size:.86rem;color:#6e5b4b;margin-top:6px">${CH.orig} 「${CH.origTitle}」</p>
+      ${S.ch > 0 ? `<p style="font-size:.82rem;color:#8a7461;margin-top:6px">지금까지의 여정 · ${CHAPTERS.slice(0, S.ch + 1).map(c => S.hist[c.key] ? `${c.num}장 ${c.endings[S.hist[c.key].ending].label}` : `${c.num}장 —`).join(" → ")}</p>` : ""}</div>
+    ${E ? `<div class="type-card"><div class="type-emoji">${emoji}</div><div style="flex:1">
+      <h3>내가 만난 결말: ${esc(E.title)} <span class="tag ${S.ending}" style="vertical-align:middle">${E.label}</span></h3><p>${desc}</p>
+      <div class="rp-gauge"><span style="width:${c}%;background:linear-gradient(90deg,#c9504a,#ec8d84)"></span><span style="width:${i}%;background:linear-gradient(90deg,#8cbbe6,#3f78b0)"></span></div>
+      <div class="rp-legend"><span style="color:#b9473f">📖 원작 ${c}%</span><span style="color:#5b8a5e">원작 ${S.tally.canon} · 상상 ${S.tally.imag} · 균형 ${S.tally.bal}번 선택</span><span style="color:#3d73a8">상상 ${i}% ✨</span></div>
+    </div></div>` : ""}
+    <div class="card"><h4>🧭 내 선택과 원작 비교</h4><div class="cmp"><div class="h">장면</div><div class="h">내가 고른 길</div><div class="h">원작 속 앤</div>${rows}</div></div>
+    <div class="grid2">
+      <div class="card"><h4>🎁 추억 상자</h4><div class="items">${items}</div>
+        ${heartsHtml()}</div>
+      <div class="card"><h4>🎬 결말 모음 (${["canon","imag","bal"].filter(k => P.endings[CH.key + "_" + k]).length}/3)</h4><div class="album">${ends}</div>
+        <h4 style="margin-top:14px">✨ 숨은 장면 (${albumCount()}/${ALBUM.length})</h4><div class="album">${album}</div></div>
+    </div>
+    <div class="card"><h4>💬 생각 나누기</h4><ol class="talk-q" style="padding-left:20px">${(lit ? CH.talk.l : CH.talk.e).map(q => `<li>${q}</li>`).join("")}</ol></div>
+    <div class="rp-btns">
+      <button type="button" class="big" id="rpReplay">🔁 다른 선택으로 ${CH.num}장 다시 하기</button>
+      <button type="button" class="big sky" id="rpBook">📖 원문으로 ${CH.num}장 전체 읽기</button>
+      <button type="button" class="big alt" id="rpPrint">🖨️ 리포트 인쇄</button>
+      ${CHAPTERS[S.ch + 1] ? `<button type="button" class="big sky" id="rpNext">➡ ${CH.num + 1}장 「${CHAPTERS[S.ch + 1].title}」으로</button>` : `<button type="button" class="big alt" disabled title="다음 장은 준비 중이에요">➡ ${CH.num + 1}장 (준비 중)</button>`}
+    </div></div>`;
+  $("rpReplay").onclick = () => replay();
+  if($("rpNext")) $("rpNext").onclick = () => nextChapter();
+  $("rpBook").onclick = () => openBook(true);
+  $("rpPrint").onclick = () => window.print();
+  el.report.scrollTop = 0;
+}
+
+/* =========================================================
+   8. 원문 책장 & 낱말 풀이
+   ========================================================= */
+function buildBook(){
+  const B = BOOK[CH.key];
+  let num = 0;
+  el.bookTitle.textContent = "📖 " + B.orig + " 「" + B.title + "」";
+  el.bookSub.textContent = "L. M. 몽고메리 《빨강 머리 앤》(1908) 영어 원작을 이 앱을 위해 새로 우리말로 옮겼어요. 점선 밑줄 낱말을 누르면 뜻풀이가 나와요.";
+  el.bookBody.innerHTML = B.paras.map(([n, t]) => {
+      if(n === "h"){ num = 0; return `<h4 style="font-family:sans-serif;font-size:.86rem;color:#8a4a2a;margin:14px 0 8px;padding:6px 10px;background:#f6ead6;border-radius:8px">${t}</h4>`; }
+      num++; return `<p class="bp${(CH.key === "ch1" && n === 3) ? " poem" : ""}" data-p="${n}"><i>${num}</i>${gloss(t)}</p>`; }).join("") +
+    (B.extra || []).map(([id, label, t]) => `<p class="bp extra" data-p="${id}"><b style="font-family:sans-serif;font-size:.78rem;color:#7a5a8a">${label}</b><br>${gloss(t)}</p>`).join("");
+  bookBuiltFor = CH.key;
+}
+function anchorFor(){
+  const n = curNode();
+  if(n.bk) return {list:n.bk.map(String), imag:false};
+  // 상상 장면 등 원문 표시가 없으면, 뒤에서 가장 가까운 원문 위치를 찾음
+  for(let i = S.pos + 1; i < NODES.length; i++){ if(NODES[i].bk && !NODES[i].t){ return {list:[String(NODES[i].bk[0])], imag: n.fx === "dream" || S.phase === "choice" || S.phase === "name"}; } }
+  return {list:[], imag:false};
+}
+function syncBook(scroll){
+  if(!el.book.classList.contains("open")) return;
+  if(bookBuiltFor !== CH.key) buildBook();
+  const a = (S.phase === "cover" || S.phase === "report") ? {list:[], imag:false} : anchorFor();
+  el.bookBody.querySelectorAll(".bp").forEach(p => p.classList.toggle("now", a.list.includes(p.dataset.p)));
+  el.bookBanner.hidden = !(a.imag && curNode().fx === "dream");
+  if(scroll !== false && a.list.length){ const t = el.bookBody.querySelector(`.bp[data-p="${a.list[0]}"]`); if(t) t.scrollIntoView({block:"center", behavior: scroll === "instant" ? "auto" : "smooth"}); }
+}
+function openBook(top){
+  if(bookBuiltFor !== CH.key) buildBook();
+  el.book.classList.add("open");
+  if(top === true){ el.bookBody.querySelectorAll(".bp").forEach(p => p.classList.remove("now")); el.bookBanner.hidden = true; el.bookBody.scrollTop = 0; }
+  else syncBook("instant");
+  sfx("page");
+}
+function closeBook(){ el.book.classList.remove("open"); }
+
+function showTip(target){
+  const r = target.getBoundingClientRect();
+  el.tip.innerHTML = `<b>${esc(target.textContent)}</b> · ${esc(target.dataset.g)}`;
+  el.tip.hidden = false;
+  const tw = el.tip.offsetWidth, th = el.tip.offsetHeight;
+  let x = Math.min(window.innerWidth - tw - 8, Math.max(8, r.left + r.width/2 - tw/2));
+  let y = r.top - th - 8; if(y < 8) y = r.bottom + 8;
+  el.tip.style.left = x + "px"; el.tip.style.top = y + "px";
+}
+function hideTip(){ el.tip.hidden = true; }
+document.addEventListener("mouseover", e => { const g = e.target.closest && e.target.closest(".gl"); if(g) showTip(g); });
+document.addEventListener("mouseout", e => { const g = e.target.closest && e.target.closest(".gl"); if(g) hideTip(); });
+document.addEventListener("click", e => {
+  const g = e.target.closest && e.target.closest(".gl");
+  if(g){ e.stopPropagation(); showTip(g); clearTimeout(window.__tipT); window.__tipT = setTimeout(hideTip, 3500); }
+  else hideTip();
+}, true);
+
+/* =========================================================
+   9. 툴바
+   ========================================================= */
+function applyLevelUI(){
+  document.body.classList.toggle("lit", level === "lit");
+  el.btnLevel.classList.toggle("lit", level === "lit");
+  el.btnLevel.textContent = level === "lit" ? "📜 원작 수준" : "🌱 초등 수준";
+  el.btnLevel.title = level === "lit" ? "지금: 원작 수준(문학 표현) · 누르면 초등 수준으로" : "지금: 초등 수준(쉬운 말) · 누르면 원작 수준으로";
+}
+function applySoundUI(){ el.btnSound.textContent = soundOn ? "🔊" : "🔇"; el.btnSound.title = soundOn ? "효과음 켜짐 (누르면 끄기)" : "효과음 꺼짐 (누르면 켜기)"; }
+el.btnLevel.addEventListener("click", e => {
+  e.stopPropagation();
+  level = level === "easy" ? "lit" : "easy"; save(); applyLevelUI();
+  if(S.phase === "play") renderPlay(true);
+  else if(S.phase === "choice") refreshChoiceTexts();
+  else if(S.phase === "name") el.question.textContent = T(curNode().q);
+  else if(S.phase === "endcard") renderEndcard();
+  else if(S.phase === "report") renderReport();
+  else if(S.phase === "cover") renderCover();
+  toast(level === "lit" ? "📜 원작 수준(문학 표현)으로 바꿨어요" : "🌱 초등 수준(쉬운 말)으로 바꿨어요");
+});
+el.btnSound.addEventListener("click", e => { e.stopPropagation(); soundOn = !soundOn; applySoundUI(); save(); if(soundOn){ unlockAudio(); sfx("select"); } });
+el.btnBook.addEventListener("click", e => { e.stopPropagation(); el.book.classList.contains("open") ? closeBook() : openBook(); });
+el.miniBook.addEventListener("click", e => { e.stopPropagation(); openBook(); });
+el.bookClose.addEventListener("click", closeBook);
+el.bookNow.addEventListener("click", () => syncBook());
+el.bookSize.addEventListener("click", () => { el.book.classList.toggle("big"); el.bookSize.textContent = el.book.classList.contains("big") ? "가 글자 작게" : "가 글자 크게"; });
+el.btnBox.addEventListener("click", e => {
+  e.stopPropagation();
+  const items = S.items.length ? S.items.map(k => `<div class="item"><span class="ic">${ITEMS[k].ic}</span><span><b>${ITEMS[k].name}</b><br>${esc(fill(ITEMS[k].desc))}</span></div>`).join("") : "<p>아직 모은 물건이 없어요. 이야기를 진행하면 하나씩 생겨요!</p>";
+  modal("🎁 추억 상자", `<div class="items">${items}</div>${heartsHtml()}
+    <p style="margin-top:10px;font-size:.84rem;color:#8a7461">✨ 숨은 장면 ${albumCount()}/${ALBUM.length} · 🎬 결말 ${["canon","imag","bal"].filter(k => P.endings[CH.key + "_" + k]).length}/3</p>`, [{label:"닫기", cls:"big alt"}]);
+});
+el.btnReset.addEventListener("click", e => {
+  e.stopPropagation();
+  modal("↺ 처음부터 다시 할까요?", "<p>지금까지의 진행과 게이지가 지워지고 1장 처음부터 시작해요.</p><p style='margin-top:6px;font-size:.85rem;color:#8a7461'>[모든 기록 지우기]를 누르면 모은 결말과 숨은 장면까지 지워져요. 여러 학생이 같은 컴퓨터를 쓸 때 사용하세요.</p>", [
+    {label:"취소"},
+    {label:"🧹 모든 기록 지우기", cls:"btn", fn:() => { P = freshP(); startNew(); }},
+    {label:"처음부터 시작", cls:"big", fn:() => startNew()}
+  ]);
+});
+const CARRY = ["canon","imag","hearts","met","items","flags","names","hist"];
+function carry(){ const o = {}; CARRY.forEach(k => o[k] = JSON.parse(JSON.stringify(S[k]))); return o; }
+function startChapter(ci, snap){
+  setChapter(ci);
+  const base = fresh();
+  S = Object.assign(base, snap ? JSON.parse(JSON.stringify(snap)) : {});
+  S.ch = ci; S.started = true; S.pos = 0; S.phase = "play"; S.bg = (CH.nodes[0] && CH.nodes[0].bg) || CH.key;
+  S.snap = carry();
+  P.reached[CH.key] = true; P.snaps[CH.key] = S.snap;
+  closeBook(); curBg = null; el.cover.classList.add("hide"); document.body.classList.remove("covering"); el.stage.hidden = false; el.report.hidden = true;
+  showChapterCard(); enter(0);
+}
+function startNew(){ startChapter(0, null); }
+function replay(){ startChapter(S.ch, S.snap); }
+function nextChapter(){ if(CHAPTERS[S.ch + 1]) startChapter(S.ch + 1, carry()); }
+
+el.fileInput.addEventListener("change", e => { handleFiles(e.target.files); e.target.value = ""; });
+el.btnHelp.addEventListener("click", e => {
+  e.stopPropagation();
+  const has = k => imgFor(k) ? "" : "miss";
+  modal("🖼️ 이미지 파일 이름 안내", `<p>이미지 이름만 맞추면 알맞은 장면에 자동으로 들어가요. 없는 장면은 내장 수채화 그림이 대신 나와요.</p>
+    <p style="margin-top:8px"><b>배경 (16:9 권장)</b> · 앞에 <code>bg_</code>를 붙여도 돼요 (예: <code>bg_ch2.png</code>)</p>
+    <div class="img-list">${BG_KEYS.map(k => `<span class="${has(k)}">${k}</span>`).join("")}</div>
+    <p style="margin-top:4px;font-size:.8rem;color:#8a7461;line-height:1.7">1장: ch1 = 기차역 · ch1_road = 언덕길 · ch1_avenue = 가로수길 · ch1_pond = 연못 · ch1_home = 초록 지붕 집(밤)<br>2장: ch2 = 초록 지붕 집 부엌 · ch2_room = 앤의 방(동쪽 다락방) · ch2_lane = 노을 진 오솔길 · ch2_lynde = 린드 부인네 부엌 · ch2_night = 밤의 오솔길</p>
+    <p style="margin-top:8px"><b>캐릭터 (투명 PNG 권장 · 흰 배경은 자동으로 지워요)</b></p>
+    <div class="img-list">${SPRITE_KEYS.map(k => `<span class="${has(k)}">${k}</span>`).join("")}</div>
+    <p style="margin-top:8px;font-size:.82rem;color:#8a7461">초록색 = 지금 적용됨 · 회색 = 아직 없음</p>
+    <p style="margin-top:8px">학생에게 나눠 줄 파일에 이미지를 넣으려면 <b>[🖼️ 폴더 이미지 불러오기]</b>로 선택한 뒤 <b>[💾 배포용 단일 HTML 저장]</b>을 누르세요.</p>`, [{label:"닫기", cls:"big alt"}]);
+});
+
+/* ---------- 배포용 단일 HTML ---------- */
+async function collectImages(){
+  const out = Object.assign({}, EMB);
+  for(const k of Object.keys(folderFound)){ if(uploaded[k] || out[k]) continue; try{ out[k] = await processImage(folderFound[k], k); }catch(e){} }
+  return Object.assign(out, uploaded);
+}
+function buildHTML(images, student){
+  const doc = new DOMParser().parseFromString(PRISTINE_HTML, "text/html");
+  doc.getElementById("embedded-images").textContent = "window.EMBEDDED_IMAGES = " + JSON.stringify(images).replace(/</g, "\\u003c") + "; window.STUDENT_MODE = " + (student ? "true" : "false") + ";";
+  return "<!DOCTYPE html>\n" + doc.documentElement.outerHTML;
+}
+el.btnExport.addEventListener("click", async e => {
+  e.stopPropagation(); toast("배포용 파일을 준비하는 중이에요…");
+  const images = await collectImages(), keys = Object.keys(images);
+  const size = keys.reduce((s,k) => s + images[k].length, 0) / 1048576;
+  const all = BG_KEYS.concat(SPRITE_KEYS), missed = Object.keys(folderFound).filter(k => !images[k]);
+  let body = keys.length ? `<p>아래 <b>${keys.length}개</b> 이미지가 HTML 안에 들어가요. (약 ${size.toFixed(1)}MB)</p>`
+    : `<p><b>아직 불러온 이미지가 없어요.</b> 지금 저장하면 내장 수채화 그림만 들어간 파일이 만들어져요.</p>`;
+  body += `<div class="img-list">${all.map(k => `<span class="${images[k] ? "" : "miss"}">${k}</span>`).join("")}${keys.filter(k => !all.includes(k)).map(k => `<span>${esc(k)}</span>`).join("")}</div>`;
+  if(missed.length) body += `<p style="margin-top:8px;color:#b9473f">같은 폴더에서 자동으로 찾은 ${esc(missed.join(", "))} 이미지는 브라우저 보안 때문에 넣지 못했어요. [🖼️ 폴더 이미지 불러오기]로 직접 선택해 주세요.</p>`;
+  body += `<label class="chk"><input type="checkbox" id="chkStudent" checked style="margin-top:4px"><span>학생용으로 저장 (교사 도구 버튼 숨김)<br><span style="font-weight:500;font-size:.8rem;color:#8a7461">학생용 파일에서 교사 도구를 다시 보려면 주소 끝에 #teacher 를 붙여 열면 돼요.</span></span></label>`;
+  modal("💾 배포용 단일 HTML 저장", body, [
+    {label:"닫기"},
+    {label:"📋 코드 복사", cls:"btn", keep:true, fn:() => copyCode(buildHTML(images, $("chkStudent").checked))},
+    {label:"📱 앱용 index.html", cls:"btn", keep:true, fn:() => download(buildHTML(images, $("chkStudent").checked), "index.html")},
+    {label:"💾 anne_visual_novel.html 다운로드", cls:"big", keep:true, fn:() => download(buildHTML(images, $("chkStudent").checked))}
+  ]);
+});
+function download(html, name){
+  try{
+    const url = URL.createObjectURL(new Blob([html], {type:"text/html;charset=utf-8"}));
+    const a = document.createElement("a"); a.href = url; a.download = name || "anne_visual_novel.html";
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+    toast("다운로드를 시작했어요! 다운로드 폴더를 확인해 주세요.");
+  }catch(err){ toast("이 화면에서는 다운로드가 막혀 있어요. [📋 코드 복사]를 이용해 주세요."); }
+}
+function copyCode(html){
+  const fallback = () => {
+    el.mBody.insertAdjacentHTML("beforeend", `<p style="margin-top:10px">아래 칸의 코드를 전체 선택(Ctrl+A)해서 복사한 뒤, 메모장에 붙여 넣고 <code>anne_visual_novel.html</code>로 저장하세요.</p><textarea readonly id="codeBox"></textarea>`);
+    const t = $("codeBox"); t.value = html; t.focus(); t.select(); try{ if(document.execCommand("copy")) toast("코드를 복사했어요!"); }catch(e){}
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(html).then(() => toast("코드를 복사했어요! 메모장에 붙여 넣고 anne_visual_novel.html로 저장하세요."), fallback);
+  else fallback();
+}
+
+/* ---------- 모달 & 토스트 ---------- */
+function modal(title, html, buttons){
+  el.mTitle.textContent = title; el.mBody.innerHTML = html; el.mBtns.innerHTML = "";
+  (buttons || [{label:"확인"}]).forEach(b => {
+    const bt = document.createElement("button"); bt.type = "button"; bt.className = b.cls || "btn"; bt.textContent = b.label;
+    bt.addEventListener("click", ev => { ev.stopPropagation(); if(!b.keep) closeModal(); if(b.fn) b.fn(); });
+    el.mBtns.appendChild(bt);
+  });
+  el.modal.hidden = false;
+}
+function closeModal(){ el.modal.hidden = true; }
+el.modal.addEventListener("click", e => { if(e.target === el.modal) closeModal(); });
+let toastT = null;
+function toast(msg){ el.toast.textContent = msg; el.toast.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => el.toast.classList.remove("show"), 2800); }
+
+/* =========================================================
+   10. 입력
+   ========================================================= */
+el.dialog.addEventListener("click", e => {
+  if(e.target.closest("button, input, .choices, .gl")) return;
+  unlockAudio(); advance();
+});
+el.viewer.addEventListener("click", e => { if(e.target.closest(".cover")) return; unlockAudio(); advance(); });
+el.nameOk.addEventListener("click", e => { e.stopPropagation(); submitName(); });
+el.nameInput.addEventListener("keydown", e => { if(e.key === "Enter" && !e.isComposing){ e.preventDefault(); submitName(); } e.stopPropagation(); });
+el.btnStart.addEventListener("click", e => { e.stopPropagation(); unlockAudio(); startNew(); });
+el.btnContinue.addEventListener("click", e => { e.stopPropagation(); unlockAudio(); el.cover.classList.add("hide"); curBg = null; render(false); });
+document.addEventListener("keydown", e => {
+  if(!el.modal.hidden){ if(e.key === "Escape") closeModal(); return; }
+  if(e.key === "Escape" && el.book.classList.contains("open")){ closeBook(); return; }
+  const tag = e.target && e.target.tagName;
+  if(tag === "INPUT" || tag === "TEXTAREA") return;
+  if(tag === "BUTTON" && (e.key === "Enter" || e.key === " ")) return;
+  if(S.phase === "choice" && /^[1-3]$/.test(e.key) && el.cover.classList.contains("hide")){ const b = el.choiceList.querySelectorAll(".choice")[+e.key - 1]; if(b) b.click(); return; }
+  if(e.key === "Enter" || e.key === " " || e.key === "ArrowRight"){
+    e.preventDefault();
+    if(S.phase === "report") return;
+    if(!el.cover.classList.contains("hide")){ S.started && S.phase !== "cover" ? el.btnContinue.click() : startNew(); return; }
+    advance();
+  }
+});
+
+/* =========================================================
+   11. 시작
+   ========================================================= */
+if(window.STUDENT_MODE && location.hash !== "#teacher") document.body.classList.add("student");
+window.addEventListener("hashchange", () => document.body.classList.toggle("student", !!window.STUDENT_MODE && location.hash !== "#teacher"));
+window.__anne = {state:() => S, node:() => curNode(), persist:() => P, process:(src, key) => processImage(src, key)};
+/* 홈 화면 앱(웹앱): 인터넷 주소로 열었을 때만 오프라인 기능을 켭니다. 파일로 열면 그냥 지나갑니다. */
+if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){ window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {})); }
+load(); probeFolder(); applyLevelUI(); applySoundUI(); applyFxUI(); updateGauge();
+renderCover();
+})();
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "빨강 머리 앤 — 초록 지붕 집으로 가는 길",
+  "short_name": "빨강 머리 앤",
+  "description": "원작 소설과 함께 읽는 선택형 문학 비주얼 노벨",
+  "lang": "ko",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fbf6ec",
+  "theme_color": "#6f9a72",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

@@ -2,7 +2,7 @@
    10장 대본 · 길모퉁이 (원작 32~38장, 37~38장 중심) + 최종 보고서
    ========================================================= */
 CHAPTERS.push({
-  key: `ch10`, num: 10, title: `길모퉁이`, orig: `원작 32~38장`, origTitle: `길모퉁이`,
+  key: `ch10`, num: 10, bgm: `bgm_ch10.mp3`, title: `길모퉁이`, orig: `원작 32~38장`, origTitle: `길모퉁이`,
   bgKeys: [`ch10`, `ch10_pasture`, `ch10_hill`],
   midReport: true, finalReport: true,
   endings: {

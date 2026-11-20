@@ -5,6 +5,7 @@ MSG="$1"
 cd /home/claude
 python3 tools/build.py
 python3 tools/assets.py 2>&1 | grep -v "proxy\|allowed\|use the read" | tail -1
+python3 tools/mkeasy.py
 R=anne/source
 rm -rf $R/build $R/tools; cp -r build tools $R/
 rm -rf $R/text/translations; cp -r src/tr $R/text/translations

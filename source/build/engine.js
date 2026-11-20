@@ -3,6 +3,11 @@ const PRISTINE_HTML = document.documentElement.outerHTML;
 
 (function(){
 "use strict";
+/* 쉬운 이야기(특수교육·느린 학습자용): /easy/ 주소이거나 ?easy 로 열면 쉬운 장들로 바꿔 끼웁니다. */
+const EASY_MODE = !!window.EASY_MODE || /[?&]easy\b/.test(location.search);
+if(EASY_MODE && EASY.length){ CHAPTERS.length = 0; EASY.forEach(c => CHAPTERS.push(c)); }
+if(EASY_MODE) document.documentElement.classList.add("easy");
+if(EASY_MODE){ document.title = "쉬운 빨강 머리 앤"; const h = document.querySelector(".cover h1"); if(h) h.innerHTML = `빨강 머리 앤 <span style="display:inline-block;font-size:.5em;vertical-align:middle;background:#fde7a8;color:#7a5a1a;border-radius:999px;padding:3px 12px">🌼 쉬운 이야기</span>`; }
 
 /* =========================================================
    0. 공통 데이터
@@ -102,7 +107,8 @@ const GLOSS = {
   "접시꽃":`키가 크게 자라고 접시처럼 둥근 꽃이 피는 식물이에요.`
 };
 const GLOSS_RE = new RegExp(Object.keys(GLOSS).sort((a,b) => b.length - a.length).map(k => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "g");
-const KIND = {act:`🚶 행동하기`, predict:`🔮 예측하기 · 원작의 앤은?`, talk:`💬 말 걸기`, name:`✍️ 이름 짓기`};
+const KIND = {act:`🚶 행동하기`, predict:`🔮 예측하기 · 원작의 앤은?`, talk:`💬 말 걸기`, name:`✍️ 이름 짓기`, feel:`💗 마음 읽기`};
+const EASY_IC = {canon:`📖`, imag:`✨`, bal:`⚖️`};
 const WHO = {anne:`앤 셜리`, matthew:`매슈 커스버트`, station:`역장`, marilla:`마릴라 커스버트`, lynde:`레이첼 린드 부인`, diana:`다이애나 배리`, barry:`배리 부인`, gilbert:`길버트 블라이스`, phillips:`필립스 선생님`, jimmy:`지미 글로버`, doctor:`의사 선생님`, maryjoe:`메리 조`, allan:`앨런 사모님`, ruby:`루비 길리스`, jane:`제인 앤드루스`};
 const CHARS = {matthew:{ic:`🐴`, name:`매슈`, full:`매슈 아저씨`, start:1}, marilla:{ic:`🧺`, name:`마릴라`, full:`마릴라 아주머니`, start:1}, lynde:{ic:`🧶`, name:`린드 부인`, full:`린드 부인`, start:0}, diana:{ic:`🎀`, name:`다이애나`, full:`다이애나`, start:1}, barry:{ic:`📚`, name:`배리 부인`, full:`배리 부인`, start:0}, gilbert:{ic:`🍎`, name:`길버트`, full:`길버트`, start:0}, allan:{ic:`🌸`, name:`앨런 사모님`, full:`앨런 사모님`, start:1}};
 const DEFAULT_NAMES = {avenue:`기쁨의 하얀 길`, pond:`반짝이는 호수`, advice:`…`, snood:`스누드`, spring:`드라이어드의 샘`, vale:`제비꽃 골짜기`};
@@ -131,7 +137,7 @@ const SPRITE_KEYS = [`anne_happy`,`anne_sad`,`anne_surprised`,`anne_angry`,`anne
 /* =========================================================
    1. 상태 & 저장
    ========================================================= */
-const SAVE_KEY = "anneVN_v2";
+const SAVE_KEY = EASY_MODE ? "anneVN_easy" : "anneVN_v2";
 const fresh = () => ({ch:0, pos:0, phase:"cover", started:false, canon:50, imag:50, hearts:{matthew:1}, met:{}, items:[], flags:{}, names:{},
   picks:[], tally:{canon:0, imag:0, bal:0}, ending:null, order:null, note:null, bg:`ch1`, cam:``, hist:{}, snap:null});
 const freshP = () => ({album:{}, endings:{}, reached:{}, snaps:{}});
@@ -145,7 +151,7 @@ function load(){
     const d = JSON.parse(localStorage.getItem(SAVE_KEY) || "null"); if(!d) return;
     if(d.S) S = Object.assign(fresh(), d.S);
     if(d.P) P = Object.assign(freshP(), d.P);
-    if(d.level === "easy" || d.level === "lit") level = d.level;
+    if(!EASY_MODE && (d.level === "easy" || d.level === "lit")) level = d.level;
     if(typeof d.soundOn === "boolean") soundOn = d.soundOn;
     if(typeof d.musicOn === "boolean") musicOn = d.musicOn;
     if(typeof d.fxOn === "boolean") fxOn = d.fxOn;
@@ -1078,18 +1084,20 @@ function renderPlay(instant){
 function shuffle(n){ const a = Array.from({length:n}, (_,i) => i); for(let i=n-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; }
 function renderChoice(){
   const n = curNode();
-  if(!Array.isArray(S.order) || S.order.length !== n.opts.length){ S.order = shuffle(n.opts.length); save(); }
+  if(!Array.isArray(S.order) || S.order.length !== n.opts.length){ S.order = n.kind === "feel" ? n.opts.map((_, i) => i) : shuffle(n.opts.length); save(); }
   clearInterval(typer); typing = false; typerDone = null;
   el.dlgText.hidden = true; el.note.hidden = true; el.choices.hidden = false; el.nameBox.hidden = true; el.choiceList.hidden = false; el.nextHint.classList.remove("on");
   el.nameTag.textContent = "💭 선택의 순간"; el.nameTag.className = "nametag sys";
   el.progress.textContent = CH.num + "장 · " + n.label;
   el.kind.textContent = KIND[n.kind]; el.kind.className = "kind " + n.kind;
   el.question.textContent = T(n.q);
-  el.choiceList.innerHTML = "";
+  el.choiceList.innerHTML = ""; el.choiceList.classList.toggle("feelrow", n.kind === "feel");
   S.order.forEach((oi, pos) => {
     const b = document.createElement("button");
     b.type = "button"; b.className = "choice"; b.dataset.oi = oi;
-    b.innerHTML = `<span class="num">${pos + 1}</span><span class="ct"></span>`;
+    const o = n.opts[oi], ic = o.ic || (EASY_MODE ? EASY_IC[o.type] : "");
+    if(n.kind === "feel") b.classList.add("feel");
+    b.innerHTML = ic ? `<span class="num ic">${ic}</span><span class="ct"></span>` : `<span class="num">${pos + 1}</span><span class="ct"></span>`;
     b.querySelector(".ct").textContent = T(n.opts[oi]);
     b.addEventListener("click", e => { e.stopPropagation(); pick(oi, b); });
     el.choiceList.appendChild(b);
@@ -1107,6 +1115,12 @@ function pick(oi, btn){
   const n = curNode(), o = n.opts[oi];
   el.choiceList.querySelectorAll(".choice").forEach(b => b.disabled = true);
   btn.classList.add("picked");
+  if(o.type === "feel"){
+    S.picks = S.picks.filter(p => p.id !== n.id); S.picks.push({id:n.id, type:"feel", oi, ic:o.ic, val:T(o)});
+    applyEff(o.eff); showBadge("bal", o.ok ? "💗 앤의 마음을 잘 읽었어요!" : "💗 그렇게 느낄 수도 있어요");
+    setTimeout(() => { picking = false; enter(o.go ? IDX[o.go] : S.pos + 1, n.note); }, 800);
+    return;
+  }
   const delta = {canon:0, imag:0};
   if(o.type === "canon") delta.canon = 15; else if(o.type === "imag") delta.imag = 15; else { delta.canon = 5; delta.imag = 5; }
   S.canon += delta.canon; S.imag += delta.imag; S.tally[o.type]++;
@@ -1129,6 +1143,14 @@ function renderName(){
   $("nameOk").textContent = n.free ? "말해 주기" : "이름 짓기";
   el.kind.textContent = n.free ? "💌 마음 전하기" : KIND.name;
   el.nameInput.value = S.names[n.key] || "";
+  if(n.pick){
+    el.choiceList.hidden = false; el.choiceList.innerHTML = ""; el.choiceList.classList.remove("feelrow");
+    n.pick.forEach((p, i) => { const b = document.createElement("button"); b.type = "button"; b.className = "choice pickname";
+      b.innerHTML = `<span class="num ic">${["🌸","🌟","🍀","🌈"][i % 4]}</span><span class="ct"></span>`; b.querySelector(".ct").textContent = p;
+      b.addEventListener("click", e => { e.stopPropagation(); el.nameInput.value = p; submitName(); }); el.choiceList.appendChild(b); });
+    el.nameBox.querySelector(".name-help").textContent = "위에서 고르거나, 직접 써도 돼요.";
+    return;
+  }
   setTimeout(() => { try{ el.nameInput.focus({preventScroll:true}); }catch(e){} }, 50);
 }
 function submitName(){
@@ -1181,7 +1203,7 @@ function renderCover(){
   setTimeout(bgmUpdate, 0);
   el.cover.classList.remove("hide"); document.body.classList.add("covering"); el.vn.classList.remove("choosing");
   el.coverSub.textContent = CHAPTERS.map(c => c.num + "장 " + c.title).join(" · ");
-  el.coverText.textContent = level === "lit"
+  el.coverText.textContent = EASY_MODE ? "쉬운 말로 읽는 빨강 머리 앤이에요. 짧은 글을 읽고, 내가 앤이라면 어떻게 할지 골라 보세요. 📖는 원작 속 앤의 선택, ✨는 상상해 보는 선택이에요." : level === "lit"
     ? "고아 소녀 앤 셜리가 초록 지붕 집의 가족이 되기까지. 선택에 따라 장마다 결말이 달라지고, 앞 장의 선택이 다음 장에 흔적을 남깁니다. 📖 원문 책장에서는 1908년 원작을 새로 옮긴 문장 전체를 함께 읽을 수 있습니다."
     : "앤이 초록 지붕 집의 가족이 되어 가는 이야기예요. 무엇을 고르느냐에 따라 결말이 바뀌고, 앞에서 고른 것이 다음 장에 다시 나와요! 📖 원문 책장을 열면 원작 소설 문장도 함께 읽을 수 있어요.";
   el.btnContinue.hidden = !S.started || S.phase === "cover";
@@ -1215,8 +1237,10 @@ function renderReport(){
     if(n.t === "name"){
       return `<div class="c">${esc(n.label)}</div><div class="mine"><span class="tag ${p.type}">${LABEL[p.type]}</span><br>'${esc(p.val)}'</div><div class="orig"><span class="tag canon">원작</span><br>'${esc(n.canon)}'</div>`;
     }
-    const mine = n.opts[p.oi], orig = n.opts.find(o => o.type === "canon");
-    return `<div class="c">${esc(n.label)}</div><div class="mine"><span class="tag ${p.type}">${LABEL[p.type]}</span><br>${esc(T(mine.s))}</div><div class="orig"><span class="tag canon">원작</span><br>${esc(T(orig.s))}</div>`;
+    if(p.type === "feel"){ const mine = n.opts[p.oi], ok = n.opts.find(o => o.ok) || mine;
+      return `<div class="c">${esc(n.label)}</div><div class="mine"><span class="tag bal">나의 느낌</span><br>${mine.ic} ${esc(T(mine))}</div><div class="orig"><span class="tag canon">원작</span><br>${ok.ic} ${esc(T(ok))}</div>`; }
+    const mine = n.opts[p.oi], orig = n.opts.find(o => o.type === "canon") || mine;
+    return `<div class="c">${esc(n.label)}</div><div class="mine"><span class="tag ${p.type}">${LABEL[p.type]}</span><br>${esc(T(mine.s || mine))}</div><div class="orig"><span class="tag canon">원작</span><br>${esc(T(orig.s || orig))}</div>`;
   }).join("");
   const items = S.items.map(k => `<div class="item"><span class="ic">${ITEMS[k].ic}</span><span><b>${ITEMS[k].name}</b><br>${esc(fill(ITEMS[k].desc))}</span></div>`).join("") || `<p style="font-size:.85rem;color:#8a7461">아직 모은 물건이 없어요.</p>`;
   const album = ALBUM.map(a => P.album[a.id] ? `<div><span class="ic">${a.ic}</span>${a.name}</div>` : `<div class="lock"><span class="ic">❔</span>???</div>`).join("");

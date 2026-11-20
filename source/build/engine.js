@@ -1202,10 +1202,8 @@ function showChapterCard(){
 function renderCover(){
   setTimeout(bgmUpdate, 0);
   el.cover.classList.remove("hide"); document.body.classList.add("covering"); el.vn.classList.remove("choosing");
-  el.coverSub.textContent = CHAPTERS.map(c => c.num + "장 " + c.title).join(" · ");
-  el.coverText.textContent = EASY_MODE ? "쉬운 말로 읽는 빨강 머리 앤이에요. 짧은 글을 읽고, 내가 앤이라면 어떻게 할지 골라 보세요. 📖는 원작 속 앤의 선택, ✨는 상상해 보는 선택이에요." : level === "lit"
-    ? "고아 소녀 앤 셜리가 초록 지붕 집의 가족이 되기까지. 선택에 따라 장마다 결말이 달라지고, 앞 장의 선택이 다음 장에 흔적을 남깁니다. 📖 원문 책장에서는 1908년 원작을 새로 옮긴 문장 전체를 함께 읽을 수 있습니다."
-    : "앤이 초록 지붕 집의 가족이 되어 가는 이야기예요. 무엇을 고르느냐에 따라 결말이 바뀌고, 앞에서 고른 것이 다음 장에 다시 나와요! 📖 원문 책장을 열면 원작 소설 문장도 함께 읽을 수 있어요.";
+  el.coverSub.textContent = (S.started && S.phase !== "cover") ? `지금 읽는 곳: ${CH.num}장 「${CH.title}」` : `초록 지붕 집으로 가는 길 · 전 ${CHAPTERS.length}장`;
+  el.coverText.textContent = EASY_MODE ? "짧은 글을 읽고, 내가 앤이라면 어떻게 할지 골라 보세요." : "내가 고른 선택에 따라 앤의 이야기가 달라져요.";
   el.btnContinue.hidden = !S.started || S.phase === "cover";
   const chips = $("chapChips");
   const other = EASY_MODE ? (/^https?:$/.test(location.protocol) ? "./" : location.pathname) : (/^https?:$/.test(location.protocol) ? "easy/" : location.pathname + "?easy");
@@ -1216,7 +1214,7 @@ function renderCover(){
   el.dlgText.hidden = false; el.choices.hidden = true; el.note.hidden = true;
   el.nameTag.textContent = "안내"; el.nameTag.className = "nametag sys";
   el.progress.textContent = CH.num + "장"; el.miniBook.hidden = true;
-  el.coverHelp.textContent = level === "lit" ? "화면을 클릭하면 문장이 완성되고, 한 번 더 클릭하면 다음 장면으로 넘어갑니다. 점선 밑줄 낱말을 누르면 뜻풀이가 나옵니다." : "화면을 누르면 문장이 바로 다 나오고, 한 번 더 누르면 다음으로 넘어가요. 점선 밑줄 낱말을 누르면 뜻을 알려 줘요!";
+  el.coverHelp.textContent = ""; el.coverHelp.hidden = true;
   el.nextHint.classList.remove("on"); el.barFill.style.width = "0";
   curBg = null; renderScene(true); setPill();
 }

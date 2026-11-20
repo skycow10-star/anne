@@ -177,6 +177,9 @@
   .vn.choosing .dialog{max-height:70%}
   .vn.choosing .viewer::after{content:"";position:absolute;inset:0;z-index:5;background:linear-gradient(180deg,rgba(40,28,18,0) 20%,rgba(40,28,18,.35));pointer-events:none}
   body.covering .dialog{display:none}
+  body.covering .gauge-row, body.covering .sprites, body.covering .dream-tag, body.covering .hud{display:none!important}
+  body.covering .tb-btns > *:not(#btnMusic):not(#btnSound){display:none!important}
+  .cover-chips{font-size:.8rem;color:#8a6a4a;font-weight:700;letter-spacing:.02em}
   .dlg-head .nametag{position:absolute;top:-15px;left:18px}
   .dlg-head{min-height:6px}
   .dlg-head .right{position:absolute;top:8px;right:12px}

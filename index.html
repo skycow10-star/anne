@@ -315,9 +315,19 @@
   @media (max-height:520px){
     .gauge-row{display:none}
     .toolbar .tb-row{min-height:0}
-    .vn.choosing .dialog{max-height:94%;bottom:3%}
     .choice{padding:5px 12px;font-size:13.5px}
     .q{font-size:13.5px}
+  }
+  /* 휴대폰 가로: 글상자는 오른쪽 세로 패널, 그림과 인물은 왼쪽에 */
+  @media (max-height:520px) and (min-aspect-ratio:1/1){
+    .dialog,.vn.choosing .dialog{left:auto;right:calc(2% + env(safe-area-inset-right));top:9%;bottom:4%;width:45%;min-height:0;max-height:none;
+      padding:20px 12px 6px}
+    .choices{gap:5px}
+    .choice{padding:4px 10px;font-size:13px;line-height:1.4}
+    .dlg-text{font-size:15px;line-height:1.7}
+    .spr{height:90%;max-width:36%}
+    .spr.l{left:calc(1% + env(safe-area-inset-left))} .spr.r{right:auto;left:24%}
+    .vn.choosing .viewer::after{background:linear-gradient(90deg,rgba(40,28,18,0) 40%,rgba(40,28,18,.3))}
   }
   @media (max-aspect-ratio: 1/1){
     .spr{height:66%;max-width:80%;bottom:16%}

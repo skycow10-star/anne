@@ -1431,6 +1431,7 @@ function renderMidReport(){
   };
   $("midBack").onclick = () => renderReport();
   if($("midNext")) $("midNext").onclick = () => nextChapter();
+  if(CH.finalReport){ const m = document.createElement("p"); m.style.cssText = "text-align:center;font-size:.8rem;color:#9a7a5a;margin-top:8px"; m.textContent = "함께 걸어 줘서 고마워요 · 만든 사람 하늘소"; el.report.querySelector(".rp-wrap").appendChild(m); }
   el.report.scrollTop = 0; sfx("chime");
 }
 

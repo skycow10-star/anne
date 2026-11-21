@@ -3,13 +3,13 @@ CI=int(os.environ.get("CI","2"))
 from playwright.async_api import async_playwright
 F=sys.argv[1] if len(sys.argv)>1 else "file:///home/claude/anne_visual_novel.html"
 SNAP={"canon":4,"imag":3,"hearts":{"matthew":3,"marilla":3,"lynde":2,"diana":3,"barry":1,"gilbert":1},"met":{"matthew":True,"marilla":True,"lynde":True},
- "items":["carpetbag","auburn","narcissi","poem"],"flags":{"castle":True,"poem":True,"quiet":True,"wreath":True,"vow":True,"missSchool":True},"names":{"avenue":"기쁨의 하얀 길","pond":"반짝이는 호수","advice":"잘했어","spring":"드라이어드의 샘","together":"소꿉놀이 집 짓기"},"hist":[]}
+ "items":["carpetbag","auburn","narcissi","poem","lock"],"flags":{"castle":True,"poem":True,"quiet":True,"wreath":True,"vow":True,"missSchool":True,"mailbox":True,"factsOnly":True},"names":{"avenue":"기쁨의 하얀 길","pond":"반짝이는 호수","advice":"잘했어","spring":"드라이어드의 샘","together":"소꿉놀이 집 짓기"},"hist":[]}
 async def play(pg, route, tag, shots):
   n=0; seen=set()
-  for step in range(500):
+  for step in range(3000):
     ph = await pg.evaluate("window.__anne.state().phase")
     if ph=="report": break
-    if ph=="choice":
+    if ph=="choice" and await pg.evaluate("!!(window.__anne.node()||{}).opts && !!document.querySelector('#choices:not([hidden]) .choice:not([disabled])')"):
       await pg.wait_for_timeout(400)
       types = await pg.evaluate("Array.from(document.querySelectorAll('.choice')).map(b=>window.__anne.node().opts[+b.dataset.oi].type)")
       await pg.click(f".choice >> nth={types.index(route)}"); await pg.wait_for_timeout(700); continue

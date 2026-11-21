@@ -3,12 +3,14 @@
 # 사용법: 저장소를 /home/claude/anne 에 clone 한 뒤  bash /home/claude/anne/source/setup.sh
 set -e
 R=/home/claude/anne/source
-mkdir -p /home/claude/imgs/in /home/claude/imgs/later /home/claude/src /home/claude/test4
+mkdir -p /home/claude/imgs/in /home/claude/imgs/later /home/claude/imgs/spare /home/claude/src /home/claude/test4
 cp -r $R/build /home/claude/build
 cp -r $R/tools /home/claude/tools
 find $R/images -maxdepth 1 -type f -exec cp {} /home/claude/imgs/in/ \;
-cp $R/images/later/* /home/claude/imgs/later/
+cp $R/images/later/* /home/claude/imgs/later/ 2>/dev/null || true
+cp $R/images/spare/* /home/claude/imgs/spare/ 2>/dev/null || true
 cp -r $R/text/translations /home/claude/src/tr
 cp -r $R/text/original_chapters /home/claude/src/chapters
-cp $R/tests/run3.py /home/claude/test4/run3.py
-echo "준비 완료: python3 /home/claude/tools/build.py 로 빌드, python3 /home/claude/tools/assets.py 로 앱용 index.html·그림 생성"
+cp $R/tests/*.py /home/claude/test4/
+mkdir -p /home/claude/out
+echo "준비 완료: 고친 뒤 bash /home/claude/tools/publish.sh \"커밋 메시지\" 로 빌드·그림·쉬운 이야기 페이지 생성·백업·배포를 한 번에 합니다."

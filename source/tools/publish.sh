@@ -9,6 +9,8 @@ python3 tools/mkeasy.py
 R=anne/source
 rm -rf $R/build $R/tools; cp -r build tools $R/
 rm -rf $R/text/translations; cp -r src/tr $R/text/translations
+rm -rf $R/images; mkdir -p $R/images/later $R/images/spare; cp imgs/in/* $R/images/; cp imgs/later/* $R/images/later/ 2>/dev/null || true; cp imgs/spare/* $R/images/spare/ 2>/dev/null || true
+mkdir -p $R/tests; cp test4/*.py $R/tests/
 cd anne
 N=$(grep -o 'anne-vn-v[0-9]*' sw.js | grep -o '[0-9]*$'); sed -i "s/anne-vn-v$N/anne-vn-v$((N+1))/" sw.js
 git add -A

@@ -132,7 +132,23 @@ function setChapter(ci){
 let bookBuiltFor = null;
 setChapter(0);
 const BG_KEYS = [].concat(...CHAPTERS.map(c => c.bgKeys || []));
-const SPRITE_KEYS = [`anne_happy`,`anne_sad`,`anne_surprised`,`anne_angry`,`anne_dreamy`,`matthew`,`lynde`,`marilla_strict`,`marilla_warm`,`diana`,`barry`,`gilbert`,`phillips`,`doctor`,`minnie_may`,`allan`,`anne_green_hair`,`anne_grown`,`diana_grown`,`gilbert_grown`];
+const SPRITE_KEYS = [`anne_happy`,`anne_sad`,`anne_surprised`,`anne_angry`,`anne_dreamy`,`matthew`,`lynde`,`marilla_strict`,`marilla_warm`,`diana`,`barry`,`gilbert`,`phillips`,`doctor`,`minnie_may`,`allan`,`anne_green_hair`,`anne_grown`,`diana_grown`,`gilbert_grown`,
+  `anne_short_happy`,`anne_short_sad`,`anne_short_dreamy`,`anne_grow_happy`,`anne_grow_sad`,`anne_grow_dreamy`,`anne_grow_surprised`,`anne_grow_angry`];
+/* 앤의 머리 모양(이야기 흐름에 따라 바뀜)
+   - 장 전체: CHAPTERS.push({ …, look:`grow` })   - 장 중간부터: 그 장면 노드에 look:`short` (그 뒤 장면들도 계속 적용, 다음 장에서는 초기화)
+   - look:`green` → anne_green_hair 하나로, `short`/`grow` → anne_short_<표정> / anne_grow_<표정>. 없는 표정은 LOOK_FALLBACK, 그래도 그림이 없으면 원래 그림 */
+const LOOK_FALLBACK = { short: { surprised: `sad`, angry: `sad` } };
+function lookAt(nodes, pos, ch){
+  for(let i = Math.min(pos, nodes.length - 1); i >= 0; i--){ const x = nodes[i]; if(x && x.look !== undefined) return x.look; }
+  return (ch && ch.look) || ``;
+}
+function anneKey(k, nodes, pos, ch){
+  const m = k && /^anne_(happy|sad|surprised|angry|dreamy)$/.exec(k); if(!m) return k;
+  const look = lookAt(nodes, pos, ch); if(!look) return k;
+  if(look === `green`) return imgFor(`anne_green_hair`) ? `anne_green_hair` : k;
+  const ex = (LOOK_FALLBACK[look] || {})[m[1]] || m[1], nk = `anne_${look}_${ex}`;
+  return imgFor(nk) ? nk : k;
+}
 
 /* =========================================================
    1. 상태 & 저장
@@ -207,7 +223,7 @@ const preloaded = {};
 function preloadKeys(keys){ keys.forEach(k => { const s = FILES[k]; if(s && !preloaded[s] && !uploaded[k] && !EMB[k]){ preloaded[s] = new Image(); preloaded[s].src = s; } }); }
 function preloadChapter(){
   const ks = new Set(CH.bgKeys || []);
-  CH.nodes.forEach(n => { if(n.bg) ks.add(n.bg); if(n.f) ks.add(n.f); if(n.o) ks.add(n.o); });
+  CH.nodes.forEach((n, i) => { if(n.bg) ks.add(n.bg); if(n.f){ ks.add(n.f); ks.add(anneKey(n.f, CH.nodes, i, CH)); } if(n.o) ks.add(n.o); });
   preloadKeys([...ks]);
 }
 function warmCache(){
@@ -893,7 +909,7 @@ function renderScene(force){
   }
   el.cue.className = "cue " + (S.phase === "cover" ? "" : (S.cam || ""));
   const showSpr = S.phase !== "cover";
-  const face = showSpr ? n.f : null;
+  const face = showSpr ? anneKey(n.f, NODES, S.pos, CH) : null;
   const other = showSpr ? (n.o || null) : null;
   const otherTalk = n.w && n.w !== "anne";
   const fSrc = face ? imgFor(face) : null, oSrc = other ? imgFor(other) : null;
@@ -1258,7 +1274,7 @@ function showScene(key){
   let bg = n.bg; if(!bg){ const i = c.nodes.indexOf(n); for(let j = i; j >= 0 && !bg; j--) bg = c.nodes[j].bg; } bg = bg || c.key;
   const pic = thumbFor(c, kind, id), title = kind === "end" ? `🎬 ${c.endings[id].title}` : `✨ ${(ALBUMS[c.key].find(a => a.id === id) || {}).name || ""}`;
   const sub = kind === "end" ? `${c.num}장 · ${c.endings[id].label}` : `${c.num}장 · 숨은 장면`;
-  const bgSrc = imgFor(bg), f = n.f ? imgFor(n.f) : null, o = n.o ? imgFor(n.o) : null;
+  const bgSrc = imgFor(bg), f = n.f ? imgFor(anneKey(n.f, c.nodes, c.nodes.indexOf(n), c)) : null, o = n.o ? imgFor(n.o) : null;
   const art = pic ? `<img class="sv-pic" src="${pic}" alt="">`
     : `<div class="sv-comp" style="${bgSrc ? `background-image:url('${bgSrc}')` : ""}">${f ? `<img class="l" src="${f}" alt="">` : ""}${o ? `<img class="r" src="${o}" alt="">` : ""}</div>`;
   let v = $("sceneView"); if(!v){ v = document.createElement("div"); v.id = "sceneView"; document.body.appendChild(v); v.addEventListener("click", e => { e.stopPropagation(); v.classList.remove("on"); }); }
@@ -1715,7 +1731,7 @@ document.addEventListener("keydown", e => {
    ========================================================= */
 if(window.STUDENT_MODE && location.hash !== "#teacher") document.body.classList.add("student");
 window.addEventListener("hashchange", () => document.body.classList.toggle("student", !!window.STUDENT_MODE && location.hash !== "#teacher"));
-window.__anne = {state:() => S, node:() => curNode(), persist:() => P, process:(src, key) => processImage(src, key), start:(ci, snap) => startChapter(ci, snap), mid:() => renderMidReport(), bgm:() => ({cur:BGM.cur, paused:BGM.el ? BGM.el.paused : null, t:BGM.el ? BGM.el.currentTime : 0, gain:BGM.gain ? BGM.gain.gain.value : (BGM.el ? BGM.el.volume : null)}), uploaded:() => uploaded, exportHTML:student => collectImages().then(im => buildHTML(im, student))};
+window.__anne = {state:() => S, node:() => curNode(), look:(ci, i) => { const c = CHAPTERS[ci], n = c && c.nodes[i]; return n && n.f ? anneKey(n.f, c.nodes, i, c) : null; }, chapters:() => CHAPTERS, render:() => renderScene(true), idx:id => IDX[id], persist:() => P, process:(src, key) => processImage(src, key), start:(ci, snap) => startChapter(ci, snap), mid:() => renderMidReport(), bgm:() => ({cur:BGM.cur, paused:BGM.el ? BGM.el.paused : null, t:BGM.el ? BGM.el.currentTime : 0, gain:BGM.gain ? BGM.gain.gain.value : (BGM.el ? BGM.el.volume : null)}), uploaded:() => uploaded, exportHTML:student => collectImages().then(im => buildHTML(im, student))};
 /* 홈 화면 앱(웹앱): 인터넷 주소로 열었을 때만 오프라인 기능을 켭니다. 파일로 열면 그냥 지나갑니다. */
 if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
   const hadCtl = !!navigator.serviceWorker.controller; let reloaded = false;

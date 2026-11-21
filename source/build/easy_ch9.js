@@ -1,6 +1,7 @@
 /* 쉬운 이야기 9장 · 불운한 백합 아가씨 (원작 28장) */
 EASY.push({
   key: `ch9`, num: 9, bgm: `bgm_ch9.mp3`, title: `불운한 백합 아가씨`, orig: `원작 28장`, origTitle: `불운한 백합 아가씨`,
+  look: `grow`, /* 다시 자란 머리의 앤 */
   bgKeys: [`ch9`, `ch9_drift`, `ch9_bridge`],
   endings: {
     canon: {title: `조금은 간직하렴`, label: `원작 결말`},

@@ -3,6 +3,7 @@
    ========================================================= */
 CHAPTERS.push({
   key: `ch9`, num: 9, bgm: `bgm_ch9.mp3`, title: `불운한 백합 아가씨`, orig: `원작 28장`, origTitle: `불운한 백합 아가씨`,
+  look: `grow`, /* 8장에서 자른 머리가 어깨까지 다시 자란 앤 (anne_grow_*) */
   bgKeys: [`ch9`, `ch9_drift`, `ch9_bridge`],
   endings: {
     canon: {title: `조금은 간직하렴`, label: `원작 결말`},

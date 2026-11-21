@@ -338,6 +338,10 @@
   .rp-tally .t{font-size:.8rem;font-weight:800;padding:3px 10px;border-radius:999px;background:#fff;border:1.5px solid #e2cba6}
   .rp-tally .t.canon{color:#b9473f}.rp-tally .t.imag{color:#3d73a8}.rp-tally .t.bal{color:#5b8a5e}
   .gains{display:flex;flex-wrap:wrap;gap:8px}
+  img.av{width:1.45em;height:1.45em;border-radius:50%;vertical-align:middle;object-fit:cover;box-shadow:0 0 0 1.5px #e2c08f;background:#fff8ec;margin:-2px 1px 0 0}
+  img.av.lg{width:2.1em;height:2.1em}
+  .hud span{display:inline-flex;align-items:center;gap:3px}
+  .hud img.av{width:20px;height:20px}
   .gain{display:flex;align-items:center;gap:6px;background:#fbf5ea;border:1.5px solid #ecdcc1;border-radius:12px;padding:6px 10px;font-size:.85rem}
   .gain .ic{font-size:1.3rem}.gain .hearts{color:#d9645c;letter-spacing:1px;font-size:.8rem}.gain small{font-weight:800;color:#5b8a5e}
   .gain.down small{color:#b9473f}
@@ -577,7 +581,7 @@
 <div class="toast" id="toast"></div>
 <div class="tip" id="tip" hidden></div>
 
-<script id="embedded-images">window.EMBEDDED_IMAGES = {}; window.STUDENT_MODE = true; window.EASY_MODE = true; window.IMAGE_FILES = {"allan": "img/allan.webp", "anne_angry": "img/anne_angry.webp", "anne_dreamy": "img/anne_dreamy.webp", "anne_green_hair": "img/anne_green_hair.webp", "anne_grown": "img/anne_grown.webp", "anne_happy": "img/anne_happy.webp", "anne_sad": "img/anne_sad.webp", "anne_surprised": "img/anne_surprised.webp", "barry": "img/barry.webp", "ch1": "img/ch1.webp", "ch10": "img/ch10.webp", "ch10_hill": "img/ch10_hill.webp", "ch10_home": "img/ch10_home.webp", "ch10_pasture": "img/ch10_pasture.webp", "ch1_avenue": "img/ch1_avenue.webp", "ch1_home": "img/ch1_home.webp", "ch1_pond": "img/ch1_pond.webp", "ch1_road": "img/ch1_road.webp", "ch2": "img/ch2.webp", "ch2_lane": "img/ch2_lane.webp", "ch2_lynde": "img/ch2_lynde.webp", "ch2_night": "img/ch2_night.webp", "ch2_room": "img/ch2_room.webp", "ch3": "img/ch3.webp", "ch3_bridge": "img/ch3_bridge.webp", "ch3_garden": "img/ch3_garden.webp", "ch3_path": "img/ch3_path.webp", "ch4": "img/ch4.webp", "ch4_birch": "img/ch4_birch.webp", "ch4_spruce": "img/ch4_spruce.webp", "ch4_yard": "img/ch4_yard.webp", "ch5": "img/ch5.webp", "ch5_dusk": "img/ch5_dusk.webp", "ch5_orchard": "img/ch5_orchard.webp", "ch6": "img/ch6.webp", "ch6_barry": "img/ch6_barry.webp", "ch6_morning": "img/ch6_morning.webp", "ch6_snow": "img/ch6_snow.webp", "ch7": "img/ch7.webp", "ch7_garden": "img/ch7_garden.webp", "ch7_spring": "img/ch7_spring.webp", "ch8": "img/ch8.webp", "ch8_attic": "img/ch8_attic.webp", "ch8_mirror": "img/ch8_mirror.webp", "ch8_porch": "img/ch8_porch.webp", "ch9": "img/ch9.webp", "ch9_bridge": "img/ch9_bridge.webp", "ch9_drift": "img/ch9_drift.webp", "diana": "img/diana.webp", "diana_grown": "img/diana_grown.webp", "doctor": "img/doctor.webp", "gilbert": "img/gilbert.webp", "gilbert_grown": "img/gilbert_grown.webp", "lynde": "img/lynde.webp", "marilla_strict": "img/marilla_strict.webp", "marilla_warm": "img/marilla_warm.webp", "matthew": "img/matthew.webp", "minnie_may": "img/minnie_may.webp", "phillips": "img/phillips.webp"};</script>
+<script id="embedded-images">window.EMBEDDED_IMAGES = {}; window.STUDENT_MODE = true; window.EASY_MODE = true; window.IMAGE_FILES = {"allan": "img/allan.webp", "anne_angry": "img/anne_angry.webp", "anne_dreamy": "img/anne_dreamy.webp", "anne_green_hair": "img/anne_green_hair.webp", "anne_grown": "img/anne_grown.webp", "anne_happy": "img/anne_happy.webp", "anne_sad": "img/anne_sad.webp", "anne_surprised": "img/anne_surprised.webp", "av_allan": "img/av_allan.webp", "av_barry": "img/av_barry.webp", "av_diana": "img/av_diana.webp", "av_gilbert": "img/av_gilbert.webp", "av_lynde": "img/av_lynde.webp", "av_marilla": "img/av_marilla.webp", "av_matthew": "img/av_matthew.webp", "barry": "img/barry.webp", "ch1": "img/ch1.webp", "ch10": "img/ch10.webp", "ch10_hill": "img/ch10_hill.webp", "ch10_home": "img/ch10_home.webp", "ch10_pasture": "img/ch10_pasture.webp", "ch1_avenue": "img/ch1_avenue.webp", "ch1_home": "img/ch1_home.webp", "ch1_pond": "img/ch1_pond.webp", "ch1_road": "img/ch1_road.webp", "ch2": "img/ch2.webp", "ch2_lane": "img/ch2_lane.webp", "ch2_lynde": "img/ch2_lynde.webp", "ch2_night": "img/ch2_night.webp", "ch2_room": "img/ch2_room.webp", "ch3": "img/ch3.webp", "ch3_bridge": "img/ch3_bridge.webp", "ch3_garden": "img/ch3_garden.webp", "ch3_path": "img/ch3_path.webp", "ch4": "img/ch4.webp", "ch4_birch": "img/ch4_birch.webp", "ch4_spruce": "img/ch4_spruce.webp", "ch4_yard": "img/ch4_yard.webp", "ch5": "img/ch5.webp", "ch5_dusk": "img/ch5_dusk.webp", "ch5_orchard": "img/ch5_orchard.webp", "ch6": "img/ch6.webp", "ch6_barry": "img/ch6_barry.webp", "ch6_morning": "img/ch6_morning.webp", "ch6_snow": "img/ch6_snow.webp", "ch7": "img/ch7.webp", "ch7_garden": "img/ch7_garden.webp", "ch7_spring": "img/ch7_spring.webp", "ch8": "img/ch8.webp", "ch8_attic": "img/ch8_attic.webp", "ch8_mirror": "img/ch8_mirror.webp", "ch8_porch": "img/ch8_porch.webp", "ch9": "img/ch9.webp", "ch9_bridge": "img/ch9_bridge.webp", "ch9_drift": "img/ch9_drift.webp", "diana": "img/diana.webp", "diana_grown": "img/diana_grown.webp", "doctor": "img/doctor.webp", "gilbert": "img/gilbert.webp", "gilbert_grown": "img/gilbert_grown.webp", "lynde": "img/lynde.webp", "marilla_strict": "img/marilla_strict.webp", "marilla_warm": "img/marilla_warm.webp", "matthew": "img/matthew.webp", "minnie_may": "img/minnie_may.webp", "phillips": "img/phillips.webp"};</script>
 <script>
 const BOOK = {};
 const CHAPTERS = [];
@@ -6341,6 +6345,7 @@ async function processImage(src, key){
   if(bg){ ctx.fillStyle = "#fbf6ec"; ctx.fillRect(0, 0, w, h); }
   ctx.drawImage(im, 0, 0, w, h);
   if(bg) return cv.toDataURL("image/jpeg", 0.86);
+  if(/^(av|it|end)_/.test(key)) return cv.toDataURL("image/png");
   removeEdgeWhite(ctx, w, h);
   return cv.toDataURL("image/png");
 }
@@ -7055,14 +7060,15 @@ function setSprite(img, src, dim){
   if(src){ if(img.getAttribute("src") !== src) img.src = src; img.classList.add("on"); img.classList.toggle("dim", !!dim); img.classList.toggle("talk", !dim); }
   else img.classList.remove("on", "dim", "talk");
 }
+function avHtml(k, cls){ const src = imgFor("av_" + k); return src ? `<img class="av ${cls || ""}" src="${src}" alt="">` : (CHARS[k] ? CHARS[k].ic : ""); }
 function heartStr(k){ const h = Math.max(0, Math.min(5, S.hearts[k] || 0)); return "♥".repeat(h) + "♡".repeat(5 - h); }
 function metList(){ return Object.keys(CHARS).filter(k => S.met[k]); }
 function renderHud(){
   if(S.phase === "cover"){ el.hud.innerHTML = ""; return; }
-  el.hud.innerHTML = metList().map(k => `<span id="hud_${k}">${CHARS[k].ic} ${CHARS[k].name} <b class="hearts">${heartStr(k)}</b></span>`).join("");
+  el.hud.innerHTML = metList().map(k => `<span id="hud_${k}">${avHtml(k)} ${CHARS[k].name} <b class="hearts">${heartStr(k)}</b></span>`).join("");
 }
 function bumpHud(k){ renderHud(); const s = $("hud_" + k); if(s){ s.classList.remove("bump"); void s.offsetWidth; s.classList.add("bump"); } }
-function heartsHtml(){ return metList().map(k => `<p style="margin-top:8px;font-size:.86rem;font-weight:800">${CHARS[k].ic} ${CHARS[k].full}${josa(CHARS[k].full, "과")}의 마음 <span style="color:#d9645c;letter-spacing:1px">${heartStr(k)}</span></p>`).join(""); }
+function heartsHtml(){ return metList().map(k => `<p style="margin-top:8px;font-size:.86rem;font-weight:800;display:flex;align-items:center;gap:6px">${avHtml(k, "lg")} ${CHARS[k].full}${josa(CHARS[k].full, "과")}의 마음 <span style="color:#d9645c;letter-spacing:1px">${heartStr(k)}</span></p>`).join(""); }
 function updateGauge(delta){
   const total = S.canon + S.imag, c = Math.round(S.canon / total * 100), i = 100 - c;
   el.gFillL.style.width = c + "%"; el.gFillR.style.width = i + "%"; el.gL.textContent = c; el.gR.textContent = i;
@@ -7302,7 +7308,7 @@ function renderReport(){
   }).join("");
   const heartGain = Object.keys(CHARS).filter(k => S.met[k] && (S.hearts[k] || 0) !== (sh[k] === undefined ? (CHARS[k].start || 0) : sh[k]))
     .map(k => { const b = sh[k] === undefined ? (CHARS[k].start || 0) : sh[k], d = (S.hearts[k] || 0) - b;
-      return `<div class="gain ${d < 0 ? "down" : ""}"><span class="ic">${CHARS[k].ic}</span><b>${CHARS[k].name}</b><span class="hearts">${heartStr(k)}</span><small>${d > 0 ? "+" + d : d}</small></div>`; }).join("");
+      return `<div class="gain ${d < 0 ? "down" : ""}"><span class="ic">${avHtml(k, "lg")}</span><b>${CHARS[k].name}</b><span class="hearts">${heartStr(k)}</span><small>${d > 0 ? "+" + d : d}</small></div>`; }).join("");
   const newItems = S.items.filter(k => !sitems.includes(k) && ITEMS[k]).map(k => `<div class="gain"><span class="ic">${ITEMS[k].ic}</span><b>${ITEMS[k].name}</b></div>`).join("");
   const gotAny = heartGain || newItems;
   const items = S.items.map(k => ITEMS[k] ? `<div class="item"><span class="ic">${ITEMS[k].ic}</span><span><b>${ITEMS[k].name}</b><br>${esc(fill(ITEMS[k].desc))}</span></div>` : "").join("") || `<p style="font-size:.85rem;color:#8a7461">아직 모은 물건이 없어요.</p>`;

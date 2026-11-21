@@ -5,7 +5,7 @@ async def main():
     b=await p.chromium.launch(executable_path="/usr/bin/google-chrome")
     for q,n,vp in [("","n",{"width":390,"height":844}),("?easy","e",{"width":390,"height":844}),("","pc",{"width":1280,"height":800})]:
       pg=await b.new_page(viewport=vp); errs=[]; pg.on("pageerror",lambda e:errs.append(str(e)))
-      await pg.goto("file:///home/claude/anne_visual_novel.html"+q); await pg.wait_for_timeout(900)
+      await pg.goto("http://localhost:8765/index.html".replace("index.html","easy/" if q else "index.html")); await pg.wait_for_timeout(900)
       await pg.evaluate("window.__anne.start(0,null)"); await pg.wait_for_timeout(1000); k=0
       for i in range(500):
         ph=await pg.evaluate("window.__anne.state().phase")

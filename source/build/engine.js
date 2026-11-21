@@ -297,6 +297,7 @@ async function processImage(src, key){
   if(bg){ ctx.fillStyle = "#fbf6ec"; ctx.fillRect(0, 0, w, h); }
   ctx.drawImage(im, 0, 0, w, h);
   if(bg) return cv.toDataURL("image/jpeg", 0.86);
+  if(/^(av|it|end)_/.test(key)) return cv.toDataURL("image/png");
   removeEdgeWhite(ctx, w, h);
   return cv.toDataURL("image/png");
 }
@@ -1011,14 +1012,15 @@ function setSprite(img, src, dim){
   if(src){ if(img.getAttribute("src") !== src) img.src = src; img.classList.add("on"); img.classList.toggle("dim", !!dim); img.classList.toggle("talk", !dim); }
   else img.classList.remove("on", "dim", "talk");
 }
+function avHtml(k, cls){ const src = imgFor("av_" + k); return src ? `<img class="av ${cls || ""}" src="${src}" alt="">` : (CHARS[k] ? CHARS[k].ic : ""); }
 function heartStr(k){ const h = Math.max(0, Math.min(5, S.hearts[k] || 0)); return "♥".repeat(h) + "♡".repeat(5 - h); }
 function metList(){ return Object.keys(CHARS).filter(k => S.met[k]); }
 function renderHud(){
   if(S.phase === "cover"){ el.hud.innerHTML = ""; return; }
-  el.hud.innerHTML = metList().map(k => `<span id="hud_${k}">${CHARS[k].ic} ${CHARS[k].name} <b class="hearts">${heartStr(k)}</b></span>`).join("");
+  el.hud.innerHTML = metList().map(k => `<span id="hud_${k}">${avHtml(k)} ${CHARS[k].name} <b class="hearts">${heartStr(k)}</b></span>`).join("");
 }
 function bumpHud(k){ renderHud(); const s = $("hud_" + k); if(s){ s.classList.remove("bump"); void s.offsetWidth; s.classList.add("bump"); } }
-function heartsHtml(){ return metList().map(k => `<p style="margin-top:8px;font-size:.86rem;font-weight:800">${CHARS[k].ic} ${CHARS[k].full}${josa(CHARS[k].full, "과")}의 마음 <span style="color:#d9645c;letter-spacing:1px">${heartStr(k)}</span></p>`).join(""); }
+function heartsHtml(){ return metList().map(k => `<p style="margin-top:8px;font-size:.86rem;font-weight:800;display:flex;align-items:center;gap:6px">${avHtml(k, "lg")} ${CHARS[k].full}${josa(CHARS[k].full, "과")}의 마음 <span style="color:#d9645c;letter-spacing:1px">${heartStr(k)}</span></p>`).join(""); }
 function updateGauge(delta){
   const total = S.canon + S.imag, c = Math.round(S.canon / total * 100), i = 100 - c;
   el.gFillL.style.width = c + "%"; el.gFillR.style.width = i + "%"; el.gL.textContent = c; el.gR.textContent = i;
@@ -1258,7 +1260,7 @@ function renderReport(){
   }).join("");
   const heartGain = Object.keys(CHARS).filter(k => S.met[k] && (S.hearts[k] || 0) !== (sh[k] === undefined ? (CHARS[k].start || 0) : sh[k]))
     .map(k => { const b = sh[k] === undefined ? (CHARS[k].start || 0) : sh[k], d = (S.hearts[k] || 0) - b;
-      return `<div class="gain ${d < 0 ? "down" : ""}"><span class="ic">${CHARS[k].ic}</span><b>${CHARS[k].name}</b><span class="hearts">${heartStr(k)}</span><small>${d > 0 ? "+" + d : d}</small></div>`; }).join("");
+      return `<div class="gain ${d < 0 ? "down" : ""}"><span class="ic">${avHtml(k, "lg")}</span><b>${CHARS[k].name}</b><span class="hearts">${heartStr(k)}</span><small>${d > 0 ? "+" + d : d}</small></div>`; }).join("");
   const newItems = S.items.filter(k => !sitems.includes(k) && ITEMS[k]).map(k => `<div class="gain"><span class="ic">${ITEMS[k].ic}</span><b>${ITEMS[k].name}</b></div>`).join("");
   const gotAny = heartGain || newItems;
   const items = S.items.map(k => ITEMS[k] ? `<div class="item"><span class="ic">${ITEMS[k].ic}</span><span><b>${ITEMS[k].name}</b><br>${esc(fill(ITEMS[k].desc))}</span></div>` : "").join("") || `<p style="font-size:.85rem;color:#8a7461">아직 모은 물건이 없어요.</p>`;

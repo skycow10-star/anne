@@ -1062,6 +1062,7 @@ function render(instant){
   bgmUpdate();
   updateGauge(); applyLevelUI(); applySoundUI(); setPill(); renderHud();
   el.vn.classList.toggle("choosing", S.phase === "choice" || S.phase === "name");
+  document.body.classList.toggle("reporting", S.phase === "report");
   el.vn.classList.toggle("naming", S.phase === "name"); el.vn.classList.remove("peek");
   { const nt = $("nameTarget"), n = curNode(); nt.hidden = S.phase !== "name"; if(S.phase === "name") nt.textContent = "✍️ " + n.label;
     $("btnPeek").hidden = !(S.phase === "choice" || S.phase === "name"); }
@@ -1240,50 +1241,58 @@ function renderReport(){
     imag: lit ? "원작 바깥으로 상상의 오솔길을 여러 번 내었습니다. 앤처럼 세상을 새로 이름 짓는 독자입니다." : "원작과 다른 상상의 길을 많이 골랐어요. 앤처럼 상상력이 반짝이는 친구예요!",
     bal: lit ? "앤의 뜨거운 마음과 주변 사람들의 마음 사이에서 균형을 찾았습니다. 타인을 헤아리는 성숙한 읽기입니다." : "앤의 마음도, 주변 사람들의 마음도 함께 생각했어요. 지혜롭고 따뜻한 선택이었어요!"
   }[S.ending] || "";
+  const snap = S.snap || {}, sh = snap.hearts || {}, sitems = snap.items || [];
+  const same = (n, p) => p.type === "canon" || (p.type === "feel" && n.opts[p.oi] && n.opts[p.oi].ok) || (n.t === "name" && !n.free && p.type === "canon");
   const rows = CHOICE_IDS.map(id => {
     const n = NODES[IDX[id]], p = S.picks.find(x => x.id === id); if(!p) return "";
-    if(n.t === "name" && n.free){
-      return `<div class="c">${esc(n.label)}</div><div class="mine"><span class="tag bal">나의 생각</span><br>"${esc(p.val)}"</div><div class="orig"><span class="tag canon">원작</span><br>${esc(T(n.note))}</div>`;
-    }
-    if(n.t === "name"){
-      return `<div class="c">${esc(n.label)}</div><div class="mine"><span class="tag ${p.type}">${LABEL[p.type]}</span><br>'${esc(p.val)}'</div><div class="orig"><span class="tag canon">원작</span><br>'${esc(n.canon)}'</div>`;
-    }
-    if(p.type === "feel"){ const mine = n.opts[p.oi], ok = n.opts.find(o => o.ok) || mine;
-      return `<div class="c">${esc(n.label)}</div><div class="mine"><span class="tag bal">나의 느낌</span><br>${mine.ic} ${esc(T(mine))}</div><div class="orig"><span class="tag canon">원작</span><br>${ok.ic} ${esc(T(ok))}</div>`; }
-    const mine = n.opts[p.oi], orig = n.opts.find(o => o.type === "canon") || mine;
-    return `<div class="c">${esc(n.label)}</div><div class="mine"><span class="tag ${p.type}">${LABEL[p.type]}</span><br>${esc(T(mine.s || mine))}</div><div class="orig"><span class="tag canon">원작</span><br>${esc(T(orig.s || orig))}</div>`;
+    let mine = "", orig = "";
+    if(n.t === "name" && n.free){ mine = `💌 "${esc(p.val)}"`; orig = ""; }
+    else if(n.t === "name"){ mine = `✍️ '${esc(p.val)}'`; orig = `'${esc(n.canon)}'`; }
+    else if(p.type === "feel"){ const m = n.opts[p.oi], ok = n.opts.find(o => o.ok) || m; mine = `${m.ic} ${esc(T(m))}`; orig = `${ok.ic} ${esc(T(ok))}`; }
+    else { const m = n.opts[p.oi], o = n.opts.find(x => x.type === "canon") || m; mine = `${({canon:"📖", imag:"✨", bal:"⚖️"})[p.type] || ""} ${esc(T(m.s || m))}`; orig = esc(T(o.s || o)); }
+    const ok = same(n, p);
+    return `<div class="crow ${ok ? "same" : ""}"><div class="cl">${esc(n.label)}</div>${n.t === "name" && n.free
+      ? `<div class="cm">${mine} <span class="cnote">나만의 생각</span></div>`
+      : ok ? `<div class="cm">✅ <b>원작과 같아요</b> · ${mine}</div>`
+           : `<div class="cm"><span class="who">나</span>${mine}</div><div class="co"><span class="who">원작</span>📖 ${orig}</div>`}</div>`;
   }).join("");
-  const items = S.items.map(k => `<div class="item"><span class="ic">${ITEMS[k].ic}</span><span><b>${ITEMS[k].name}</b><br>${esc(fill(ITEMS[k].desc))}</span></div>`).join("") || `<p style="font-size:.85rem;color:#8a7461">아직 모은 물건이 없어요.</p>`;
+  const heartGain = Object.keys(CHARS).filter(k => S.met[k] && (S.hearts[k] || 0) !== (sh[k] === undefined ? (CHARS[k].start || 0) : sh[k]))
+    .map(k => { const b = sh[k] === undefined ? (CHARS[k].start || 0) : sh[k], d = (S.hearts[k] || 0) - b;
+      return `<div class="gain ${d < 0 ? "down" : ""}"><span class="ic">${CHARS[k].ic}</span><b>${CHARS[k].name}</b><span class="hearts">${heartStr(k)}</span><small>${d > 0 ? "+" + d : d}</small></div>`; }).join("");
+  const newItems = S.items.filter(k => !sitems.includes(k) && ITEMS[k]).map(k => `<div class="gain"><span class="ic">${ITEMS[k].ic}</span><b>${ITEMS[k].name}</b></div>`).join("");
+  const gotAny = heartGain || newItems;
+  const items = S.items.map(k => ITEMS[k] ? `<div class="item"><span class="ic">${ITEMS[k].ic}</span><span><b>${ITEMS[k].name}</b><br>${esc(fill(ITEMS[k].desc))}</span></div>` : "").join("") || `<p style="font-size:.85rem;color:#8a7461">아직 모은 물건이 없어요.</p>`;
   const album = ALBUM.map(a => P.album[a.id] ? `<div><span class="ic">${a.ic}</span>${a.name}</div>` : `<div class="lock"><span class="ic">❔</span>???</div>`).join("");
+  const endN = ["canon","imag","bal"].filter(k => P.endings[CH.key + "_" + k]).length;
   const ends = ["canon","imag","bal"].map(k => P.endings[CH.key + "_" + k] ? `<div><span class="ic">🎬</span>${CH.endings[k].title}<br><small>${CH.endings[k].label}</small></div>` : `<div class="lock"><span class="ic">❔</span>??? 결말</div>`).join("");
+  const nextBtn = CH.finalReport ? `<button type="button" class="big alt" disabled>📕 1부 완결 · 고마워요</button>` : CHAPTERS[S.ch + 1] ? `<button type="button" class="big sky" id="rpNext">➡ ${CH.num + 1}장으로</button>` : `<button type="button" class="big alt" disabled>➡ ${CH.num + 1}장 (준비 중)</button>`;
   el.report.innerHTML = `<div class="rp-wrap">
-    <div class="rp-head"><small>CHAPTER ${CH.num} REPORT</small><h2>🎒 ${CH.num}장 리포트 · ${CH.title}</h2>
-      <p style="font-size:.86rem;color:#6e5b4b;margin-top:6px">${CH.orig} 「${CH.origTitle}」</p>
-      ${S.ch > 0 ? `<p style="font-size:.82rem;color:#8a7461;margin-top:6px">지금까지의 여정 · ${CHAPTERS.slice(0, S.ch + 1).map(c => S.hist[c.key] ? `${c.num}장 ${c.endings[S.hist[c.key].ending].label}` : `${c.num}장 —`).join(" → ")}</p>` : ""}</div>
-    ${E ? `<div class="type-card"><div class="type-emoji">${emoji}</div><div style="flex:1">
-      <h3>내가 만난 결말: ${esc(E.title)} <span class="tag ${S.ending}" style="vertical-align:middle">${E.label}</span></h3><p>${desc}</p>
-      <div class="rp-gauge"><span style="width:${c}%;background:linear-gradient(90deg,#c9504a,#ec8d84)"></span><span style="width:${i}%;background:linear-gradient(90deg,#8cbbe6,#3f78b0)"></span></div>
-      <div class="rp-legend"><span style="color:#b9473f">📖 원작 ${c}%</span><span style="color:#5b8a5e">원작 ${S.tally.canon} · 상상 ${S.tally.imag} · 균형 ${S.tally.bal}번 선택</span><span style="color:#3d73a8">상상 ${i}% ✨</span></div>
-    </div></div>` : ""}
-    <div class="card"><h4>🧭 내 선택과 원작 비교</h4><div class="cmp"><div class="h">장면</div><div class="h">내가 고른 길</div><div class="h">원작 속 앤</div>${rows}</div></div>
-    <div class="grid2">
-      <div class="card"><h4>🎁 추억 상자</h4><div class="items">${items}</div>
-        ${heartsHtml()}</div>
-      <div class="card"><h4>🎬 결말 모음 (${["canon","imag","bal"].filter(k => P.endings[CH.key + "_" + k]).length}/3)</h4><div class="album">${ends}</div>
-        <h4 style="margin-top:14px">✨ 숨은 장면 (${albumCount()}/${ALBUM.length})</h4><div class="album">${album}</div></div>
-    </div>
+    <div class="rp-head"><small>CHAPTER ${CH.num} REPORT</small><h2>${CH.num}장 · ${CH.title}</h2>
+      <p style="font-size:.82rem;color:#8a7461;margin-top:4px">${CH.orig} 「${CH.origTitle}」</p></div>
+    ${E ? `<div class="rp-end ${S.ending}"><div class="rp-end-ic">${emoji}</div><span class="tag ${S.ending}">${E.label}</span>
+      <h3>${esc(E.title)}</h3><p>${desc}</p>
+      <div class="rp-tally"><span class="t canon">📖 원작 ${S.tally.canon}</span><span class="t imag">✨ 상상 ${S.tally.imag}</span>${S.tally.bal || !EASY_MODE ? `<span class="t bal">⚖️ 균형 ${S.tally.bal}</span>` : ""}</div></div>` : ""}
+    ${gotAny ? `<div class="card"><h4>🎁 이번 장에서 얻은 것</h4><div class="gains">${heartGain}${newItems}</div></div>` : ""}
+    <div class="card"><h4>🧭 내 선택과 원작</h4><div class="crows">${rows}</div></div>
     <div class="card"><h4>💬 생각 나누기</h4><ol class="talk-q" style="padding-left:20px">${(lit ? CH.talk.l : CH.talk.e).map(q => `<li>${q}</li>`).join("")}</ol></div>
-    ${CH.midReport ? (CH.finalReport ? `<div class="mid-banner"><div><b>🏁 1~10장 최종 보고서가 열렸어요!</b><br><span>열 장 동안 앤과 함께 걸어온 길, 지어 준 이름, 쌓은 마음을 모두 돌아봐요.</span></div><button type="button" class="big" id="rpMid">🏁 최종 보고서 보기</button></div>` : `<div class="mid-banner"><div><b>📜 1~${CH.num}장 중간 보고서가 열렸어요!</b><br><span>지금까지 다섯 장 동안 내가 걸어온 길, 지어 준 이름, 쌓은 마음을 한눈에 볼 수 있어요.</span></div><button type="button" class="big" id="rpMid">📜 중간 보고서 보기</button></div>`) : ""}
-    <div class="rp-btns">
-      <button type="button" class="big" id="rpReplay">🔁 다른 선택으로 ${CH.num}장 다시 하기</button>
-      <button type="button" class="big sky" id="rpBook">📖 원문으로 ${CH.num}장 전체 읽기</button>
-      <button type="button" class="big alt" id="rpPrint">🖨️ 리포트 인쇄</button>
-      ${CH.finalReport ? `<button type="button" class="big alt" disabled>📕 1부 완결 · 끝까지 읽어 줘서 고마워요</button>` : CHAPTERS[S.ch + 1] ? `<button type="button" class="big sky" id="rpNext">➡ ${CH.num + 1}장 「${CHAPTERS[S.ch + 1].title}」으로</button>` : `<button type="button" class="big alt" disabled title="다음 장은 준비 중이에요">➡ ${CH.num + 1}장 (준비 중)</button>`}
-    </div></div>`;
+    ${CH.midReport ? (CH.finalReport ? `<div class="mid-banner"><div><b>🏁 1~10장 최종 보고서가 열렸어요!</b><br><span>열 장 동안 앤과 함께 걸어온 길을 모두 돌아봐요.</span></div><button type="button" class="big" id="rpMid">🏁 최종 보고서 보기</button></div>` : `<div class="mid-banner"><div><b>📜 1~${CH.num}장 중간 보고서가 열렸어요!</b><br><span>지금까지 걸어온 길, 지어 준 이름, 쌓은 마음을 한눈에 봐요.</span></div><button type="button" class="big" id="rpMid">📜 중간 보고서 보기</button></div>`) : ""}
+    <details class="card more"><summary>🎬 결말·숨은 장면·추억 상자 모아 보기 <small>(결말 ${endN}/3 · 숨은 장면 ${albumCount()}/${ALBUM.length})</small></summary>
+      <h4 style="margin-top:10px">🎬 결말 모음</h4><div class="album">${ends}</div>
+      <h4 style="margin-top:12px">✨ 숨은 장면</h4><div class="album">${album}</div>
+      <h4 style="margin-top:12px">🎁 추억 상자 전체</h4><div class="items">${items}</div>
+      <h4 style="margin-top:12px">💞 지금까지 쌓은 마음</h4>${heartsHtml()}
+      ${S.ch > 0 ? `<p style="font-size:.8rem;color:#8a7461;margin-top:10px">지금까지의 여정 · ${CHAPTERS.slice(0, S.ch + 1).map(c => S.hist[c.key] ? `${c.num}장 ${c.endings[S.hist[c.key].ending].label}` : `${c.num}장 —`).join(" → ")}</p>` : ""}
+    </details>
+    <div class="rp-sub">
+      <button type="button" class="btn" id="rpReplay">🔁 다른 선택으로 다시</button>
+      ${EASY_MODE ? "" : `<button type="button" class="btn" id="rpBook">📖 원문 전체 읽기</button>`}
+      <button type="button" class="btn" id="rpPrint">🖨️ 인쇄</button>
+    </div>
+    <div class="rp-btns">${nextBtn}</div></div>`;
   $("rpReplay").onclick = () => replay();
   if($("rpMid")) $("rpMid").onclick = () => renderMidReport();
   if($("rpNext")) $("rpNext").onclick = () => nextChapter();
-  $("rpBook").onclick = () => openBook(true);
+  if($("rpBook")) $("rpBook").onclick = () => openBook(true);
   $("rpPrint").onclick = () => window.print();
   el.report.scrollTop = 0;
 }

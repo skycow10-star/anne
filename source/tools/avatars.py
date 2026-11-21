@@ -3,7 +3,7 @@ import sys
 from PIL import Image, ImageDraw
 import numpy as np
 SRC={'matthew':'matthew','marilla':'marilla_warm','lynde':'lynde','diana':'diana','barry':'barry','gilbert':'gilbert','allan':'allan'}
-ADJ={}  # k:(dx,dy,scale) 미세 조정
+ADJ={k:(0,-0.1,1.3) for k in SRC}  # k:(dx,dy,scale) 미세 조정 — 얼굴 전체가 들어오게 조금 축소
 if len(sys.argv)>1: ADJ=eval(sys.argv[1])
 sheet=Image.new('RGBA',(7*170,190),(250,245,235,255))
 for i,(k,f) in enumerate(SRC.items()):

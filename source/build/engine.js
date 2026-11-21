@@ -230,7 +230,9 @@ function probeFolder(){
   SPRITE_KEYS.forEach(k => probe(k, [k + ".png"]));
 }
 function normalizeKey(name){
-  let n = name.toLowerCase().replace(/\.[a-z0-9]+$/, "").trim().replace(/\s+/g, "_");
+  const raw = name.replace(/\.[A-Za-z0-9]+$/, "").trim().replace(/\s+/g, "_");
+  if(/^(sc|it|ed|av|end)_/i.test(raw)) return raw.replace(/^[A-Za-z]+_/, m => m.toLowerCase());
+  let n = raw.toLowerCase();
   const m = n.match(/^(?:bg_)?ch0?(\d{1,2})(_[a-z]+)?$/);
   if(m) return "ch" + parseInt(m[1], 10) + (m[2] || "");
   return n;
@@ -1012,6 +1014,7 @@ function setSprite(img, src, dim){
   if(src){ if(img.getAttribute("src") !== src) img.src = src; img.classList.add("on"); img.classList.toggle("dim", !!dim); img.classList.toggle("talk", !dim); }
   else img.classList.remove("on", "dim", "talk");
 }
+function itHtml(k, cls){ const src = imgFor("it_" + k); return src ? `<img class="it ${cls || ""}" src="${src}" alt="">` : (ITEMS[k] ? ITEMS[k].ic : ""); }
 function avHtml(k, cls){ const src = imgFor("av_" + k); return src ? `<img class="av ${cls || ""}" src="${src}" alt="">` : (CHARS[k] ? CHARS[k].ic : ""); }
 function heartStr(k){ const h = Math.max(0, Math.min(5, S.hearts[k] || 0)); return "♥".repeat(h) + "♡".repeat(5 - h); }
 function metList(){ return Object.keys(CHARS).filter(k => S.met[k]); }
@@ -1290,9 +1293,9 @@ function renderReport(){
   const heartGain = Object.keys(CHARS).filter(k => S.met[k] && (S.hearts[k] || 0) !== (sh[k] === undefined ? (CHARS[k].start || 0) : sh[k]))
     .map(k => { const b = sh[k] === undefined ? (CHARS[k].start || 0) : sh[k], d = (S.hearts[k] || 0) - b;
       return `<div class="gain ${d < 0 ? "down" : ""}"><span class="ic">${avHtml(k, "lg")}</span><b>${CHARS[k].name}</b><span class="hearts">${heartStr(k)}</span><small>${d > 0 ? "+" + d : d}</small></div>`; }).join("");
-  const newItems = S.items.filter(k => !sitems.includes(k) && ITEMS[k]).map(k => `<div class="gain"><span class="ic">${ITEMS[k].ic}</span><b>${ITEMS[k].name}</b></div>`).join("");
+  const newItems = S.items.filter(k => !sitems.includes(k) && ITEMS[k]).map(k => `<div class="gain"><span class="ic">${itHtml(k)}</span><b>${ITEMS[k].name}</b></div>`).join("");
   const gotAny = heartGain || newItems;
-  const items = S.items.map(k => ITEMS[k] ? `<div class="item"><span class="ic">${ITEMS[k].ic}</span><span><b>${ITEMS[k].name}</b><br>${esc(fill(ITEMS[k].desc))}</span></div>` : "").join("") || `<p style="font-size:.85rem;color:#8a7461">아직 모은 물건이 없어요.</p>`;
+  const items = S.items.map(k => ITEMS[k] ? `<div class="item"><span class="ic">${itHtml(k)}</span><span><b>${ITEMS[k].name}</b><br>${esc(fill(ITEMS[k].desc))}</span></div>` : "").join("") || `<p style="font-size:.85rem;color:#8a7461">아직 모은 물건이 없어요.</p>`;
   const album = albumGrid(CH);
   const endN = ["canon","imag","bal"].filter(k => P.endings[CH.key + "_" + k]).length;
   const ends = endGrid(CH);
@@ -1300,7 +1303,7 @@ function renderReport(){
   el.report.innerHTML = `<div class="rp-wrap">
     <div class="rp-head"><small>CHAPTER ${CH.num} REPORT</small><h2>${CH.num}장 · ${CH.title}</h2>
       <p style="font-size:.82rem;color:#8a7461;margin-top:4px">${CH.orig} 「${CH.origTitle}」</p></div>
-    ${E ? `<div class="rp-end ${S.ending}"><div class="rp-end-ic">${emoji}</div><span class="tag ${S.ending}">${E.label}</span>
+    ${E ? `<div class="rp-end ${S.ending}">${thumbFor(CH, "end", S.ending) ? `<img class="rp-end-pic" data-scene="${CH.key}|end|${S.ending}" src="${thumbFor(CH, "end", S.ending)}" alt="">` : `<div class="rp-end-ic">${emoji}</div>`}<span class="tag ${S.ending}">${E.label}</span>
       <h3>${esc(E.title)}</h3><p>${desc}</p>
       <div class="rp-tally"><span class="t canon">📖 원작 ${S.tally.canon}</span><span class="t imag">✨ 상상 ${S.tally.imag}</span>${S.tally.bal || !EASY_MODE ? `<span class="t bal">⚖️ 균형 ${S.tally.bal}</span>` : ""}</div></div>` : ""}
     ${gotAny ? `<div class="card"><h4>🎁 이번 장에서 얻은 것</h4><div class="gains">${heartGain}${newItems}</div></div>` : ""}
@@ -1367,7 +1370,7 @@ function renderMidReport(){
   const names = NAME_LABELS.filter(x => x.ch <= CH.num).map(x => { const v = S.names[x.k];
     return `<div class="c">${x.ch}장 · ${x.what}</div><div class="mine">${v ? `'${esc(v)}'` : `<span style="color:#a08770">—</span>`}</div><div class="orig">${x.free ? `<span style="color:#a08770">정답 없음</span>` : `'${x.canon}'`}</div>`; }).join("");
   const endCount = upto.reduce((s, c) => s + ["canon","imag","bal"].filter(k => P.endings[c.key + "_" + k]).length, 0);
-  const itemIcons = S.items.map(k => ITEMS[k] ? `<span title="${esc(ITEMS[k].name)}">${ITEMS[k].ic}</span>` : "").join(" ");
+  const itemIcons = S.items.map(k => ITEMS[k] ? `<span title="${esc(ITEMS[k].name)}">${itHtml(k, "sm")}</span>` : "").join(" ");
   const fin = !!CH.finalReport, RN = fin ? "최종 보고서" : "중간 보고서";
   const qs = fin ? (lit
     ? [`1~10장 전체에서 앤이 가장 크게 변한 점을 하나 골라, 처음(1~2장)의 앤과 마지막(10장)의 앤을 비교하며 근거를 들어 써 봅시다.`,
@@ -1562,7 +1565,7 @@ $("btnPeek").addEventListener("click", e => { e.stopPropagation(); el.vn.classLi
 $("peekBack").addEventListener("click", e => { e.stopPropagation(); el.vn.classList.remove("peek"); });
 el.btnBox.addEventListener("click", e => {
   e.stopPropagation();
-  const items = S.items.length ? S.items.map(k => `<div class="item"><span class="ic">${ITEMS[k].ic}</span><span><b>${ITEMS[k].name}</b><br>${esc(fill(ITEMS[k].desc))}</span></div>`).join("") : "<p>아직 모은 물건이 없어요. 이야기를 진행하면 하나씩 생겨요!</p>";
+  const items = S.items.length ? S.items.map(k => `<div class="item"><span class="ic">${itHtml(k)}</span><span><b>${ITEMS[k].name}</b><br>${esc(fill(ITEMS[k].desc))}</span></div>`).join("") : "<p>아직 모은 물건이 없어요. 이야기를 진행하면 하나씩 생겨요!</p>";
   modal("🎁 추억 상자", `<div class="items">${items}</div>${heartsHtml()}
     <h4 style="margin-top:12px">🎬 ${CH.num}장 결말 (${["canon","imag","bal"].filter(k => P.endings[CH.key + "_" + k]).length}/3)</h4><div class="album">${endGrid(CH)}</div>
     <h4 style="margin-top:12px">✨ ${CH.num}장 숨은 장면 (${albumCount()}/${ALBUM.length})</h4><div class="album">${albumGrid(CH)}</div>

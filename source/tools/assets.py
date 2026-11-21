@@ -1,13 +1,14 @@
 # 그림을 앱이 쓰는 모양(배경 JPEG/투명 스프라이트)으로 처리한 뒤 WebP 파일로 저장하고, IMAGE_FILES 목록을 넣은 index.html을 만든다.
 import asyncio, glob, json, base64, os, re
 from playwright.async_api import async_playwright
-OUT="/home/claude/anne"
+from paths import REPO, IN, HTML, CHROME, uri
+OUT=str(REPO)
 async def main():
-  files=sorted(glob.glob("/home/claude/imgs/in/*"))
+  files=sorted(glob.glob(str(IN/"*")))
   async with async_playwright() as p:
-    b=await p.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--allow-file-access-from-files"])
+    b=await p.chromium.launch(executable_path=CHROME, args=["--allow-file-access-from-files"])
     pg=await b.new_page(); errs=[]; pg.on("pageerror", lambda e: errs.append(str(e)))
-    await pg.goto("file:///home/claude/anne_visual_novel.html"); await pg.wait_for_timeout(500)
+    await pg.goto(uri(HTML)); await pg.wait_for_timeout(500)
     await pg.set_input_files("#fileInput", files)
     await pg.wait_for_function(f"Object.keys(window.__anne.uploaded()).length>={len(files)}", timeout=180000)
     keys=await pg.evaluate("Object.keys(window.__anne.uploaded()).sort()")
@@ -22,11 +23,11 @@ async def main():
     html=await pg.evaluate("window.__anne.exportHTML(true)")
     await b.close()
   # exportHTML(true)에는 업로드한 그림이 통째로 들어가므로, 그림 없는 판으로 다시 만든다
-  base=open("/home/claude/anne_visual_novel.html",encoding="utf-8").read()
+  base=open(HTML,encoding="utf-8").read()
   tag='<script id="embedded-images">window.EMBEDDED_IMAGES = {}; window.STUDENT_MODE = false;</script>'
   assert tag in base
   base=base.replace(tag,'<script id="embedded-images">window.EMBEDDED_IMAGES = {}; window.STUDENT_MODE = true; window.IMAGE_FILES = '+json.dumps(manifest)+';</script>')
   if not base.lstrip().lower().startswith("<!doctype"): base="<!DOCTYPE html>\n"+base
-  open(OUT+"/index.html","w",encoding="utf-8").write(base)
+  open(OUT+"/index.html","w",encoding="utf-8",newline="\n").write(base)
   print(len(keys),"images", round(total/1048576,2),"MB; index", round(len(base.encode())/1024),"KB", errs)
 asyncio.run(main())

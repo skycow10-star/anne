@@ -1,7 +1,9 @@
 # 4×4 아이콘 시트를 물건 덩어리별로 잘라 imgs/in/it_<키>.png 로 저장 (왼쪽 위부터 줄 순서)
-import sys, numpy as np
+# 사용법: python slice_icons.py 시트1.png 시트2.png 시트3.png  (없으면 작업 폴더 uploads/ 의 예전 파일 이름)
+import sys, os, numpy as np
 from PIL import Image
 from scipy import ndimage
+from paths import IN, WORK
 def slice_sheet(path, keys, cols=4, dil=14):
     im=Image.open(path).convert('RGB'); a=np.asarray(im).astype(int)
     mask=(a.min(axis=2)<232)
@@ -13,7 +15,7 @@ def slice_sheet(path, keys, cols=4, dil=14):
         objs.append((sl[0].start,sl[1].start,sl))
     # 줄 묶기: y 중심으로 정렬 후 비슷한 높이끼리
     objs.sort(key=lambda o:(o[2][0].start+o[2][0].stop)/2)
-    rows=[]; 
+    rows=[];
     for o in objs:
         cy=(o[2][0].start+o[2][0].stop)/2
         if rows and abs(rows[-1][0]-cy)<im.height/(cols*2.2): rows[-1][1].append(o)
@@ -27,18 +29,19 @@ def slice_sheet(path, keys, cols=4, dil=14):
         arr=np.asarray(sq.convert('RGBA')).copy(); wht=(arr[:,:,:3].min(axis=2)>238)
         l2,_=ndimage.label(wht); edge=set(np.unique(np.concatenate([l2[0],l2[-1],l2[:,0],l2[:,-1]])))-{0}
         bgm=np.isin(l2,list(edge)); arr[bgm,3]=0
-        Image.fromarray(arr).save(f'/home/claude/imgs/in/it_{k}.png')
+        Image.fromarray(arr).save(f'{IN}/it_{k}.png')
     return order
 S1='carpetbag plum petal namecard poem note auburn narcissi wreath vow lily choco slate ricelily candy pansy'.split()
 S2='maple lock pebble bookmark jamKey rosecard taffy star hanky rainbow bottle garden candle dye scissors ribbon'.split()
 S3='iris shawl pile oar avery narcissus scotchRose bend'.split()
-U='/mnt/user-data/uploads/'
-slice_sheet(U+"d8be18f6-image.png",S1); slice_sheet(U+"a9035c75-image.png",S2); slice_sheet(U+"8ed20807-image.png",S3,dil=5)
+U=str(WORK/'uploads')+'/'
+P=sys.argv[1:4] if len(sys.argv)>=4 else [U+"d8be18f6-image.png",U+"a9035c75-image.png",U+"8ed20807-image.png"]
+slice_sheet(P[0],S1); slice_sheet(P[1],S2); slice_sheet(P[2],S3,dil=5)
 # 확인용 모음
 keys=S1+S2+S3; sheet=Image.new('RGBA',(10*110,4*130),(250,245,235,255))
 from PIL import ImageDraw
 d=ImageDraw.Draw(sheet)
 for i,k in enumerate(keys):
-    t=Image.open(f'/home/claude/imgs/in/it_{k}.png').resize((100,100)); x,y=(i%10)*110+5,(i//10)*130+5
+    t=Image.open(f'{IN}/it_{k}.png').resize((100,100)); x,y=(i%10)*110+5,(i//10)*130+5
     sheet.alpha_composite(t,(x,y)); d.text((x,y+104),k,fill=(80,50,30,255))
-sheet.save('/home/claude/icons/check.png'); print('ok',len(keys))
+os.makedirs(WORK/'icons',exist_ok=True); sheet.save(WORK/'icons'/'check.png'); print('ok',len(keys))

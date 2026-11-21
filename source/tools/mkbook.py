@@ -10,5 +10,6 @@ for spec in sys.argv[4:]:
         assert '`' not in l and '${' not in l
         out.append(f"[`{n}-{i}`, `{l}`],")
 out+=["  ]","};"]
-open(f'/home/claude/build/book_{key}.js','w',encoding='utf-8').write('\n'.join(out)+'\n')
+from paths import WORK
+open(WORK/'build'/f'book_{key}.js','w',encoding='utf-8',newline='\n').write('\n'.join(out)+'\n')
 print(key, sum(1 for x in out if x.startswith('[`')))

@@ -289,7 +289,7 @@ function removeEdgeWhite(ctx, w, h){
   ctx.putImageData(id, 0, 0);
 }
 async function processImage(src, key){
-  const im = await loadImg(src), bg = isBgKey(key);
+  const im = await loadImg(src), bg = isBgKey(key) || /^(sc|ed)_/.test(key);
   const sc = Math.min(1, (bg ? 1600 : 1200) / im.naturalWidth, (bg ? 900 : 1000) / im.naturalHeight);
   const w = Math.max(1, Math.round(im.naturalWidth * sc)), h = Math.max(1, Math.round(im.naturalHeight * sc));
   const cv = document.createElement("canvas"); cv.width = w; cv.height = h;
@@ -1234,6 +1234,35 @@ function renderCover(){
 }
 
 /* ---------- 리포트 ---------- */
+/* ---------- 결말·숨은 장면 다시 보기 ---------- */
+function thumbFor(c, kind, id){ return imgFor(kind === "end" ? `ed_${c.key}_${id}` : `sc_${id}`); }
+function albumGrid(c){ return (ALBUMS[c.key] || []).map(a => P.album[a.id]
+  ? `<div class="pick" data-scene="${c.key}|album|${a.id}" title="눌러서 다시 보기">${thumbFor(c, "album", a.id) ? `<img class="thumb" src="${thumbFor(c, "album", a.id)}" alt="">` : `<span class="ic">${a.ic}</span>`}${a.name}</div>`
+  : `<div class="lock"><span class="ic">❔</span>???</div>`).join(""); }
+function endGrid(c){ return ["canon","imag","bal"].map(k => P.endings[c.key + "_" + k]
+  ? `<div class="pick" data-scene="${c.key}|end|${k}" title="눌러서 다시 보기">${thumbFor(c, "end", k) ? `<img class="thumb" src="${thumbFor(c, "end", k)}" alt="">` : `<span class="ic">🎬</span>`}${c.endings[k].title}<br><small>${c.endings[k].label}</small></div>`
+  : `<div class="lock"><span class="ic">❔</span>??? 결말</div>`).join(""); }
+function sceneNodeFor(c, kind, id){
+  const N = c.nodes, at = i => { let n = N[i]; while(n && n.t === "goto"){ n = N.findIndex(x => x.id === n.to) >= 0 ? N[N.findIndex(x => x.id === n.to)] : null; } return n; };
+  if(kind === "end") return N.find(n => n.id === "E_" + id);
+  let n = N.find(x => x.eff && x.eff.album === id); if(n) return n;
+  for(const x of N){ if(x.t === "choice"){ const o = x.opts.find(o => o.eff && o.eff.album === id); if(o) return N.find(y => y.id === o.go) || x; } }
+  return null;
+}
+function showScene(key){
+  const [ck, kind, id] = key.split("|"), c = CHAPTERS.find(x => x.key === ck); if(!c) return;
+  const n = sceneNodeFor(c, kind, id) || {};
+  let bg = n.bg; if(!bg){ const i = c.nodes.indexOf(n); for(let j = i; j >= 0 && !bg; j--) bg = c.nodes[j].bg; } bg = bg || c.key;
+  const pic = thumbFor(c, kind, id), title = kind === "end" ? `🎬 ${c.endings[id].title}` : `✨ ${(ALBUMS[c.key].find(a => a.id === id) || {}).name || ""}`;
+  const sub = kind === "end" ? `${c.num}장 · ${c.endings[id].label}` : `${c.num}장 · 숨은 장면`;
+  const bgSrc = imgFor(bg), f = n.f ? imgFor(n.f) : null, o = n.o ? imgFor(n.o) : null;
+  const art = pic ? `<img class="sv-pic" src="${pic}" alt="">`
+    : `<div class="sv-comp" style="${bgSrc ? `background-image:url('${bgSrc}')` : ""}">${f ? `<img class="l" src="${f}" alt="">` : ""}${o ? `<img class="r" src="${o}" alt="">` : ""}</div>`;
+  let v = $("sceneView"); if(!v){ v = document.createElement("div"); v.id = "sceneView"; document.body.appendChild(v); v.addEventListener("click", e => { e.stopPropagation(); v.classList.remove("on"); }); }
+  v.innerHTML = `<div class="sv-box">${art}<div class="sv-cap"><small>${sub}</small><b>${esc(title)}</b><p>${esc(fill(T(n)))}</p><span class="sv-close">닫기 ✕</span></div></div>`;
+  v.classList.add("on");
+}
+document.addEventListener("click", e => { const t = e.target.closest && e.target.closest("[data-scene]"); if(t){ e.stopPropagation(); showScene(t.dataset.scene); } }, true);
 function renderReport(){
   const total = S.canon + S.imag, c = Math.round(S.canon / total * 100), i = 100 - c;
   const lit = level === "lit", E = S.ending ? CH.endings[S.ending] : null;
@@ -1264,9 +1293,9 @@ function renderReport(){
   const newItems = S.items.filter(k => !sitems.includes(k) && ITEMS[k]).map(k => `<div class="gain"><span class="ic">${ITEMS[k].ic}</span><b>${ITEMS[k].name}</b></div>`).join("");
   const gotAny = heartGain || newItems;
   const items = S.items.map(k => ITEMS[k] ? `<div class="item"><span class="ic">${ITEMS[k].ic}</span><span><b>${ITEMS[k].name}</b><br>${esc(fill(ITEMS[k].desc))}</span></div>` : "").join("") || `<p style="font-size:.85rem;color:#8a7461">아직 모은 물건이 없어요.</p>`;
-  const album = ALBUM.map(a => P.album[a.id] ? `<div><span class="ic">${a.ic}</span>${a.name}</div>` : `<div class="lock"><span class="ic">❔</span>???</div>`).join("");
+  const album = albumGrid(CH);
   const endN = ["canon","imag","bal"].filter(k => P.endings[CH.key + "_" + k]).length;
-  const ends = ["canon","imag","bal"].map(k => P.endings[CH.key + "_" + k] ? `<div><span class="ic">🎬</span>${CH.endings[k].title}<br><small>${CH.endings[k].label}</small></div>` : `<div class="lock"><span class="ic">❔</span>??? 결말</div>`).join("");
+  const ends = endGrid(CH);
   const nextBtn = CH.finalReport ? `<button type="button" class="big alt" disabled>📕 1부 완결 · 고마워요</button>` : CHAPTERS[S.ch + 1] ? `<button type="button" class="big sky" id="rpNext">➡ ${CH.num + 1}장으로</button>` : `<button type="button" class="big alt" disabled>➡ ${CH.num + 1}장 (준비 중)</button>`;
   el.report.innerHTML = `<div class="rp-wrap">
     <div class="rp-head"><small>CHAPTER ${CH.num} REPORT</small><h2>${CH.num}장 · ${CH.title}</h2>
@@ -1535,7 +1564,9 @@ el.btnBox.addEventListener("click", e => {
   e.stopPropagation();
   const items = S.items.length ? S.items.map(k => `<div class="item"><span class="ic">${ITEMS[k].ic}</span><span><b>${ITEMS[k].name}</b><br>${esc(fill(ITEMS[k].desc))}</span></div>`).join("") : "<p>아직 모은 물건이 없어요. 이야기를 진행하면 하나씩 생겨요!</p>";
   modal("🎁 추억 상자", `<div class="items">${items}</div>${heartsHtml()}
-    <p style="margin-top:10px;font-size:.84rem;color:#8a7461">✨ 숨은 장면 ${albumCount()}/${ALBUM.length} · 🎬 결말 ${["canon","imag","bal"].filter(k => P.endings[CH.key + "_" + k]).length}/3</p>`, [{label:"닫기", cls:"big alt"}]);
+    <h4 style="margin-top:12px">🎬 ${CH.num}장 결말 (${["canon","imag","bal"].filter(k => P.endings[CH.key + "_" + k]).length}/3)</h4><div class="album">${endGrid(CH)}</div>
+    <h4 style="margin-top:12px">✨ ${CH.num}장 숨은 장면 (${albumCount()}/${ALBUM.length})</h4><div class="album">${albumGrid(CH)}</div>
+    <p style="margin-top:8px;font-size:.8rem;color:#8a7461">찾은 결말과 숨은 장면을 누르면 그 장면을 다시 볼 수 있어요.</p>`, [{label:"닫기", cls:"big alt"}]);
 });
 el.btnReset.addEventListener("click", e => {
   e.stopPropagation();

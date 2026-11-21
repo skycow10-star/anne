@@ -829,7 +829,8 @@ function applyEff(eff){
   if(eff.flag){ S.flags[eff.flag] = true; if(eff.flag === "metMatthew") S.met.matthew = true; }
   if(eff.met){ S.met[eff.met] = true; if(S.hearts[eff.met] === undefined) S.hearts[eff.met] = CHARS[eff.met] ? CHARS[eff.met].start : 0; setTimeout(() => bumpHud(eff.met), 50); }
   if(eff.name) Object.assign(S.names, eff.name);
-  if(eff.heart) for(const k in eff.heart){ S.met[k] = true; S.hearts[k] = Math.max(0, Math.min(5, (S.hearts[k] || 0) + eff.heart[k])); setTimeout(() => bumpHud(k), 50); }
+  if(eff.heart) for(const k in eff.heart){ const before = S.hearts[k] || 0, d = eff.heart[k]; S.met[k] = true; S.hearts[k] = Math.max(0, Math.min(5, before + d)); setTimeout(() => bumpHud(k), 50);
+    if(d && CHARS[k]){ const nm = CHARS[k].full; toast(S.hearts[k] === before ? (d > 0 ? `💗 ${nm}의 마음이 이미 가득해요` : `💔 ${nm}의 마음이 더 내려갈 곳이 없어요`) : d > 0 ? `💗 ${nm}의 마음 +${d}` : `💔 ${nm}의 마음 ${d}`); } }
   if(eff.item && !S.items.includes(eff.item)){ S.items.push(eff.item); const it = ITEMS[eff.item]; setTimeout(() => { sfx("item"); toast(`🎁 추억 상자에 '${it.name}'${josa(it.name, "을")} 넣었어요`); }, 400); }
   if(eff.album && !P.album[eff.album]){ P.album[eff.album] = true; if(!/^e_/.test(eff.album)) setTimeout(() => { sfx("dream"); toast("✨ 숨은 장면을 발견했어요! (" + albumCount() + "/" + ALBUM.length + ")"); }, 300); }
 }
@@ -1632,7 +1633,10 @@ function modal(title, html, buttons){
 function closeModal(){ el.modal.hidden = true; }
 el.modal.addEventListener("click", e => { if(e.target === el.modal) closeModal(); });
 let toastT = null;
-function toast(msg){ el.toast.textContent = msg; el.toast.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => el.toast.classList.remove("show"), 2800); }
+const toastQ = [];
+function toast(msg){ toastQ.push(msg); if(toastQ.length === 1) showToast(); }
+function showToast(){ const msg = toastQ[0]; if(msg === undefined) return; el.toast.textContent = msg; el.toast.classList.add("show"); clearTimeout(toastT);
+  toastT = setTimeout(() => { el.toast.classList.remove("show"); toastQ.shift(); if(toastQ.length) setTimeout(showToast, 250); }, toastQ.length > 1 ? 1500 : 2400); }
 
 /* =========================================================
    10. 입력

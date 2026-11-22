@@ -24,6 +24,8 @@ async def main():
       if not info or not info["ok"]: bad.append(t)
       card=pg.locator(".type-card")
       if await card.count(): await card.first.screenshot(path=OUT+f"type_{t}.png")
+    await pg.set_viewport_size({"width":390,"height":844}); await pg.wait_for_timeout(400)
+    if await card.count(): await card.first.screenshot(path=OUT+"type_phone.png")
     print("errors", errs)
     await b.close()
     if bad or errs: sys.exit(1)

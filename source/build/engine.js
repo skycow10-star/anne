@@ -1319,7 +1319,7 @@ function renderReport(){
   el.report.innerHTML = `<div class="rp-wrap">
     <div class="rp-head"><small>CHAPTER ${CH.num} REPORT</small><h2>${CH.num}장 · ${CH.title}</h2>
       <p style="font-size:.82rem;color:#8a7461;margin-top:4px">${CH.orig} 「${CH.origTitle}」</p></div>
-    ${E ? `<div class="rp-end ${S.ending}">${thumbFor(CH, "end", S.ending) ? `<img class="rp-end-pic" data-scene="${CH.key}|end|${S.ending}" src="${thumbFor(CH, "end", S.ending)}" alt="">` : `<div class="rp-end-ic">${emoji}</div>`}<span class="tag ${S.ending}">${E.label}</span>
+    ${E ? `<div class="rp-end ${S.ending}">${thumbFor(CH, "end", S.ending) ? `<img class="rp-end-pic" data-scene="${CH.key}|end|${S.ending}" src="${thumbFor(CH, "end", S.ending)}" alt="">` : `<div class="rp-end-ic">${imgFor("end_" + S.ending) ? `<img src="${imgFor("end_" + S.ending)}" alt="">` : emoji}</div>`}<span class="tag ${S.ending}">${E.label}</span>
       <h3>${esc(E.title)}</h3><p>${desc}</p>
       <div class="rp-tally"><span class="t canon">📖 원작 ${S.tally.canon}</span><span class="t imag">✨ 상상 ${S.tally.imag}</span>${S.tally.bal || !EASY_MODE ? `<span class="t bal">⚖️ 균형 ${S.tally.bal}</span>` : ""}</div></div>` : ""}
     ${gotAny ? `<div class="card"><h4>🎁 이번 장에서 얻은 것</h4><div class="gains">${heartGain}${newItems}</div></div>` : ""}
@@ -1374,7 +1374,7 @@ function renderMidReport(){
   upto.forEach(c => { const h = S.hist[c.key]; if(h && h.tally) ["canon","imag","bal"].forEach(k => sum[k] += h.tally[k] || 0); });
   const top = ["canon","imag","bal"].reduce((a, b) => sum[b] > sum[a] ? b : a, "canon");
   const tie = ["canon","imag","bal"].filter(k => sum[k] === sum[top]).length > 1;
-  const type = READER_TYPE[tie ? "bal" : top];
+  const typeKey = tie ? "bal" : top, type = READER_TYPE[typeKey], typeIc = imgFor("end_" + typeKey);
   const tot = sum.canon + sum.imag + sum.bal || 1;
   const pct = k => Math.round(sum[k] / tot * 100);
   const total = S.canon + S.imag, gc = Math.round(S.canon / total * 100);
@@ -1406,7 +1406,7 @@ function renderMidReport(){
   el.report.innerHTML = `<div class="rp-wrap mid">
     <div class="rp-head"><small>${fin ? "FINAL READING REPORT" : "MID-TERM READING REPORT"}</small><h2>${fin ? "🏁" : "📜"} ${RN} · 1~${CH.num}장 나의 독서 여정</h2>
       <p style="font-size:.86rem;color:#6e5b4b;margin-top:6px">${fin ? "원작 2장부터 38장까지, 초록 지붕 집에 온 열한 살 소녀가 길모퉁이 앞에 선 열여섯 살 숙녀가 되기까지의 이야기" : "원작 2장부터 17장까지, 앤이 초록 지붕 집에 와서 첫 친구를 사귀고 잃기까지의 이야기"}</p></div>
-    <div class="type-card"><div class="type-emoji">${type.emoji}</div><div style="flex:1">
+    <div class="type-card"><div class="type-emoji">${typeIc ? `<img src="${typeIc}" alt="">` : type.emoji}</div><div style="flex:1">
       <h3>나의 독서 유형: ${type.name}</h3><p>${lit ? type.l : type.e}</p>
       <div class="rp-gauge"><span style="width:${pct("canon")}%;background:linear-gradient(90deg,#c9504a,#ec8d84)"></span><span style="width:${pct("bal")}%;background:linear-gradient(90deg,#9cc49a,#5b8a5e)"></span><span style="width:${pct("imag")}%;background:linear-gradient(90deg,#8cbbe6,#3f78b0)"></span></div>
       <div class="rp-legend"><span style="color:#b9473f">📖 원작 ${sum.canon}번</span><span style="color:#5b8a5e">⚖️ 균형 ${sum.bal}번</span><span style="color:#3d73a8">✨ 상상 ${sum.imag}번</span></div>

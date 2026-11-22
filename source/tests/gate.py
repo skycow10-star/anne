@@ -1,3 +1,6 @@
+import sys, pathlib; sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / 'tools'))
+from paths import CHROME, HTML, WORK, uri
+OUT = str(WORK / 'test4') + '/'
 import asyncio,json,sys
 from playwright.async_api import async_playwright
 async def run(pg,ci,hearts):
@@ -14,9 +17,9 @@ async def run(pg,ci,hearts):
     return seen
 async def main():
   async with async_playwright() as p:
-    b=await p.chromium.launch(executable_path="/usr/bin/google-chrome"); pg=await b.new_page(viewport={"width":1280,"height":800}); errs=[]
+    b=await p.chromium.launch(executable_path=CHROME); pg=await b.new_page(viewport={"width":1280,"height":800}); errs=[]
     pg.on("pageerror",lambda e:errs.append(str(e)))
-    await pg.goto("file:///home/claude/anne_visual_novel.html"); await pg.wait_for_timeout(1000)
+    await pg.goto("http://localhost:8765/index.html"); await pg.wait_for_timeout(1000)
     for ci in [4,8,9]:
       hi=await run(pg,ci,{"matthew":5,"marilla":5,"diana":5,"lynde":3,"allan":3,"gilbert":3,"barry":2})
       lo=await run(pg,ci,{"matthew":1,"marilla":1,"diana":1,"lynde":0,"allan":0,"gilbert":0,"barry":0})

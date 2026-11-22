@@ -1,12 +1,15 @@
+import sys, pathlib; sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / 'tools'))
+from paths import CHROME, HTML, WORK, uri
+OUT = str(WORK / 'test4') + '/'
 import asyncio,sys
 from playwright.async_api import async_playwright
 ROUTE=sys.argv[1] if len(sys.argv)>1 else "canon"; CI=int(sys.argv[2]) if len(sys.argv)>2 else 0
 async def main():
   async with async_playwright() as p:
-    b=await p.chromium.launch(executable_path="/usr/bin/google-chrome")
+    b=await p.chromium.launch(executable_path=CHROME)
     vp={"width":1280,"height":800} if ROUTE!="phone" else {"width":390,"height":844}
     pg=await b.new_page(viewport=vp); errs=[]; pg.on("pageerror",lambda e:errs.append(str(e)))
-    await pg.goto("file:///home/claude/anne_visual_novel.html?easy"); await pg.wait_for_timeout(1200)
+    await pg.goto("http://localhost:8765/easy/"); await pg.wait_for_timeout(1200)
     await pg.evaluate(f"window.__anne.start({CI},null)"); await pg.wait_for_timeout(1500)
     shots=0
     for step in range(400):

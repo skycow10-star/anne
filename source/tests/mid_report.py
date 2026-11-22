@@ -1,3 +1,6 @@
+import sys, pathlib; sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / 'tools'))
+from paths import CHROME, HTML, WORK, uri
+OUT = str(WORK / 'test4') + '/'
 import asyncio
 from playwright.async_api import async_playwright
 SNAP={"canon":60,"imag":40,"hearts":{"matthew":5,"marilla":4,"diana":5,"barry":2,"gilbert":1,"lynde":2},"met":{"matthew":True,"marilla":True,"diana":True,"barry":True,"gilbert":True,"lynde":True},
@@ -5,7 +8,7 @@ SNAP={"canon":60,"imag":40,"hearts":{"matthew":5,"marilla":4,"diana":5,"barry":2
  "hist":{"ch1":{"ending":"canon","tally":{"canon":4,"imag":1,"bal":1}},"ch2":{"ending":"imag","tally":{"canon":1,"imag":4,"bal":1}},"ch3":{"ending":"bal","tally":{"canon":1,"imag":1,"bal":4}},"ch4":{"ending":"canon","tally":{"canon":4,"imag":1,"bal":1}},"ch5":{"ending":"bal","tally":{"canon":2,"imag":1,"bal":3}}}}
 async def main():
   async with async_playwright() as p:
-    b=await p.chromium.launch(executable_path="/usr/bin/google-chrome")
+    b=await p.chromium.launch(executable_path=CHROME)
     ctx=await b.new_context(viewport={"width":390,"height":844},device_scale_factor=2,is_mobile=True,has_touch=True)
     pg=await ctx.new_page(); errs=[]; pg.on("pageerror",lambda e: errs.append(str(e)))
     await pg.goto("http://localhost:8765/"); await pg.wait_for_timeout(1000)
@@ -18,14 +21,14 @@ async def main():
     await tas.nth(2).fill("다시 친구가 될 것 같아요!\n길버트와는 계속 경쟁할 것 같아요.")
     await pg.wait_for_timeout(500)
     await pg.evaluate("document.querySelector('.mid-q').scrollIntoView()")
-    await pg.screenshot(path="/home/claude/test4/mid_m.png")
+    await pg.screenshot(path=OUT+"mid_m.png")
     await pg.reload(); await pg.wait_for_timeout(1000)
     await pg.evaluate("document.getElementById('stage').hidden=true; document.getElementById('report').hidden=false; window.__anne.mid()")
     await pg.wait_for_timeout(400)
     print("after reload:", await pg.evaluate("[document.getElementById('midName').value, ...[...document.querySelectorAll('.mid-ans')].map(t=>t.value)]"))
     await pg.emulate_media(media="print"); await pg.wait_for_timeout(300)
     await pg.evaluate("document.querySelector('.mid-q').scrollIntoView()")
-    await pg.screenshot(path="/home/claude/test4/mid_print.png")
+    await pg.screenshot(path=OUT+"mid_print.png")
     print("errors", errs)
     await b.close()
 asyncio.run(main())

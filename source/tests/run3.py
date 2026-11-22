@@ -1,7 +1,10 @@
+import sys, pathlib; sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / 'tools'))
+from paths import CHROME, HTML, WORK, uri
+OUT = str(WORK / 'test4') + '/'
 import asyncio, json, sys, os
 CI=int(os.environ.get("CI","2"))
 from playwright.async_api import async_playwright
-F=sys.argv[1] if len(sys.argv)>1 else "file:///home/claude/anne_visual_novel.html"
+F=sys.argv[1] if len(sys.argv)>1 else "http://localhost:8765/index.html"
 SNAP={"canon":4,"imag":3,"hearts":{"matthew":3,"marilla":3,"lynde":2,"diana":3,"barry":1,"gilbert":1},"met":{"matthew":True,"marilla":True,"lynde":True},
  "items":["carpetbag","auburn","narcissi","poem","lock"],"flags":{"castle":True,"poem":True,"quiet":True,"wreath":True,"vow":True,"missSchool":True,"mailbox":True,"factsOnly":True},"names":{"avenue":"기쁨의 하얀 길","pond":"반짝이는 호수","advice":"잘했어","spring":"드라이어드의 샘","together":"소꿉놀이 집 짓기"},"hist":[]}
 async def play(pg, route, tag, shots):
@@ -20,12 +23,12 @@ async def play(pg, route, tag, shots):
     bg = await pg.evaluate("window.__anne.state().bg")
     if shots and bg not in seen:
       seen.add(bg); await pg.wait_for_timeout(1300); await pg.click(".dlg-head"); await pg.wait_for_timeout(300)
-      await pg.screenshot(path=f"/home/claude/test4/c{CI}_{tag}_{bg}.png")
+      await pg.screenshot(path=OUT+f"c{CI}_{tag}_{bg}.png")
     await pg.click(".dlg-head"); await pg.wait_for_timeout(30)
   return await pg.evaluate("window.__anne.state()")
 async def main():
   async with async_playwright() as p:
-    b=await p.chromium.launch(executable_path="/usr/bin/google-chrome")
+    b=await p.chromium.launch(executable_path=CHROME)
     pg=await b.new_page(viewport={"width":1280,"height":800}); errs=[]
     pg.on("pageerror",lambda e: errs.append(str(e)))
     await pg.goto(F); await pg.wait_for_timeout(600)
@@ -34,7 +37,7 @@ async def main():
       st=await play(pg,r,r,r=="imag")
       print(r, st["ending"], st["tally"] if "tally" in st else "", st["items"], st["hearts"], st["names"])
       if r=="bal":
-        await pg.screenshot(path="/home/claude/test4/report.png")
+        await pg.screenshot(path=OUT+"report.png")
     # unresolved templates / missing book ids
     bad = await pg.evaluate("""(()=>{const out=[];const ch=CHAPTERS[%d];const ids=new Set(BOOK[ch.key].paras.map(p=>p[0]));
       ch.nodes.forEach(n=>{(n.bk||[]).forEach(b=>{if(!ids.has(b))out.push('bk '+b)});});return out})()""" % CI)

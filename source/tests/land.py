@@ -1,8 +1,11 @@
+import sys, pathlib; sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / 'tools'))
+from paths import CHROME, HTML, WORK, uri
+OUT = str(WORK / 'test4') + '/'
 import asyncio
 from playwright.async_api import async_playwright
 async def main():
   async with async_playwright() as p:
-    b=await p.chromium.launch(executable_path="/usr/bin/google-chrome")
+    b=await p.chromium.launch(executable_path=CHROME)
     for url,n in [("http://localhost:8765/index.html","n"),("http://localhost:8765/easy/","e")]:
       ctx=await b.new_context(viewport={"width":844,"height":390}); pg=await ctx.new_page(); errs=[]; pg.on("pageerror",lambda e:errs.append(str(e)))
       await pg.goto(url); await pg.wait_for_timeout(2000)

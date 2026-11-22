@@ -1,3 +1,6 @@
+import sys, pathlib; sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / 'tools'))
+from paths import CHROME, HTML, WORK, uri
+OUT = str(WORK / 'test4') + '/'
 import asyncio, sys
 from playwright.async_api import async_playwright
 ROUTES=["canon","imag","bal","canon","bal"]
@@ -16,7 +19,7 @@ async def play(pg, route):
     await pg.click(".dlg-head"); await pg.wait_for_timeout(25)
 async def main():
   async with async_playwright() as p:
-    b=await p.chromium.launch(executable_path="/usr/bin/google-chrome")
+    b=await p.chromium.launch(executable_path=CHROME)
     pg=await b.new_page(viewport={"width":1100,"height":900}); errs=[]
     pg.on("pageerror",lambda e: errs.append(str(e)))
     await pg.goto("http://localhost:8765/"); await pg.wait_for_timeout(1200)
@@ -26,11 +29,11 @@ async def main():
       st=await pg.evaluate("window.__anne.state()")
       print(i+1, r, st["ending"], flush=True)
       if i<4: await pg.click("#rpNext", timeout=5000); await pg.wait_for_timeout(1800)
-    await pg.screenshot(path="/home/claude/test4/r5.png")
+    await pg.screenshot(path=OUT+"r5.png")
     await pg.click("#rpMid"); await pg.wait_for_timeout(800)
     h=await pg.evaluate("document.getElementById('report').scrollHeight")
     await pg.set_viewport_size({"width":1100,"height":h+40}); await pg.wait_for_timeout(500)
-    await pg.screenshot(path="/home/claude/test4/mid.png")
+    await pg.screenshot(path=OUT+"mid.png")
     print("errors", errs)
     await b.close()
 asyncio.run(main())
